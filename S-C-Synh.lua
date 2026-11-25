@@ -112,8 +112,35 @@ end
 
 loadPrefs()
 
-local CLARA_FOOTPRINT = 16
-local CLARA_DEFAULT_V = {tilt=0.5, gobor=0, color=0, strobe=0, prism=0, pan=0.5, frost=0, ctrl=0, dim=1, focus=0.5, speed=0, gobo=0, prot=0, prism2=0}
+local FIXTURE_FOOTPRINTS = {
+    clara = 16,
+    strobe = 8,
+    mapple = 16,
+    parled = 6,
+    fogger = 1,
+    blinder = 4,
+    flower = 18,
+    pixel = 20,
+    retro = 12,
+    wall = 8,
+    windmill = 8,
+    sbar = 8
+}
+
+local FIXTURE_DEFAULTS = {
+    clara = {tilt=0.5, gobor=0, color=0, strobe=0, prism=0, pan=0.5, frost=0, ctrl=0, dim=1, focus=0.5, speed=0, gobo=0, prot=0, prism2=0},
+    strobe = {shutter=0, col1=0, int=1, cont2=0, fx2=0, pos6=0.5, macro2=0, macro1=0},
+    mapple = {rc3=0, mpos=0.5, rc1=0, rmac=0, mmode=0, astrobe=0, amac=0, acol=0, rstrobe=0, rdim=1, adim=1, rc2=0, bdim=1, bmac=0, bcol=0},
+    parled = {strobe=0, dim=1, r=1, b=1, w=0, g=1},
+    fogger = {fog=1},
+    blinder = {d2=1, d3=1, d1=1, d4=1},
+    flower = {str=0, b1=1, b2=1, d2=1, d1=1, g1=0, ms2=0, g2=0, mo2=0, mo1=0, m2=0, m1=0, ms1=0, s1=0, r1=1, r2=1, s2=0},
+    pixel = {meff=0, astrb=0, astat=0, teff=0, mstrb=0, mdim=1, tilt=0.5, mmac=0, aeff=0, mb=1, mstat=0, mr=1, mespd=0, tspd=0, aespd=0, mg=1, adim=1, tsprd=0, zoom=0.5},
+    retro = {str=0, mref=0, r=1, g=1, dins=1, eref=0, dref=1, mring=0, dring=1, ering=0, b=1},
+    wall = {strobe=0, dim=1, r=1, b=1, eff=0, g=1, spd=0},
+    windmill = {str=0, eo=0, dim=1, b=1, ei=0, rot=0, g=1, r=1},
+    sbar = {strobe=0, dim=1, r=1, b=1, eff=0, g=1, spd=0}
+}
 
 local MOTION_PRESETS = {
     {name="Circle Smooth", cat="GERAK", layer="mov", target="pos", shape="circle", rate=0.35, sx=0.35, sy=0.35, phase=0, wing=0, groups=0, dir=">", wax="x", dty=0.5, soft=0},
@@ -184,8 +211,10 @@ local function deepCopy(orig)
     return copy
 end
 
-local function makeClaraV(overrides)
-    local v = deepCopy(CLARA_DEFAULT_V)
+local function makeFullV(fixtureType, overrides)
+    local t = string.lower(tostring(fixtureType or "clara"))
+    local base = FIXTURE_DEFAULTS[t] or FIXTURE_DEFAULTS.clara
+    local v = deepCopy(base)
     if type(overrides) == "table" then
         for k, val in pairs(overrides) do
             if v[k] ~= nil then
@@ -247,11 +276,11 @@ local function sanitizeWorkStructure(data)
     data.keys = data.keys or {}
     data.rig = data.rig or {}
     for _, fix in ipairs(data.rig) do
-        fix.t = "clara"
+        fix.t = string.lower(tostring(fix.t or "clara"))
         fix.a = math.max(1, math.floor(tonumber(fix.a) or 1))
         fix.x = math.clamp(tonumber(fix.x) or 0.5, 0, 1)
         fix.y = math.clamp(tonumber(fix.y) or 0.5, 0, 1)
-        fix.v = makeClaraV(fix.v)
+        fix.v = makeFullV(fix.t, fix.v)
     end
     data.eff = normalizeEffArray(data.eff)
     data.chase = data.chase or {off = 0, seq = false, dir = ">", scope = "all", glide = 0, rate = 1, steps = {}}
@@ -261,10 +290,12 @@ local function sanitizeWorkStructure(data)
     return data
 end
 
-local function buildClaraRig(count, startAddr, mode)
+local function buildAutoPatchedRig(fixtureType, count, startAddr, mode)
     local newRig = {}
+    local t = string.lower(tostring(fixtureType or "clara"))
+    local fp = FIXTURE_FOOTPRINTS[t] or 16
     local addr = math.max(1, math.floor(tonumber(startAddr) or 1))
-    local qty = math.clamp(math.floor(tonumber(count) or 8), 1, 32)
+    local qty = math.clamp(math.floor(tonumber(count) or 8), 1, 64)
     local isMulti = (mode == "multi")
     for i = 1, qty do
         local posX = (qty == 1) and 0.5 or (0.08 + ((i - 1) * (0.84 / math.max(1, qty - 1))))
@@ -272,11 +303,11 @@ local function buildClaraRig(count, startAddr, mode)
             a = addr,
             x = math.floor(posX * 100 + 0.5) / 100,
             y = 0.5,
-            t = "clara",
-            v = makeClaraV()
+            t = t,
+            v = makeFullV(t)
         })
         if not isMulti then
-            addr = addr + CLARA_FOOTPRINT
+            addr = addr + fp
         end
     end
     return newRig
@@ -292,7 +323,7 @@ local function defaultWorkData()
         eff = normalizeEffArray({}),
         chase = {off = 0, seq = false, dir = ">", scope = "all", glide = 0, rate = 1, steps = {}},
         cues = {},
-        rig = buildClaraRig(8, 1, "independen")
+        rig = buildAutoPatchedRig("clara", 8, 1, "independen")
     })
 end
 
@@ -311,7 +342,7 @@ local function loadWorkFile()
             end
         end
     end
-    return false, "CLARA RIG READY"
+    return false, "DEFAULT RIG READY"
 end
 
 local function saveWorkFile()
@@ -361,9 +392,10 @@ local function getSelectedFxEmptyMap()
     local map = {}
     local indices = getSelectedMemberIndices()
     for _, idx in ipairs(indices) do
-        if workData.rig[idx] then
+        local fix = workData.rig[idx]
+        if fix then
             map[tostring(idx)] = {
-                t = "clara",
+                t = string.lower(fix.t or "clara"),
                 v = {}
             }
         end
@@ -388,6 +420,7 @@ local state = {
     soft = 0,
     slotIndex = 1,
     previewActive = true,
+    rigType = (#workData.rig > 0 and workData.rig[1].t) or "clara",
     rigCount = math.max(1, #workData.rig),
     rigStartAddr = (#workData.rig > 0 and workData.rig[1].a) or 1,
     rigMode = "independen",
@@ -494,9 +527,9 @@ local bubbleBtn = Instance.new("TextButton")
 bubbleBtn.Name = "FloatingBubble"
 bubbleBtn.Size = UDim2.new(0, uiPrefs.bubbleSize, 0, uiPrefs.bubbleSize)
 bubbleBtn.Position = UDim2.new(0.03, 0, 0.25, 0)
-bubbleBtn.Text = "CLARA"
+bubbleBtn.Text = "DMX"
 bubbleBtn.Font = Enum.Font.GothamBlack
-bubbleBtn.TextSize = 11
+bubbleBtn.TextSize = 13
 bubbleBtn.BorderSizePixel = 0
 bubbleBtn.Visible = false
 bubbleBtn.ZIndex = 20
@@ -523,10 +556,10 @@ applyBrutalBorder(topBar)
 makeDraggableFrame(topBar, main, nil)
 
 local titleLbl = Instance.new("TextLabel")
-titleLbl.Size = UDim2.new(0, 165, 1, 0)
+titleLbl.Size = UDim2.new(0, 175, 1, 0)
 titleLbl.Position = UDim2.new(0, 10, 0, 0)
 titleLbl.BackgroundTransparency = 1
-titleLbl.Text = "APEX CLARA // FX"
+titleLbl.Text = "APEX DMX // RK-512"
 titleLbl.Font = Enum.Font.GothamBlack
 titleLbl.TextSize = 12
 titleLbl.TextXAlignment = Enum.TextXAlignment.Left
@@ -535,8 +568,8 @@ titleLbl.Parent = topBar
 registerTheme(titleLbl, "btnText", "TextColor3")
 
 local statusLbl = Instance.new("TextLabel")
-statusLbl.Size = UDim2.new(1, -245, 1, 0)
-statusLbl.Position = UDim2.new(0, 175, 0, 0)
+statusLbl.Size = UDim2.new(1, -255, 1, 0)
+statusLbl.Position = UDim2.new(0, 185, 0, 0)
 statusLbl.BackgroundTransparency = 1
 statusLbl.Text = "READY // " .. WORK_FILE
 statusLbl.Font = Enum.Font.Code
@@ -995,8 +1028,8 @@ rigModalOverlay.ZIndex = 30
 rigModalOverlay.Parent = main
 
 local rigModalBox = Instance.new("Frame")
-rigModalBox.Size = UDim2.new(0.86, 0, 0.80, 0)
-rigModalBox.Position = UDim2.new(0.07, 0, 0.10, 0)
+rigModalBox.Size = UDim2.new(0.88, 0, 0.84, 0)
+rigModalBox.Position = UDim2.new(0.06, 0, 0.08, 0)
 rigModalBox.BorderSizePixel = 0
 rigModalBox.ZIndex = 31
 rigModalBox.Parent = rigModalOverlay
@@ -1015,7 +1048,7 @@ local rigModalTitle = Instance.new("TextLabel")
 rigModalTitle.Size = UDim2.new(1, -38, 1, 0)
 rigModalTitle.Position = UDim2.new(0, 8, 0, 0)
 rigModalTitle.BackgroundTransparency = 1
-rigModalTitle.Text = "SETUP JUMLAH & DMX CLARA S 14R (16CH)"
+rigModalTitle.Text = "SETUP JUMLAH & ALAMAT DMX SEBELUM MEMBUAT CUE"
 rigModalTitle.Font = Enum.Font.GothamBlack
 rigModalTitle.TextSize = 10
 rigModalTitle.TextXAlignment = Enum.TextXAlignment.Left
@@ -1059,15 +1092,22 @@ rigModalCloseBtn.MouseButton1Click:Connect(function()
     setStatus("SETUP DMX DITUTUP", false)
 end)
 
-local modalSldCount = makeSliderRow(rigModalScroll, "1. Jumlah Unit Clara", 1, 32, state.rigCount, true, function(v)
+local modalChipFix = makeChipSelector(rigModalScroll, "1. Pilih Tipe Fixture (Clara / Lainnya):", {
+    "clara", "strobe", "mapple", "parled", "fogger", "blinder",
+    "flower", "pixel", "retro", "wall", "windmill", "sbar"
+}, state.rigType, function(v)
+    state.rigType = v
+end)
+
+local modalSldCount = makeSliderRow(rigModalScroll, "2. Jumlah Unit Lampu", 1, 32, state.rigCount, true, function(v)
     state.rigCount = v
 end)
 
-local modalSldStart = makeSliderRow(rigModalScroll, "2. Alamat DMX Awal", 1, 512, state.rigStartAddr, true, function(v)
+local modalSldStart = makeSliderRow(rigModalScroll, "3. Alamat DMX Awal", 1, 512, state.rigStartAddr, true, function(v)
     state.rigStartAddr = v
 end)
 
-local modalChipMode = makeChipSelector(rigModalScroll, "3. Mode Alamat (Independen = Lompat 16ch, Multi = Sama):", {"independen", "multi"}, state.rigMode, function(v)
+local modalChipMode = makeChipSelector(rigModalScroll, "4. Mode Alamat (Independen = Pisah Ch, Multi = Sama):", {"independen", "multi"}, state.rigMode, function(v)
     state.rigMode = v
 end)
 
@@ -1124,7 +1164,7 @@ registerTheme(modalExitBtn, "danger", "BackgroundColor3")
 applyBrutalBorder(modalExitBtn)
 
 modalConfirmBtn.MouseButton1Click:Connect(function()
-    workData.rig = buildClaraRig(state.rigCount, state.rigStartAddr, state.rigMode)
+    workData.rig = buildAutoPatchedRig(state.rigType, state.rigCount, state.rigStartAddr, state.rigMode)
     state.rigConfigured = true
     resetSelectionAll()
     rigModalOverlay.Visible = false
@@ -1136,7 +1176,7 @@ modalConfirmBtn.MouseButton1Click:Connect(function()
         cb()
     else
         autoSaveTrigger()
-        setStatus("DMX CLARA SET: " .. state.rigCount .. " UNIT", false)
+        setStatus("DMX SET: " .. state.rigCount .. "X " .. string.upper(state.rigType), false)
     end
 end)
 
@@ -1158,6 +1198,7 @@ end)
 
 openRigSetupModal = function(onDoneCallback)
     pendingAfterRigCallback = onDoneCallback
+    modalChipFix.setSelected(state.rigType)
     modalSldCount.setValue(state.rigCount)
     modalSldStart.setValue(state.rigStartAddr)
     modalChipMode.setSelected(state.rigMode)
@@ -1245,7 +1286,9 @@ local function generateChaseFromPattern(cueKey, patternKey, patternName)
             local frame = {}
             local prog = (s - 1) / numSteps
             for posIdx, rigIdx in ipairs(indices) do
-                if workData.rig[rigIdx] then
+                local fix = workData.rig[rigIdx]
+                if fix then
+                    local fType = string.lower(fix.t or "clara")
                     local phaseOff = (posIdx - 1) / totalSel
                     local ang = (prog + phaseOff) * math.pi * 2
                     local ov = {}
@@ -1264,7 +1307,20 @@ local function generateChaseFromPattern(cueKey, patternKey, patternName)
                     elseif patternKey == "odd_even" then
                         local isOdd = (posIdx % 2 == 1)
                         local active = ((s % 2 == 1) and isOdd) or ((s % 2 == 0) and not isOdd)
-                        ov.dim = active and 1 or 0
+                        local val = active and 1 or 0
+                        ov.dim = val
+                        ov.int = val
+                        ov.r = val
+                        ov.g = val
+                        ov.b = val
+                        ov.d1 = val
+                        ov.d2 = val
+                        ov.d3 = val
+                        ov.d4 = val
+                        ov.mdim = val
+                        ov.adim = val
+                        ov.rdim = val
+                        ov.bdim = val
                     elseif patternKey == "fan_io" then
                         local mid = (totalSel + 1) / 2
                         local dist = (posIdx - mid) / math.max(1, totalSel / 2)
@@ -1273,11 +1329,17 @@ local function generateChaseFromPattern(cueKey, patternKey, patternName)
                         ov.tilt = 0.5 + (0.25 * math.cos(prog * math.pi * 2))
                     elseif patternKey == "color_run" then
                         ov.color = (prog + phaseOff) % 1
+                        ov.col1 = (prog + phaseOff) % 1
+                        ov.acol = (prog + phaseOff) % 1
+                        ov.bcol = (prog + phaseOff) % 1
+                        ov.r = 0.5 + 0.5 * math.sin(ang)
+                        ov.g = 0.5 + 0.5 * math.sin(ang + 2.09)
+                        ov.b = 0.5 + 0.5 * math.sin(ang + 4.18)
                     end
 
                     frame[tostring(rigIdx)] = {
-                        t = "clara",
-                        v = makeClaraV(ov)
+                        t = fType,
+                        v = makeFullV(fType, ov)
                     }
                 end
             end
@@ -1303,7 +1365,7 @@ local function generateChaseFromPattern(cueKey, patternKey, patternName)
     end)
 end
 
-local secMembers = makeSection(pagePresets, "1. PILIH UNIT CLARA & TAP TEMPO BPM SYNC")
+local secMembers = makeSection(pagePresets, "1. PILIH LAMPU TARGET (INDEKS RIG) & TAP TEMPO BPM")
 
 local memberToolsRow = Instance.new("Frame")
 memberToolsRow.Size = UDim2.new(1, 0, 0, 22)
@@ -1326,10 +1388,10 @@ makeSmallActionBtn(memberToolsRow, "Genap", 104, 48, "surface", function()
     if refreshMembersUI then refreshMembersUI() end
 end)
 
-makeSmallActionBtn(memberToolsRow, "DMX Clara", 156, 74, "secondary", function()
+makeSmallActionBtn(memberToolsRow, "Setup DMX", 156, 74, "secondary", function()
     openRigSetupModal(function()
         autoSaveTrigger()
-        setStatus("DMX CLARA: " .. #workData.rig .. " UNIT", false)
+        setStatus("DMX RIG: " .. #workData.rig .. " UNIT", false)
     end)
 end)
 
@@ -1393,7 +1455,7 @@ refreshMembersUI = function()
         local b = Instance.new("TextButton")
         local active = selectedMembers[i] == true
         b.BackgroundColor3 = active and th.accent or th.surface
-        b.Text = "#" .. i .. " CLR(" .. tostring(fix.a) .. ")"
+        b.Text = "#" .. i .. " " .. string.upper(string.sub(fix.t or "?", 1, 3)) .. "(" .. tostring(fix.a) .. ")"
         b.Font = Enum.Font.GothamBlack
         b.TextSize = 9
         b.TextColor3 = active and th.btnText or th.ink
@@ -1441,7 +1503,7 @@ for _, combo in ipairs(LAYER_STACK_COMBOS) do
     end)
 end
 
-local secMotionTpl = makeSection(pagePresets, "3. PRESET GERAKAN PAN / TILT CLARA (12 POLA)")
+local secMotionTpl = makeSection(pagePresets, "3. PRESET GERAKAN PAN / TILT (12 POLA GERAK)")
 
 local movGridWrap = Instance.new("Frame")
 movGridWrap.Size = UDim2.new(1, 0, 0, 0)
@@ -1554,7 +1616,7 @@ for _, chsTpl in ipairs(CHASE_STEP_TEMPLATES) do
     end)
 end
 
-local secPreviewBox = makeSection(pageCustom, "1. LIVE STAGE PREVIEW (SIMULASI SOROTAN BEAM CLARA)")
+local secPreviewBox = makeSection(pageCustom, "1. LIVE STAGE PREVIEW (SIMULASI MODEL BEAM CLARA)")
 
 local previewTopRow = Instance.new("Frame")
 previewTopRow.Size = UDim2.new(1, 0, 0, 22)
@@ -1578,7 +1640,7 @@ local previewInfoLbl = Instance.new("TextLabel")
 previewInfoLbl.Size = UDim2.new(1, -145, 1, 0)
 previewInfoLbl.Position = UDim2.new(0, 145, 0, 0)
 previewInfoLbl.BackgroundTransparency = 1
-previewInfoLbl.Text = "CIRCLE | RATE: 0.35"
+previewInfoLbl.Text = "CLARA BEAM | CIRCLE"
 previewInfoLbl.Font = Enum.Font.Code
 previewInfoLbl.TextSize = 9
 previewInfoLbl.TextXAlignment = Enum.TextXAlignment.Right
@@ -1684,7 +1746,7 @@ RunService.RenderStepped:Connect(function()
     if #previewFixtures ~= #workData.rig then
         rebuildPreviewDots()
     end
-    previewInfoLbl.Text = string.upper(state.shape) .. " | RATE:" .. string.format("%.2f", state.rate) .. " | PH:" .. tostring(state.phase)
+    previewInfoLbl.Text = "CLARA SIM | " .. string.upper(state.shape) .. " | RATE:" .. string.format("%.2f", state.rate)
     local t = os.clock() * (state.rate * 2.5)
     local total = math.max(1, #previewFixtures)
     local th = getCurrentTheme()
@@ -1882,7 +1944,7 @@ makeSmallActionBtn(slotActionRow, "Kosongkan Slot Ini", 141, 130, "danger", func
     end
 end)
 
-local secCueGrid = makeSection(pageSlots, "2. GRID CUE 1 - 24 (KLIK CUE BARU = SETUP DMX CLARA)")
+local secCueGrid = makeSection(pageSlots, "2. GRID CUE 1 - 24 (KLIK CUE BARU = SETUP DMX)")
 
 local cueQuickRow = Instance.new("Frame")
 cueQuickRow.Size = UDim2.new(1, 0, 0, 24)
@@ -1890,14 +1952,14 @@ cueQuickRow.BackgroundTransparency = 1
 cueQuickRow.ZIndex = 5
 cueQuickRow.Parent = secCueGrid
 
-makeSmallActionBtn(cueQuickRow, "Atur DMX Clara", 0, 102, "accent", function()
+makeSmallActionBtn(cueQuickRow, "Atur DMX Rig", 0, 95, "accent", function()
     openRigSetupModal(function()
         autoSaveTrigger()
-        setStatus("DMX CLARA DIPERBARUI", false)
+        setStatus("DMX RIG DIPERBARUI", false)
     end)
 end)
 
-makeSmallActionBtn(cueQuickRow, "Duplikat Cue+1", 108, 105, "secondary", function()
+makeSmallActionBtn(cueQuickRow, "Duplikat Cue+1", 101, 105, "secondary", function()
     local src = workData.cues[state.cueId]
     if not src then
         setStatus("CUE " .. state.cueId .. " KOSONG!", true)
@@ -1915,7 +1977,7 @@ makeSmallActionBtn(cueQuickRow, "Duplikat Cue+1", 108, 105, "secondary", functio
     setStatus("DUPLIKAT -> CUE " .. nextKey, false)
 end)
 
-makeSmallActionBtn(cueQuickRow, "Hapus Cue", 219, 82, "danger", function()
+makeSmallActionBtn(cueQuickRow, "Hapus Cue", 212, 82, "danger", function()
     workData.cues[state.cueId] = nil
     autoSaveTrigger()
     refreshSlotsAndCuesUI()
@@ -1941,7 +2003,7 @@ loadCueIntoEditor = function(cueKey)
         if refreshSlotsAndCuesUI then refreshSlotsAndCuesUI() end
         if uiPrefs.promptRigOnNewCue then
             openRigSetupModal(function()
-                setStatus("CUE " .. state.cueId .. " SIAP DIISI (" .. #workData.rig .. " CLARA)", false)
+                setStatus("CUE " .. state.cueId .. " SIAP DIISI (" .. #workData.rig .. " UNIT)", false)
             end)
         else
             setStatus("CUE " .. state.cueId .. " DIPILIH (KOSONG)", false)
@@ -2154,7 +2216,7 @@ cueIdBox.FocusLost:Connect(function()
         state.cueId = clean
         if workData.cues[state.cueId] == nil and uiPrefs.promptRigOnNewCue then
             openRigSetupModal(function()
-                setStatus("CUE " .. state.cueId .. " SIAP (" .. #workData.rig .. " CLARA)", false)
+                setStatus("CUE " .. state.cueId .. " SIAP (" .. #workData.rig .. " UNIT)", false)
             end)
         end
     else
