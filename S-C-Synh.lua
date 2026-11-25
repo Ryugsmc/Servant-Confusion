@@ -5,7 +5,6 @@ local UserInputService = game:GetService("UserInputService")
 local RunService = game:GetService("RunService")
 
 local WORK_FILE = "dmx_ui_work.json"
-local SHOWS_FILE = "dmx_ui_shows.json"
 local PREFS_FILE = "apex_dmx_prefs.json"
 
 local guiParent = (gethui and gethui()) or CoreGui or Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -14,6 +13,45 @@ if guiParent:FindFirstChild("ApexDMXStudio") then
 end
 
 local THEMES = {
+    ["Brutal Dark"] = {
+        bg = Color3.fromRGB(18, 18, 22),
+        surface = Color3.fromRGB(30, 30, 36),
+        header = Color3.fromRGB(255, 102, 0),
+        accent = Color3.fromRGB(0, 245, 155),
+        secondary = Color3.fromRGB(255, 214, 0),
+        danger = Color3.fromRGB(255, 68, 68),
+        ink = Color3.fromRGB(245, 245, 248),
+        subInk = Color3.fromRGB(175, 178, 190),
+        chipBg = Color3.fromRGB(44, 44, 52),
+        canvas = Color3.fromRGB(10, 10, 14),
+        btnText = Color3.fromRGB(12, 12, 12)
+    },
+    ["OLED Midnight"] = {
+        bg = Color3.fromRGB(10, 10, 13),
+        surface = Color3.fromRGB(22, 22, 28),
+        header = Color3.fromRGB(0, 212, 255),
+        accent = Color3.fromRGB(185, 255, 0),
+        secondary = Color3.fromRGB(255, 110, 180),
+        danger = Color3.fromRGB(245, 55, 65),
+        ink = Color3.fromRGB(242, 244, 250),
+        subInk = Color3.fromRGB(160, 165, 180),
+        chipBg = Color3.fromRGB(34, 34, 42),
+        canvas = Color3.fromRGB(5, 5, 8),
+        btnText = Color3.fromRGB(10, 10, 10)
+    },
+    ["Obsidian Neon"] = {
+        bg = Color3.fromRGB(22, 20, 28),
+        surface = Color3.fromRGB(35, 32, 44),
+        header = Color3.fromRGB(175, 95, 255),
+        accent = Color3.fromRGB(0, 235, 215),
+        secondary = Color3.fromRGB(255, 195, 45),
+        danger = Color3.fromRGB(255, 65, 85),
+        ink = Color3.fromRGB(248, 245, 255),
+        subInk = Color3.fromRGB(185, 178, 200),
+        chipBg = Color3.fromRGB(50, 46, 62),
+        canvas = Color3.fromRGB(12, 10, 16),
+        btnText = Color3.fromRGB(12, 12, 12)
+    },
     ["Acid Lime"] = {
         bg = Color3.fromRGB(244, 241, 232),
         surface = Color3.fromRGB(255, 255, 255),
@@ -24,7 +62,8 @@ local THEMES = {
         ink = Color3.fromRGB(15, 15, 15),
         subInk = Color3.fromRGB(60, 60, 60),
         chipBg = Color3.fromRGB(232, 229, 218),
-        canvas = Color3.fromRGB(22, 22, 22)
+        canvas = Color3.fromRGB(20, 20, 24),
+        btnText = Color3.fromRGB(15, 15, 15)
     },
     ["Cyber Yellow"] = {
         bg = Color3.fromRGB(238, 236, 230),
@@ -36,41 +75,18 @@ local THEMES = {
         ink = Color3.fromRGB(12, 12, 12),
         subInk = Color3.fromRGB(55, 55, 55),
         chipBg = Color3.fromRGB(228, 226, 220),
-        canvas = Color3.fromRGB(18, 18, 22)
-    },
-    ["Hyper Pink"] = {
-        bg = Color3.fromRGB(246, 238, 242),
-        surface = Color3.fromRGB(255, 255, 255),
-        header = Color3.fromRGB(255, 107, 178),
-        accent = Color3.fromRGB(125, 249, 255),
-        secondary = Color3.fromRGB(255, 222, 89),
-        danger = Color3.fromRGB(240, 50, 50),
-        ink = Color3.fromRGB(15, 15, 15),
-        subInk = Color3.fromRGB(60, 55, 60),
-        chipBg = Color3.fromRGB(235, 225, 230),
-        canvas = Color3.fromRGB(20, 18, 22)
-    },
-    ["Brutal Dark"] = {
-        bg = Color3.fromRGB(24, 24, 27),
-        surface = Color3.fromRGB(36, 36, 42),
-        header = Color3.fromRGB(255, 102, 0),
-        accent = Color3.fromRGB(0, 245, 155),
-        secondary = Color3.fromRGB(255, 214, 0),
-        danger = Color3.fromRGB(255, 68, 68),
-        ink = Color3.fromRGB(245, 245, 245),
-        subInk = Color3.fromRGB(185, 185, 195),
-        chipBg = Color3.fromRGB(48, 48, 56),
-        canvas = Color3.fromRGB(14, 14, 16)
+        canvas = Color3.fromRGB(18, 18, 22),
+        btnText = Color3.fromRGB(12, 12, 12)
     }
 }
 
 local uiPrefs = {
-    themeName = "Acid Lime",
+    themeName = "Brutal Dark",
     uiScale = 1.0,
     borderThickness = 2,
-    autoSaveOnApply = false,
-    bubbleSize = 48,
-    compactRows = false
+    autoSaveOnApply = true,
+    bubbleSize = 46,
+    promptRigOnNewCue = true
 }
 
 local function loadPrefs()
@@ -83,7 +99,8 @@ local function loadPrefs()
                 if tonumber(dec.uiScale) then uiPrefs.uiScale = math.clamp(tonumber(dec.uiScale), 0.75, 1.30) end
                 if tonumber(dec.borderThickness) then uiPrefs.borderThickness = math.clamp(math.floor(tonumber(dec.borderThickness)), 1, 4) end
                 if type(dec.autoSaveOnApply) == "boolean" then uiPrefs.autoSaveOnApply = dec.autoSaveOnApply end
-                if tonumber(dec.bubbleSize) then uiPrefs.bubbleSize = math.clamp(math.floor(tonumber(dec.bubbleSize)), 38, 68) end
+                if tonumber(dec.bubbleSize) then uiPrefs.bubbleSize = math.clamp(math.floor(tonumber(dec.bubbleSize)), 36, 66) end
+                if type(dec.promptRigOnNewCue) == "boolean" then uiPrefs.promptRigOnNewCue = dec.promptRigOnNewCue end
             end
         end
     end
@@ -115,21 +132,6 @@ local FIXTURE_FOOTPRINTS = {
     sbar = 8
 }
 
-local FIXTURE_KEYS_ORDER = {
-    clara = {"dim", "strobe", "pan", "tilt", "speed", "color", "gobo", "gobor", "prism", "prism2", "prot", "frost", "focus", "ctrl"},
-    strobe = {"int", "shutter", "col1", "pos6", "fx2", "cont2", "macro1", "macro2"},
-    mapple = {"rdim", "rstrobe", "rc1", "rc2", "rc3", "rmac", "adim", "astrobe", "acol", "amac", "bdim", "bcol", "bmac", "mpos", "mmode"},
-    parled = {"dim", "strobe", "r", "g", "b", "w"},
-    fogger = {"fog"},
-    blinder = {"d1", "d2", "d3", "d4"},
-    flower = {"d1", "d2", "b1", "b2", "r1", "r2", "g1", "g2", "s1", "s2", "m1", "m2", "ms1", "ms2", "mo1", "mo2", "str"},
-    pixel = {"mdim", "mstrb", "mr", "mg", "mb", "meff", "mespd", "mstat", "mmac", "adim", "astrb", "aeff", "aespd", "astat", "tilt", "teff", "tspd", "tsprd", "zoom"},
-    retro = {"r", "g", "b", "str", "dins", "dref", "dring", "mref", "mring", "eref", "ering"},
-    wall = {"dim", "strobe", "r", "g", "b", "eff", "spd"},
-    windmill = {"dim", "str", "r", "g", "b", "rot", "ei", "eo"},
-    sbar = {"dim", "strobe", "r", "g", "b", "eff", "spd"}
-}
-
 local FIXTURE_DEFAULTS = {
     clara = {tilt=0.5, gobor=0, color=0, strobe=0, prism=0, pan=0.5, frost=0, ctrl=0, dim=1, focus=0.5, speed=0, gobo=0, prot=0, prism2=0},
     strobe = {shutter=0, col1=0, int=1, cont2=0, fx2=0, pos6=0.5, macro2=0, macro1=0},
@@ -145,48 +147,37 @@ local FIXTURE_DEFAULTS = {
     sbar = {strobe=0, dim=1, r=1, b=1, eff=0, g=1, spd=0}
 }
 
-local EFFECT_TEMPLATES = {
-    {name="Circle Smooth", layer="mov", target="pos", shape="circle", rate=0.35, sx=0.35, sy=0.35, phase=0, wing=0, groups=0, dir=">", wax="x", dty=0.5, soft=0},
-    {name="Circle Mirror Wing", layer="mov", target="pos", shape="circle", rate=0.4, sx=0.35, sy=0.35, phase=0, wing=2, groups=1, dir=">", wax="x", dty=0.5, soft=0},
-    {name="Figure-8 Wide", layer="mov", target="pos", shape="fig8", rate=0.3, sx=0.45, sy=0.3, phase=0, wing=0, groups=0, dir=">", wax="x", dty=0.5, soft=0},
-    {name="Figure-8 Vertical", layer="mov", target="pos", shape="fig8", rate=0.35, sx=0.25, sy=0.45, phase=180, wing=2, groups=1, dir=">", wax="y", dty=0.5, soft=0},
-    {name="Pan Sweep Sine", layer="mov", target="pos", shape="sine", rate=0.45, sx=0.45, sy=0, phase=180, wing=2, groups=1, dir=">", wax="x", dty=0.5, soft=0},
-    {name="Tilt Wave Bounce", layer="mov", target="pos", shape="sine", rate=0.5, sx=0, sy=0.4, phase=180, wing=2, groups=1, dir=">", wax="y", dty=0.5, soft=0},
-    {name="Tilt Fly-Up Saw", layer="mov", target="pos", shape="saw", rate=0.55, sx=0, sy=0.45, phase=180, wing=0, groups=0, dir=">", wax="y", dty=0.5, soft=0.1},
-    {name="Ballyhoo Chaos", layer="mov", target="pos", shape="random", rate=0.6, sx=0.4, sy=0.4, phase=360, wing=0, groups=0, dir="<>", wax="x", dty=0.5, soft=0.15},
-    {name="Color Rainbow Saw", layer="eff", target="color", shape="saw", rate=0.6, sx=0.3, sy=0.3, phase=360, wing=2, groups=0, dir=">", wax="x", dty=0.55, soft=0.25},
-    {name="Color Snap 2-Group", layer="eff", target="color", shape="square", rate=1.0, sx=0.3, sy=0.3, phase=180, wing=0, groups=2, dir=">", wax="x", dty=0.5, soft=0},
-    {name="Color Wave Sine", layer="eff", target="color", shape="sine", rate=0.5, sx=0.4, sy=0.4, phase=360, wing=2, groups=0, dir="<>", wax="x", dty=0.5, soft=0.3},
-    {name="Dimmer Chase Pulse", layer="eff", target="dim", shape="sine", rate=1.2, sx=0.5, sy=0.5, phase=360, wing=2, groups=0, dir=">", wax="x", dty=0.5, soft=0.2},
-    {name="Dimmer Hard Flash", layer="eff", target="dim", shape="square", rate=2.0, sx=0.5, sy=0.5, phase=180, wing=0, groups=2, dir=">", wax="x", dty=0.35, soft=0},
-    {name="Strobe Burst PingPong", layer="eff", target="strobe", shape="square", rate=1.5, sx=0.3, sy=0.3, phase=360, wing=0, groups=0, dir="<>", wax="x", dty=0.2, soft=0.1},
-    {name="Beam Prism/Gobo Flip", layer="eff", target="beam", shape="square", rate=0.8, sx=0.3, sy=0.3, phase=180, wing=0, groups=2, dir=">", wax="x", dty=0.5, soft=0},
-    {name="Beam Frost Pulse", layer="eff", target="beam", shape="sine", rate=0.65, sx=0.4, sy=0.4, phase=180, wing=2, groups=0, dir=">", wax="x", dty=0.5, soft=0.25}
+local MOTION_PRESETS = {
+    {name="Circle Smooth", cat="GERAK", layer="mov", target="pos", shape="circle", rate=0.35, sx=0.35, sy=0.35, phase=0, wing=0, groups=0, dir=">", wax="x", dty=0.5, soft=0},
+    {name="Circle Fan 360", cat="GERAK", layer="mov", target="pos", shape="circle", rate=0.35, sx=0.35, sy=0.35, phase=360, wing=0, groups=0, dir=">", wax="x", dty=0.5, soft=0},
+    {name="Circle Cermin", cat="GERAK", layer="mov", target="pos", shape="circle", rate=0.40, sx=0.35, sy=0.35, phase=180, wing=2, groups=1, dir=">", wax="x", dty=0.5, soft=0},
+    {name="Figure-8 Wide", cat="GERAK", layer="mov", target="pos", shape="fig8", rate=0.30, sx=0.45, sy=0.30, phase=180, wing=0, groups=0, dir=">", wax="x", dty=0.5, soft=0},
+    {name="Figure-8 Cermin", cat="GERAK", layer="mov", target="pos", shape="fig8", rate=0.35, sx=0.40, sy=0.35, phase=180, wing=2, groups=1, dir=">", wax="x", dty=0.5, soft=0},
+    {name="Sapu Pan (Kiri-Kanan)", cat="GERAK", layer="mov", target="pos", shape="sine", rate=0.45, sx=0.45, sy=0.0, phase=0, wing=0, groups=0, dir=">", wax="x", dty=0.5, soft=0},
+    {name="Kipas Pan (Cermin)", cat="GERAK", layer="mov", target="pos", shape="sine", rate=0.45, sx=0.45, sy=0.0, phase=180, wing=2, groups=1, dir=">", wax="x", dty=0.5, soft=0},
+    {name="Tilt Wave (Ombak)", cat="GERAK", layer="mov", target="pos", shape="sine", rate=0.50, sx=0.0, sy=0.40, phase=360, wing=0, groups=0, dir=">", wax="y", dty=0.5, soft=0},
+    {name="Tilt Cermin Wing", cat="GERAK", layer="mov", target="pos", shape="sine", rate=0.50, sx=0.0, sy=0.40, phase=180, wing=2, groups=1, dir=">", wax="y", dty=0.5, soft=0},
+    {name="Tilt Fly-Up Saw", cat="GERAK", layer="mov", target="pos", shape="saw", rate=0.60, sx=0.0, sy=0.45, phase=360, wing=0, groups=0, dir=">", wax="y", dty=0.5, soft=0.1},
+    {name="Silang 2-Grup", cat="GERAK", layer="mov", target="pos", shape="square", rate=0.70, sx=0.40, sy=0.30, phase=180, wing=0, groups=2, dir=">", wax="x", dty=0.5, soft=0},
+    {name="Ballyhoo Acak", cat="GERAK", layer="mov", target="pos", shape="random", rate=0.60, sx=0.40, sy=0.40, phase=360, wing=0, groups=0, dir="<>", wax="x", dty=0.5, soft=0.15},
+
+    {name="Rainbow Saw Wave", cat="EFEK", layer="eff", target="color", shape="saw", rate=0.60, sx=0.30, sy=0.30, phase=360, wing=2, groups=0, dir=">", wax="x", dty=0.55, soft=0.25},
+    {name="Color Snap 2-Grup", cat="EFEK", layer="eff", target="color", shape="square", rate=1.00, sx=0.30, sy=0.30, phase=180, wing=0, groups=2, dir=">", wax="x", dty=0.50, soft=0},
+    {name="Color Sine Bounce", cat="EFEK", layer="eff", target="color", shape="sine", rate=0.50, sx=0.40, sy=0.40, phase=360, wing=2, groups=0, dir="<>", wax="x", dty=0.50, soft=0.3},
+    {name="Dimmer Chase Gelombang", cat="EFEK", layer="eff", target="dim", shape="sine", rate=1.20, sx=0.50, sy=0.50, phase=360, wing=2, groups=0, dir=">", wax="x", dty=0.50, soft=0.2},
+    {name="Dimmer Kedip Ganjil-Genap", cat="EFEK", layer="eff", target="dim", shape="square", rate=2.00, sx=0.50, sy=0.50, phase=180, wing=0, groups=2, dir=">", wax="x", dty=0.35, soft=0},
+    {name="Strobe Burst PingPong", cat="EFEK", layer="eff", target="strobe", shape="square", rate=1.50, sx=0.30, sy=0.30, phase=360, wing=0, groups=0, dir="<>", wax="x", dty=0.20, soft=0.1},
+    {name="Beam Prism/Gobo Flip", cat="EFEK", layer="eff", target="beam", shape="square", rate=0.80, sx=0.30, sy=0.30, phase=180, wing=0, groups=2, dir=">", wax="x", dty=0.50, soft=0},
+    {name="Beam Frost Pulse", cat="EFEK", layer="eff", target="beam", shape="sine", rate=0.65, sx=0.40, sy=0.40, phase=180, wing=2, groups=0, dir=">", wax="x", dty=0.50, soft=0.25}
 }
 
-local POSE_PRESETS = {
-    {name="Center Home", vals={pan=0.5, tilt=0.5, dim=1, color=0, gobo=0, prism=0, frost=0, focus=0.5, strobe=0, speed=0, int=1, r=1, g=1, b=1, w=1, mr=1, mg=1, mb=1, d1=1, d2=1, d3=1, d4=1, fog=1}},
-    {name="Audience Blinder", vals={pan=0.5, tilt=0.15, dim=1, color=0, gobo=0, prism=0, frost=0.3, focus=0.3, strobe=0, speed=0, int=1, r=1, g=0.9, b=0.8, w=1, mr=1, mg=0.9, mb=0.8, d1=1, d2=1, d3=1, d4=1}},
-    {name="Sky Beam High", vals={pan=0.5, tilt=0.88, dim=1, color=0, gobo=0, prism=0, frost=0, focus=0.5, strobe=0, speed=0, int=1, r=0.2, g=0.6, b=1, w=0, mr=0.2, mg=0.6, mb=1}},
-    {name="Prism 9-Dot Split", vals={pan=0.5, tilt=0.45, dim=1, color=0.35, gobo=0.35, prism=0.6, frost=0, focus=0.4, strobe=0, speed=0}},
-    {name="Grid 9-Box Red", vals={pan=0.5, tilt=0.5, dim=1, color=0.62, gobo=0.91, prism=0, frost=0, focus=0.5, strobe=0, speed=0, r=1, g=0, b=0, w=0, mr=1, mg=0, mb=0}},
-    {name="Cross Left-Right", vals={pan=0.2, tilt=0.35, dim=1, color=0.2, gobo=0, prism=0, frost=0, focus=0.5, strobe=0, speed=0}},
-    {name="Blackout (All 0)", vals={dim=0, int=0, r=0, g=0, b=0, w=0, mr=0, mg=0, mb=0, mdim=0, adim=0, rdim=0, bdim=0, d1=0, d2=0, d3=0, d4=0, dins=0, dref=0, dring=0, fog=0, strobe=0, str=0, shutter=0}}
-}
-
-local RGB_COLOR_PRESETS = {
-    {name="Pure Red", color=Color3.fromRGB(235, 55, 55), vals={r=1, g=0, b=0, w=0, mr=1, mg=0, mb=0, color=0.15, col1=0.15, acol=0.15, bcol=0.15}},
-    {name="Pure Green", color=Color3.fromRGB(50, 210, 95), vals={r=0, g=1, b=0, w=0, mr=0, mg=1, mb=0, color=0.30, col1=0.30, acol=0.30, bcol=0.30}},
-    {name="Pure Blue", color=Color3.fromRGB(55, 125, 245), vals={r=0, g=0, b=1, w=0, mr=0, mg=0, mb=1, color=0.45, col1=0.45, acol=0.45, bcol=0.45}},
-    {name="Cool White", color=Color3.fromRGB(235, 242, 255), vals={r=1, g=1, b=1, w=1, mr=1, mg=1, mb=1, color=0.0, col1=0.0, acol=0.0, bcol=0.0}},
-    {name="Warm White", color=Color3.fromRGB(255, 215, 155), vals={r=1, g=0.78, b=0.45, w=0.85, mr=1, mg=0.78, mb=0.45, color=0.08, col1=0.08, acol=0.08, bcol=0.08}},
-    {name="Cyan Aqua", color=Color3.fromRGB(45, 220, 230), vals={r=0, g=1, b=1, w=0, mr=0, mg=1, mb=1, color=0.55, col1=0.55, acol=0.55, bcol=0.55}},
-    {name="Magenta Pink", color=Color3.fromRGB(235, 65, 195), vals={r=1, g=0, b=1, w=0, mr=1, mg=0, mb=1, color=0.70, col1=0.70, acol=0.70, bcol=0.70}},
-    {name="Yellow Gold", color=Color3.fromRGB(245, 205, 45), vals={r=1, g=0.85, b=0, w=0, mr=1, mg=0.85, mb=0, color=0.22, col1=0.22, acol=0.22, bcol=0.22}},
-    {name="Amber Orange", color=Color3.fromRGB(245, 125, 35), vals={r=1, g=0.38, b=0, w=0, mr=1, mg=0.38, mb=0, color=0.12, col1=0.12, acol=0.12, bcol=0.12}},
-    {name="UV Purple", color=Color3.fromRGB(135, 60, 240), vals={r=0.45, g=0, b=1, w=0, mr=0.45, mg=0, mb=1, color=0.82, col1=0.82, acol=0.82, bcol=0.82}},
-    {name="Hot Coral", color=Color3.fromRGB(250, 95, 110), vals={r=1, g=0.22, b=0.32, w=0.1, mr=1, mg=0.22, mb=0.32, color=0.62, col1=0.62, acol=0.62, bcol=0.62}},
-    {name="Mint Lime", color=Color3.fromRGB(125, 245, 130), vals={r=0.35, g=1, b=0.35, w=0.1, mr=0.35, mg=1, mb=0.35, color=0.38, col1=0.38, acol=0.38, bcol=0.38}}
+local CHASE_STEP_TEMPLATES = {
+    {name="Wave Pan Sweep", pattern="wave_pan", steps=8, rate=2.5, glide=0.4},
+    {name="Ping-Pong Silang", pattern="pingpong", steps=8, rate=3.0, glide=0.25},
+    {name="Staircase Tilt Naik", pattern="stair_tilt", steps=8, rate=2.0, glide=0.35},
+    {name="Ganjil-Genap Flash", pattern="odd_even", steps=4, rate=4.0, glide=0.0},
+    {name="Fan Out - Fan In", pattern="fan_io", steps=8, rate=2.2, glide=0.45},
+    {name="Pelangi Berjalan", pattern="color_run", steps=8, rate=3.0, glide=0.15}
 }
 
 local function deepCopy(orig)
@@ -228,9 +219,9 @@ local function buildEffObject(cfg, membersList, isActive)
     eff.shape = cfg.shape or "circle"
     eff.on = isActive and true or false
     eff.unused = not eff.on
-    eff.rate = tonumber(cfg.rate) or 0.3
-    eff.sx = math.clamp(tonumber(cfg.sx) or 0.3, 0, 1)
-    eff.sy = math.clamp(tonumber(cfg.sy) or 0.3, 0, 1)
+    eff.rate = tonumber(cfg.rate) or 0.35
+    eff.sx = math.clamp(tonumber(cfg.sx) or 0.35, 0, 1)
+    eff.sy = math.clamp(tonumber(cfg.sy) or 0.35, 0, 1)
     eff.phase = tonumber(cfg.phase) or 360
     eff.wing = math.floor(tonumber(cfg.wing) or 0)
     eff.groups = math.floor(tonumber(cfg.groups) or 0)
@@ -277,17 +268,30 @@ local function sanitizeWorkStructure(data)
     return data
 end
 
-local function defaultWorkData()
-    local rig = {}
-    for i = 1, 8 do
-        table.insert(rig, {
-            a = 1 + ((i - 1) * 16),
-            x = math.floor((0.1 + ((i - 1) * 0.11)) * 100 + 0.5) / 100,
+local function buildAutoPatchedRig(fixtureType, count, startAddr, mode)
+    local newRig = {}
+    local t = string.lower(tostring(fixtureType or "clara"))
+    local fp = FIXTURE_FOOTPRINTS[t] or 16
+    local addr = math.max(1, math.floor(tonumber(startAddr) or 1))
+    local qty = math.clamp(math.floor(tonumber(count) or 8), 1, 64)
+    local isMulti = (mode == "multi")
+    for i = 1, qty do
+        local posX = (qty == 1) and 0.5 or (0.08 + ((i - 1) * (0.84 / math.max(1, qty - 1))))
+        table.insert(newRig, {
+            a = addr,
+            x = math.floor(posX * 100 + 0.5) / 100,
             y = 0.5,
-            t = "clara",
-            v = makeFullV("clara")
+            t = t,
+            v = makeFullV(t)
         })
+        if not isMulti then
+            addr = addr + fp
+        end
     end
+    return newRig
+end
+
+local function defaultWorkData()
     return sanitizeWorkStructure({
         v = 3,
         gm = 100,
@@ -297,12 +301,11 @@ local function defaultWorkData()
         eff = normalizeEffArray({}),
         chase = {off = 0, seq = false, dir = ">", scope = "all", glide = 0, rate = 1, steps = {}},
         cues = {},
-        rig = rig
+        rig = buildAutoPatchedRig("clara", 8, 1, "independen")
     })
 end
 
 local workData = defaultWorkData()
-local showsData = {}
 
 local function loadWorkFile()
     if isfile and readfile and isfile(WORK_FILE) then
@@ -317,7 +320,7 @@ local function loadWorkFile()
             end
         end
     end
-    return false, "DEFAULT MEMORY READY"
+    return false, "DEFAULT RIG READY"
 end
 
 local function saveWorkFile()
@@ -336,46 +339,10 @@ local function saveWorkFile()
     if not okWrite then
         return false, tostring(err)
     end
-    return true, "SAVED MINIFY -> " .. WORK_FILE
-end
-
-local function loadShowsFile()
-    if isfile and readfile and isfile(SHOWS_FILE) then
-        local ok, raw = pcall(readfile, SHOWS_FILE)
-        if ok and type(raw) == "string" and #raw > 0 then
-            local ok2, decoded = pcall(function()
-                return HttpService:JSONDecode(raw)
-            end)
-            if ok2 and type(decoded) == "table" then
-                showsData = decoded
-                return true
-            end
-        end
-    end
-    showsData = {}
-    return false
-end
-
-local function saveShowsFile()
-    if not writefile then
-        return false, "NO WRITEFILE SUPPORT"
-    end
-    local ok, encoded = pcall(function()
-        return HttpService:JSONEncode(showsData)
-    end)
-    if not ok then
-        return false, "JSON ENCODE ERROR"
-    end
-    local minified = string.gsub(encoded, "[\r\n]", "")
-    local okWrite, err = pcall(writefile, SHOWS_FILE, minified)
-    if not okWrite then
-        return false, tostring(err)
-    end
-    return true, "SAVED -> " .. SHOWS_FILE
+    return true, "SAVED -> " .. WORK_FILE
 end
 
 loadWorkFile()
-loadShowsFile()
 
 local selectedMembers = {}
 local function resetSelectionAll()
@@ -430,18 +397,12 @@ local state = {
     dty = 0.5,
     soft = 0,
     slotIndex = 1,
-    chaseRate = 2,
-    chaseGlide = 0.3,
-    chaseDir = ">",
-    chaseSteps = {},
-    editorFixtureType = "clara",
-    staticLayerType = "pos",
-    editorValues = deepCopy(FIXTURE_DEFAULTS.clara),
-    rigType = "clara",
-    rigCount = 8,
+    previewActive = true,
+    rigType = (#workData.rig > 0 and workData.rig[1].t) or "clara",
+    rigCount = math.max(1, #workData.rig),
+    rigStartAddr = (#workData.rig > 0 and workData.rig[1].a) or 1,
     rigMode = "independen",
-    rigStartAddr = 1,
-    previewActive = false
+    rigConfigured = false
 }
 
 local themeBindings = {}
@@ -450,7 +411,7 @@ local function registerTheme(obj, role, prop)
 end
 
 local function getCurrentTheme()
-    return THEMES[uiPrefs.themeName] or THEMES["Acid Lime"]
+    return THEMES[uiPrefs.themeName] or THEMES["Brutal Dark"]
 end
 
 local screen = Instance.new("ScreenGui")
@@ -494,33 +455,15 @@ sizeConstraint.MinSize = Vector2.new(350, 235)
 sizeConstraint.MaxSize = Vector2.new(530, 335)
 sizeConstraint.Parent = main
 
-local mainStroke = Instance.new("UIStroke")
-mainStroke.Color = Color3.fromRGB(0, 0, 0)
-mainStroke.Thickness = uiPrefs.borderThickness
-mainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
-mainStroke.Parent = main
-
-local function applyBrutalBorder(guiObj, withHardShadow)
+local function applyBrutalBorder(guiObj)
     local st = guiObj:FindFirstChildOfClass("UIStroke") or Instance.new("UIStroke")
     st.Color = Color3.fromRGB(0, 0, 0)
     st.Thickness = uiPrefs.borderThickness
     st.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
     st.Parent = guiObj
-    if withHardShadow and guiObj.Parent then
-        local sh = guiObj.Parent:FindFirstChild(guiObj.Name .. "_Shd")
-        if not sh then
-            sh = Instance.new("Frame")
-            sh.Name = guiObj.Name .. "_Shd"
-            sh.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-            sh.BorderSizePixel = 0
-            sh.ZIndex = math.max(1, guiObj.ZIndex - 1)
-            sh.Parent = guiObj.Parent
-        end
-        sh.Size = guiObj.Size
-        sh.Position = UDim2.new(guiObj.Position.X.Scale, guiObj.Position.X.Offset + 3, guiObj.Position.Y.Scale, guiObj.Position.Y.Offset + 3)
-        sh.Visible = guiObj.Visible
-    end
 end
+
+applyBrutalBorder(main)
 
 local bubbleShadow = Instance.new("Frame")
 bubbleShadow.Size = UDim2.new(0, uiPrefs.bubbleSize, 0, uiPrefs.bubbleSize)
@@ -535,16 +478,16 @@ local bubbleBtn = Instance.new("TextButton")
 bubbleBtn.Name = "FloatingBubble"
 bubbleBtn.Size = UDim2.new(0, uiPrefs.bubbleSize, 0, uiPrefs.bubbleSize)
 bubbleBtn.Position = UDim2.new(0.03, 0, 0.25, 0)
-bubbleBtn.Text = "DMX"
+bubbleBtn.Text = "FX"
 bubbleBtn.Font = Enum.Font.GothamBlack
-bubbleBtn.TextSize = 13
+bubbleBtn.TextSize = 14
 bubbleBtn.BorderSizePixel = 0
 bubbleBtn.Visible = false
 bubbleBtn.ZIndex = 20
 bubbleBtn.Parent = screen
 registerTheme(bubbleBtn, "header", "BackgroundColor3")
-registerTheme(bubbleBtn, "ink", "TextColor3")
-applyBrutalBorder(bubbleBtn, false)
+registerTheme(bubbleBtn, "btnText", "TextColor3")
+applyBrutalBorder(bubbleBtn)
 
 do
     local bDragging, bDragInput, bDragStart, bStartPos, bMoved
@@ -573,7 +516,6 @@ do
         end
     end)
     UserInputService.InputChanged:Connect(function(input)
-        if input == bDragInput and dragging then return end
         if input == bDragInput and bDragging then
             local delta = input.Position - bDragStart
             if delta.Magnitude > 6 then
@@ -592,19 +534,19 @@ topBar.BorderSizePixel = 0
 topBar.ZIndex = 3
 topBar.Parent = main
 registerTheme(topBar, "header", "BackgroundColor3")
-applyBrutalBorder(topBar, false)
+applyBrutalBorder(topBar)
 
 local titleLbl = Instance.new("TextLabel")
 titleLbl.Size = UDim2.new(0, 175, 1, 0)
 titleLbl.Position = UDim2.new(0, 10, 0, 0)
 titleLbl.BackgroundTransparency = 1
-titleLbl.Text = "APEX DMX // RK-512"
+titleLbl.Text = "APEX MOTION // FX"
 titleLbl.Font = Enum.Font.GothamBlack
 titleLbl.TextSize = 12
 titleLbl.TextXAlignment = Enum.TextXAlignment.Left
 titleLbl.ZIndex = 4
 titleLbl.Parent = topBar
-registerTheme(titleLbl, "ink", "TextColor3")
+registerTheme(titleLbl, "btnText", "TextColor3")
 
 local statusLbl = Instance.new("TextLabel")
 statusLbl.Size = UDim2.new(1, -255, 1, 0)
@@ -617,12 +559,12 @@ statusLbl.TextXAlignment = Enum.TextXAlignment.Right
 statusLbl.TextTruncate = Enum.TextTruncate.AtEnd
 statusLbl.ZIndex = 4
 statusLbl.Parent = topBar
-registerTheme(statusLbl, "ink", "TextColor3")
+registerTheme(statusLbl, "btnText", "TextColor3")
 
 local function setStatus(msg, isErr)
     statusLbl.Text = string.upper(tostring(msg))
     local th = getCurrentTheme()
-    statusLbl.TextColor3 = isErr and Color3.fromRGB(220, 20, 20) or th.ink
+    statusLbl.TextColor3 = isErr and Color3.fromRGB(235, 25, 25) or th.btnText
 end
 
 local minBtn = Instance.new("TextButton")
@@ -636,7 +578,7 @@ minBtn.ZIndex = 4
 minBtn.Parent = topBar
 registerTheme(minBtn, "surface", "BackgroundColor3")
 registerTheme(minBtn, "ink", "TextColor3")
-applyBrutalBorder(minBtn, false)
+applyBrutalBorder(minBtn)
 
 local closeBtn = Instance.new("TextButton")
 closeBtn.Size = UDim2.new(0, 24, 0, 22)
@@ -649,7 +591,7 @@ closeBtn.BorderSizePixel = 0
 closeBtn.ZIndex = 4
 closeBtn.Parent = topBar
 registerTheme(closeBtn, "danger", "BackgroundColor3")
-applyBrutalBorder(closeBtn, false)
+applyBrutalBorder(closeBtn)
 
 minBtn.MouseButton1Click:Connect(function()
     main.Visible = false
@@ -711,18 +653,18 @@ navBar.CanvasSize = UDim2.new(0, 0, 0, 0)
 navBar.ZIndex = 3
 navBar.Parent = body
 registerTheme(navBar, "surface", "BackgroundColor3")
-applyBrutalBorder(navBar, false)
+applyBrutalBorder(navBar)
 
 local navLayout = Instance.new("UIListLayout")
 navLayout.FillDirection = Enum.FillDirection.Horizontal
-navLayout.Padding = UDim.new(0, 4)
+navLayout.Padding = UDim.new(0, 5)
 navLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
 navLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 navLayout.Parent = navBar
 
 local navPad = Instance.new("UIPadding")
-navPad.PaddingLeft = UDim.new(0, 4)
-navPad.PaddingRight = UDim.new(0, 4)
+navPad.PaddingLeft = UDim.new(0, 5)
+navPad.PaddingRight = UDim.new(0, 5)
 navPad.Parent = navBar
 
 local contentArea = Instance.new("Frame")
@@ -732,7 +674,7 @@ contentArea.BorderSizePixel = 0
 contentArea.ZIndex = 3
 contentArea.Parent = body
 registerTheme(contentArea, "surface", "BackgroundColor3")
-applyBrutalBorder(contentArea, false)
+applyBrutalBorder(contentArea)
 
 local footerBar = Instance.new("Frame")
 footerBar.Size = UDim2.new(1, -16, 0, 32)
@@ -741,18 +683,18 @@ footerBar.BorderSizePixel = 0
 footerBar.ZIndex = 3
 footerBar.Parent = body
 registerTheme(footerBar, "surface", "BackgroundColor3")
-applyBrutalBorder(footerBar, false)
+applyBrutalBorder(footerBar)
 
 local pages = {}
 local tabButtons = {}
-local activeTabKey = "templates"
+local activeTabKey = "presets"
 
 local function refreshTabStyles()
     local th = getCurrentTheme()
     for k, btn in pairs(tabButtons) do
         local isAct = (k == activeTabKey)
         btn.BackgroundColor3 = isAct and th.accent or th.chipBg
-        btn.TextColor3 = th.ink
+        btn.TextColor3 = isAct and th.btnText or th.ink
     end
 end
 
@@ -766,14 +708,14 @@ end
 
 local function createTab(key, label, width)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0, width or 76, 0, 20)
+    btn.Size = UDim2.new(0, width or 96, 0, 20)
     btn.Text = string.upper(label)
     btn.Font = Enum.Font.GothamBlack
     btn.TextSize = 9
     btn.BorderSizePixel = 0
     btn.ZIndex = 4
     btn.Parent = navBar
-    applyBrutalBorder(btn, false)
+    applyBrutalBorder(btn)
 
     local scroll = Instance.new("ScrollingFrame")
     scroll.Size = UDim2.new(1, -8, 1, -8)
@@ -810,7 +752,7 @@ local function makeSection(parent, title)
     box.ZIndex = 4
     box.Parent = parent
     registerTheme(box, "bg", "BackgroundColor3")
-    applyBrutalBorder(box, false)
+    applyBrutalBorder(box)
 
     local pad = Instance.new("UIPadding")
     pad.PaddingTop = UDim.new(0, 6)
@@ -866,7 +808,7 @@ local function makeSliderRow(parent, labelText, minVal, maxVal, defaultVal, isIn
     track.ZIndex = 5
     track.Parent = row
     registerTheme(track, "surface", "BackgroundColor3")
-    applyBrutalBorder(track, false)
+    applyBrutalBorder(track)
 
     local fill = Instance.new("Frame")
     fill.Size = UDim2.new(0, 0, 1, 0)
@@ -886,7 +828,7 @@ local function makeSliderRow(parent, labelText, minVal, maxVal, defaultVal, isIn
     valBox.Parent = row
     registerTheme(valBox, "surface", "BackgroundColor3")
     registerTheme(valBox, "ink", "TextColor3")
-    applyBrutalBorder(valBox, false)
+    applyBrutalBorder(valBox)
 
     local currentVal = defaultVal
 
@@ -998,7 +940,7 @@ local function makeChipSelector(parent, labelText, options, initialVal, onSelect
         for optVal, btn in pairs(chips) do
             local active = (optVal == current)
             btn.BackgroundColor3 = active and th.accent or th.surface
-            btn.TextColor3 = th.ink
+            btn.TextColor3 = active and th.btnText or th.ink
         end
     end
 
@@ -1010,7 +952,7 @@ local function makeChipSelector(parent, labelText, options, initialVal, onSelect
         btn.BorderSizePixel = 0
         btn.ZIndex = 5
         btn.Parent = wrap
-        applyBrutalBorder(btn, false)
+        applyBrutalBorder(btn)
         chips[opt] = btn
 
         btn.MouseButton1Click:Connect(function()
@@ -1049,29 +991,25 @@ local function makeSmallActionBtn(parent, text, posX, width, roleKey, callback)
     registerTheme(b, roleKey, "BackgroundColor3")
     if roleKey == "danger" then
         b.TextColor3 = Color3.fromRGB(255, 255, 255)
-    else
+    elseif roleKey == "surface" or roleKey == "chipBg" then
         registerTheme(b, "ink", "TextColor3")
+    else
+        registerTheme(b, "btnText", "TextColor3")
     end
-    applyBrutalBorder(b, false)
+    applyBrutalBorder(b)
     b.MouseButton1Click:Connect(callback)
     return b
 end
 
-local pageTemplates = createTab("templates", "Templates", 72)
-local pageCustom = createTab("custom", "Custom FX", 72)
-local pageStatic = createTab("static", "Static/RGB", 76)
-local pageChase = createTab("chase", "Chase Seq", 72)
-local pageRig = createTab("rig", "Rig & DMX", 72)
-local pageShows = createTab("shows", "Cue/Shows", 76)
-local pageSettings = createTab("settings", "Settings", 70)
+local pagePresets = createTab("presets", "Preset FX", 78)
+local pageCustom = createTab("custom", "Custom Gerakan", 98)
+local pageSlots = createTab("slots", "Cue & 6-Slot", 88)
+local pageSettings = createTab("settings", "Settings", 72)
 
 local refreshMembersUI
-local refreshCuesListUI
-local refreshRigEditorUI
-local refreshChaseStepsUI
-local refreshShowsListUI
-local rebuildDynamicFixtureSliders
+local refreshSlotsAndCuesUI
 local loadCueIntoEditor
+local openRigSetupModal
 
 local function autoSaveTrigger()
     if uiPrefs.autoSaveOnApply then
@@ -1079,7 +1017,279 @@ local function autoSaveTrigger()
     end
 end
 
-local secMembers = makeSection(pageTemplates, "1. PILIH LAMPU TARGET (MEMBERS INDEKS RIG)")
+local rigModalOverlay = Instance.new("Frame")
+rigModalOverlay.Name = "RigSetupModal"
+rigModalOverlay.Size = UDim2.new(1, 0, 1, 0)
+rigModalOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+rigModalOverlay.BackgroundTransparency = 0.35
+rigModalOverlay.BorderSizePixel = 0
+rigModalOverlay.Visible = false
+rigModalOverlay.ZIndex = 30
+rigModalOverlay.Parent = main
+
+local rigModalBox = Instance.new("Frame")
+rigModalBox.Size = UDim2.new(0.88, 0, 0.84, 0)
+rigModalBox.Position = UDim2.new(0.06, 0, 0.08, 0)
+rigModalBox.BorderSizePixel = 0
+rigModalBox.ZIndex = 31
+rigModalBox.Parent = rigModalOverlay
+registerTheme(rigModalBox, "bg", "BackgroundColor3")
+applyBrutalBorder(rigModalBox)
+
+local rigModalHeader = Instance.new("Frame")
+rigModalHeader.Size = UDim2.new(1, 0, 0, 26)
+rigModalHeader.BorderSizePixel = 0
+rigModalHeader.ZIndex = 32
+rigModalHeader.Parent = rigModalBox
+registerTheme(rigModalHeader, "header", "BackgroundColor3")
+applyBrutalBorder(rigModalHeader)
+
+local rigModalTitle = Instance.new("TextLabel")
+rigModalTitle.Size = UDim2.new(1, -12, 1, 0)
+rigModalTitle.Position = UDim2.new(0, 8, 0, 0)
+rigModalTitle.BackgroundTransparency = 1
+rigModalTitle.Text = "SETUP JUMLAH & ALAMAT DMX SEBELUM MEMBUAT CUE"
+rigModalTitle.Font = Enum.Font.GothamBlack
+rigModalTitle.TextSize = 10
+rigModalTitle.TextXAlignment = Enum.TextXAlignment.Left
+rigModalTitle.ZIndex = 33
+rigModalTitle.Parent = rigModalHeader
+registerTheme(rigModalTitle, "btnText", "TextColor3")
+
+local rigModalScroll = Instance.new("ScrollingFrame")
+rigModalScroll.Size = UDim2.new(1, -12, 1, -66)
+rigModalScroll.Position = UDim2.new(0, 6, 0, 30)
+rigModalScroll.BackgroundTransparency = 1
+rigModalScroll.BorderSizePixel = 0
+rigModalScroll.ScrollBarThickness = 4
+rigModalScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+rigModalScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+rigModalScroll.ZIndex = 32
+rigModalScroll.Parent = rigModalBox
+
+local rigModalList = Instance.new("UIListLayout")
+rigModalList.Padding = UDim.new(0, 6)
+rigModalList.Parent = rigModalScroll
+
+local pendingAfterRigCallback = nil
+
+local modalChipFix = makeChipSelector(rigModalScroll, "1. Pilih Tipe Lampu (Clara / Lainnya):", {
+    "clara", "strobe", "mapple", "parled", "fogger", "blinder",
+    "flower", "pixel", "retro", "wall", "windmill", "sbar"
+}, state.rigType, function(v)
+    state.rigType = v
+end)
+
+local modalSldCount = makeSliderRow(rigModalScroll, "2. Jumlah Unit Lampu", 1, 32, state.rigCount, true, function(v)
+    state.rigCount = v
+end)
+
+local modalSldStart = makeSliderRow(rigModalScroll, "3. Alamat DMX Awal", 1, 512, state.rigStartAddr, true, function(v)
+    state.rigStartAddr = v
+end)
+
+local modalChipMode = makeChipSelector(rigModalScroll, "4. Mode Alamat (Independen = Pisah Ch, Multi = Sama):", {"independen", "multi"}, state.rigMode, function(v)
+    state.rigMode = v
+end)
+
+for _, desc in ipairs(rigModalScroll:GetDescendants()) do
+    if desc:IsA("GuiObject") then
+        desc.ZIndex = math.max(33, desc.ZIndex + 28)
+    end
+end
+
+local modalFoot = Instance.new("Frame")
+modalFoot.Size = UDim2.new(1, -12, 0, 28)
+modalFoot.Position = UDim2.new(0, 6, 1, -32)
+modalFoot.BackgroundTransparency = 1
+modalFoot.ZIndex = 32
+modalFoot.Parent = rigModalBox
+
+local modalConfirmBtn = Instance.new("TextButton")
+modalConfirmBtn.Size = UDim2.new(0.62, 0, 0, 24)
+modalConfirmBtn.Position = UDim2.new(0, 0, 0, 2)
+modalConfirmBtn.Text = "TERAPKAN DMX & LANJUT BUAT GERAKAN"
+modalConfirmBtn.Font = Enum.Font.GothamBlack
+modalConfirmBtn.TextSize = 9
+modalConfirmBtn.BorderSizePixel = 0
+modalConfirmBtn.ZIndex = 33
+modalConfirmBtn.Parent = modalFoot
+registerTheme(modalConfirmBtn, "accent", "BackgroundColor3")
+registerTheme(modalConfirmBtn, "btnText", "TextColor3")
+applyBrutalBorder(modalConfirmBtn)
+
+local modalSkipBtn = Instance.new("TextButton")
+modalSkipBtn.Size = UDim2.new(0.35, 0, 0, 24)
+modalSkipBtn.Position = UDim2.new(0.65, 0, 0, 2)
+modalSkipBtn.Text = "PAKAI RIG SAAT INI"
+modalSkipBtn.Font = Enum.Font.GothamBlack
+modalSkipBtn.TextSize = 9
+modalSkipBtn.BorderSizePixel = 0
+modalSkipBtn.ZIndex = 33
+modalSkipBtn.Parent = modalFoot
+registerTheme(modalSkipBtn, "surface", "BackgroundColor3")
+registerTheme(modalSkipBtn, "ink", "TextColor3")
+applyBrutalBorder(modalSkipBtn)
+
+modalConfirmBtn.MouseButton1Click:Connect(function()
+    workData.rig = buildAutoPatchedRig(state.rigType, state.rigCount, state.rigStartAddr, state.rigMode)
+    state.rigConfigured = true
+    resetSelectionAll()
+    rigModalOverlay.Visible = false
+    if refreshMembersUI then refreshMembersUI() end
+    local cb = pendingAfterRigCallback
+    pendingAfterRigCallback = nil
+    if cb then
+        cb()
+    else
+        autoSaveTrigger()
+        setStatus("DMX SET: " .. state.rigCount .. "X " .. string.upper(state.rigType), false)
+    end
+end)
+
+modalSkipBtn.MouseButton1Click:Connect(function()
+    state.rigConfigured = true
+    rigModalOverlay.Visible = false
+    local cb = pendingAfterRigCallback
+    pendingAfterRigCallback = nil
+    if cb then
+        cb()
+    end
+end)
+
+openRigSetupModal = function(onDoneCallback)
+    pendingAfterRigCallback = onDoneCallback
+    modalChipFix.setSelected(state.rigType)
+    modalSldCount.setValue(state.rigCount)
+    modalSldStart.setValue(state.rigStartAddr)
+    modalChipMode.setSelected(state.rigMode)
+    rigModalOverlay.Visible = true
+end
+
+local function executeWithRigCheck(cueKey, actionFn)
+    local isNewCue = (workData.cues[cueKey] == nil)
+    if uiPrefs.promptRigOnNewCue and isNewCue and not state.rigConfigured then
+        openRigSetupModal(actionFn)
+    else
+        actionFn()
+    end
+end
+
+local function applyEffectToCue(cueKey, layerName, slotIdx, effConfig)
+    executeWithRigCheck(cueKey, function()
+        local members = getSelectedMemberIndices()
+        local effObj = buildEffObject(effConfig, members, true)
+        local existingCue = workData.cues[cueKey]
+
+        if layerName == "mov" then
+            workData.cues[cueKey] = {
+                layer = "mov",
+                fx = getSelectedFxEmptyMap(),
+                eff = {effObj}
+            }
+        else
+            local cueEffArr
+            if existingCue and existingCue.layer == "eff" and type(existingCue.eff) == "table" then
+                cueEffArr = normalizeEffArray(deepCopy(existingCue.eff))
+            else
+                cueEffArr = normalizeEffArray(deepCopy(workData.eff))
+            end
+            local idx = math.clamp(slotIdx or 1, 1, 6)
+            cueEffArr[idx] = effObj
+            workData.eff[idx] = deepCopy(effObj)
+            workData.eff[idx].on = false
+            workData.eff[idx].unused = nil
+            workData.cues[cueKey] = {
+                layer = "eff",
+                fx = getSelectedFxEmptyMap(),
+                eff = cueEffArr
+            }
+        end
+        autoSaveTrigger()
+        if refreshSlotsAndCuesUI then refreshSlotsAndCuesUI() end
+        setStatus("TERSIMPAN -> CUE " .. cueKey .. " (" .. string.upper(effConfig.shape or "FX") .. ")", false)
+    end)
+end
+
+local function generateChaseFromPattern(cueKey, tpl)
+    executeWithRigCheck(cueKey, function()
+        local indices = getSelectedMemberIndices()
+        local totalSel = math.max(1, #indices)
+        local numSteps = tpl.steps or 8
+        local stepsArr = {}
+
+        for s = 1, numSteps do
+            local frame = {}
+            local prog = (s - 1) / numSteps
+            for posIdx, rigIdx in ipairs(indices) do
+                local fix = workData.rig[rigIdx]
+                if fix then
+                    local fType = string.lower(fix.t or "clara")
+                    local phaseOff = (posIdx - 1) / totalSel
+                    local ang = (prog + phaseOff) * math.pi * 2
+                    local ov = {}
+
+                    if tpl.pattern == "wave_pan" then
+                        ov.pan = 0.5 + (math.sin(ang) * 0.4)
+                        ov.tilt = 0.5
+                    elseif tpl.pattern == "pingpong" then
+                        local dir = (s % 2 == 1) and 1 or -1
+                        local side = (posIdx % 2 == 1) and 1 or -1
+                        ov.pan = 0.5 + (0.35 * dir * side)
+                        ov.tilt = 0.5 + (0.25 * dir)
+                    elseif tpl.pattern == "stair_tilt" then
+                        ov.pan = 0.5
+                        ov.tilt = 0.2 + (((prog + phaseOff) % 1) * 0.65)
+                    elseif tpl.pattern == "odd_even" then
+                        local isOdd = (posIdx % 2 == 1)
+                        local active = ((s % 2 == 1) and isOdd) or ((s % 2 == 0) and not isOdd)
+                        ov.dim = active and 1 or 0
+                        ov.int = active and 1 or 0
+                        ov.r = active and 1 or 0
+                        ov.g = active and 1 or 0
+                        ov.b = active and 1 or 0
+                    elseif tpl.pattern == "fan_io" then
+                        local mid = (totalSel + 1) / 2
+                        local dist = (posIdx - mid) / math.max(1, totalSel / 2)
+                        local wave = math.sin(prog * math.pi * 2)
+                        ov.pan = 0.5 + (dist * 0.38 * wave)
+                        ov.tilt = 0.5 + (0.25 * math.cos(prog * math.pi * 2))
+                    elseif tpl.pattern == "color_run" then
+                        ov.color = (prog + phaseOff) % 1
+                        ov.r = 0.5 + 0.5 * math.sin(ang)
+                        ov.g = 0.5 + 0.5 * math.sin(ang + 2.09)
+                        ov.b = 0.5 + 0.5 * math.sin(ang + 4.18)
+                    end
+
+                    frame[tostring(rigIdx)] = {
+                        t = fType,
+                        v = makeFullV(fType, ov)
+                    }
+                end
+            end
+            table.insert(stepsArr, frame)
+        end
+
+        workData.cues[cueKey] = {
+            layer = "chs",
+            fx = {},
+            eff = {},
+            chase = {
+                glide = tpl.glide or 0.3,
+                dir = ">",
+                seq = false,
+                off = 0,
+                rate = tpl.rate or 2.5,
+                steps = stepsArr
+            }
+        }
+        autoSaveTrigger()
+        if refreshSlotsAndCuesUI then refreshSlotsAndCuesUI() end
+        setStatus("CHASE '" .. tpl.name .. "' (" .. numSteps .. " STEP) -> CUE " .. cueKey, false)
+    end)
+end
+
+local secMembers = makeSection(pagePresets, "1. PILIH LAMPU TARGET & SETUP DMX")
 
 local memberToolsRow = Instance.new("Frame")
 memberToolsRow.Size = UDim2.new(1, 0, 0, 22)
@@ -1087,25 +1297,26 @@ memberToolsRow.BackgroundTransparency = 1
 memberToolsRow.ZIndex = 5
 memberToolsRow.Parent = secMembers
 
-makeSmallActionBtn(memberToolsRow, "Semua", 0, 58, "accent", function()
+makeSmallActionBtn(memberToolsRow, "Semua", 0, 52, "accent", function()
     for i = 1, #workData.rig do selectedMembers[i] = true end
     if refreshMembersUI then refreshMembersUI() end
 end)
 
-makeSmallActionBtn(memberToolsRow, "Ganjil", 62, 58, "surface", function()
+makeSmallActionBtn(memberToolsRow, "Ganjil", 56, 52, "surface", function()
     for i = 1, #workData.rig do selectedMembers[i] = (i % 2 == 1) end
     if refreshMembersUI then refreshMembersUI() end
 end)
 
-makeSmallActionBtn(memberToolsRow, "Genap", 124, 58, "surface", function()
+makeSmallActionBtn(memberToolsRow, "Genap", 112, 52, "surface", function()
     for i = 1, #workData.rig do selectedMembers[i] = (i % 2 == 0) end
     if refreshMembersUI then refreshMembersUI() end
 end)
 
-makeSmallActionBtn(memberToolsRow, "Reset", 186, 54, "danger", function()
-    for i = 1, #workData.rig do selectedMembers[i] = false end
-    selectedMembers[1] = true
-    if refreshMembersUI then refreshMembersUI() end
+makeSmallActionBtn(memberToolsRow, "Atur Jumlah DMX", 170, 120, "secondary", function()
+    openRigSetupModal(function()
+        autoSaveTrigger()
+        setStatus("DMX UPDATED: " .. #workData.rig .. " UNIT", false)
+    end)
 end)
 
 local memberGridHolder = Instance.new("Frame")
@@ -1134,11 +1345,11 @@ refreshMembersUI = function()
         b.Text = "#" .. i .. " " .. string.upper(string.sub(fix.t or "?", 1, 3)) .. "(" .. tostring(fix.a) .. ")"
         b.Font = Enum.Font.GothamBlack
         b.TextSize = 9
-        b.TextColor3 = th.ink
+        b.TextColor3 = active and th.btnText or th.ink
         b.BorderSizePixel = 0
         b.ZIndex = 5
         b.Parent = memberGridHolder
-        applyBrutalBorder(b, false)
+        applyBrutalBorder(b)
 
         b.MouseButton1Click:Connect(function()
             selectedMembers[i] = not selectedMembers[i]
@@ -1147,55 +1358,52 @@ refreshMembersUI = function()
     end
 end
 
-local secTpl = makeSection(pageTemplates, "2. TEMPLATE GERAKAN & EFEK SIAP PAKAI (16 PRESET)")
+local secMotionTpl = makeSection(pagePresets, "2. PRESET GERAKAN PAN / TILT (12 POLA GERAK)")
 
-local tplGridWrap = Instance.new("Frame")
-tplGridWrap.Size = UDim2.new(1, 0, 0, 0)
-tplGridWrap.AutomaticSize = Enum.AutomaticSize.Y
-tplGridWrap.BackgroundTransparency = 1
-tplGridWrap.ZIndex = 5
-tplGridWrap.Parent = secTpl
+local movGridWrap = Instance.new("Frame")
+movGridWrap.Size = UDim2.new(1, 0, 0, 0)
+movGridWrap.AutomaticSize = Enum.AutomaticSize.Y
+movGridWrap.BackgroundTransparency = 1
+movGridWrap.ZIndex = 5
+movGridWrap.Parent = secMotionTpl
 
-local tplGrid = Instance.new("UIGridLayout")
-tplGrid.CellSize = UDim2.new(0.49, 0, 0, 28)
-tplGrid.CellPadding = UDim2.new(0.02, 0, 0, 5)
-tplGrid.Parent = tplGridWrap
+local movGrid = Instance.new("UIGridLayout")
+movGrid.CellSize = UDim2.new(0.49, 0, 0, 28)
+movGrid.CellPadding = UDim2.new(0.02, 0, 0, 5)
+movGrid.Parent = movGridWrap
 
-local function applyEffectToCue(cueKey, layerName, slotIdx, effConfig)
-    local members = getSelectedMemberIndices()
-    local effObj = buildEffObject(effConfig, members, true)
-    local existingCue = workData.cues[cueKey]
+local secEffTpl = makeSection(pagePresets, "3. PRESET EFFECT WARNA / DIMMER / BEAM (8 POLA EFEK)")
 
-    if layerName == "mov" then
-        workData.cues[cueKey] = {
-            layer = "mov",
-            fx = getSelectedFxEmptyMap(),
-            eff = {effObj}
-        }
-    else
-        local cueEffArr
-        if existingCue and existingCue.layer == "eff" and type(existingCue.eff) == "table" then
-            cueEffArr = normalizeEffArray(deepCopy(existingCue.eff))
-        else
-            cueEffArr = normalizeEffArray(deepCopy(workData.eff))
-        end
-        local idx = math.clamp(slotIdx or 1, 1, 6)
-        cueEffArr[idx] = effObj
-        workData.eff[idx] = deepCopy(effObj)
-        workData.eff[idx].on = false
-        workData.eff[idx].unused = nil
-        workData.cues[cueKey] = {
-            layer = "eff",
-            fx = getSelectedFxEmptyMap(),
-            eff = cueEffArr
-        }
-    end
-    autoSaveTrigger()
-end
+local effGridWrap = Instance.new("Frame")
+effGridWrap.Size = UDim2.new(1, 0, 0, 0)
+effGridWrap.AutomaticSize = Enum.AutomaticSize.Y
+effGridWrap.BackgroundTransparency = 1
+effGridWrap.ZIndex = 5
+effGridWrap.Parent = secEffTpl
+
+local effGrid = Instance.new("UIGridLayout")
+effGrid.CellSize = UDim2.new(0.49, 0, 0, 28)
+effGrid.CellPadding = UDim2.new(0.02, 0, 0, 5)
+effGrid.Parent = effGridWrap
+
+local secChaseTpl = makeSection(pagePresets, "4. AUTO-CHASE GENERATOR (OTOMATIS BIKIN STEP CHASE)")
+
+local chsGridWrap = Instance.new("Frame")
+chsGridWrap.Size = UDim2.new(1, 0, 0, 0)
+chsGridWrap.AutomaticSize = Enum.AutomaticSize.Y
+chsGridWrap.BackgroundTransparency = 1
+chsGridWrap.ZIndex = 5
+chsGridWrap.Parent = secChaseTpl
+
+local chsGrid = Instance.new("UIGridLayout")
+chsGrid.CellSize = UDim2.new(0.49, 0, 0, 28)
+chsGrid.CellPadding = UDim2.new(0.02, 0, 0, 5)
+chsGrid.Parent = chsGridWrap
 
 local customControls = {}
 
-for _, tpl in ipairs(EFFECT_TEMPLATES) do
+for _, tpl in ipairs(MOTION_PRESETS) do
+    local isMov = (tpl.cat == "GERAK")
     local btn = Instance.new("TextButton")
     btn.Text = string.upper(tpl.name) .. " [" .. string.upper(tpl.shape) .. "]"
     btn.Font = Enum.Font.GothamBold
@@ -1203,10 +1411,10 @@ for _, tpl in ipairs(EFFECT_TEMPLATES) do
     btn.TextTruncate = Enum.TextTruncate.AtEnd
     btn.BorderSizePixel = 0
     btn.ZIndex = 5
-    btn.Parent = tplGridWrap
-    registerTheme(btn, (tpl.layer == "mov") and "surface" or "secondary", "BackgroundColor3")
-    registerTheme(btn, "ink", "TextColor3")
-    applyBrutalBorder(btn, false)
+    btn.Parent = isMov and movGridWrap or effGridWrap
+    registerTheme(btn, isMov and "surface" or "secondary", "BackgroundColor3")
+    registerTheme(btn, isMov and "ink" or "btnText", "TextColor3")
+    applyBrutalBorder(btn)
 
     btn.MouseButton1Click:Connect(function()
         state.layerMode = tpl.layer
@@ -1228,12 +1436,185 @@ for _, tpl in ipairs(EFFECT_TEMPLATES) do
         end
 
         applyEffectToCue(state.cueId, tpl.layer, state.slotIndex, tpl)
-        if refreshCuesListUI then refreshCuesListUI() end
-        setStatus("TPL '" .. tpl.name .. "' -> CUE " .. state.cueId, false)
     end)
 end
 
-local secCustomTop = makeSection(pageCustom, "1. KONFIGURASI LAYER, TARGET & ALGORITMA BENTUK")
+for _, chsTpl in ipairs(CHASE_STEP_TEMPLATES) do
+    local btn = Instance.new("TextButton")
+    btn.Text = string.upper(chsTpl.name) .. " [" .. chsTpl.steps .. " STEP]"
+    btn.Font = Enum.Font.GothamBold
+    btn.TextSize = 9
+    btn.TextTruncate = Enum.TextTruncate.AtEnd
+    btn.BorderSizePixel = 0
+    btn.ZIndex = 5
+    btn.Parent = chsGridWrap
+    registerTheme(btn, "chipBg", "BackgroundColor3")
+    registerTheme(btn, "ink", "TextColor3")
+    applyBrutalBorder(btn)
+
+    btn.MouseButton1Click:Connect(function()
+        generateChaseFromPattern(state.cueId, chsTpl)
+    end)
+end
+
+local secPreviewBox = makeSection(pageCustom, "1. LIVE PREVIEW GERAKAN (SIMULASI PAN/TILT & FASE)")
+
+local previewTopRow = Instance.new("Frame")
+previewTopRow.Size = UDim2.new(1, 0, 0, 22)
+previewTopRow.BackgroundTransparency = 1
+previewTopRow.ZIndex = 5
+previewTopRow.Parent = secPreviewBox
+
+local previewToggleBtn = Instance.new("TextButton")
+previewToggleBtn.Size = UDim2.new(0, 145, 0, 22)
+previewToggleBtn.Text = "PREVIEW: AKTIF (ON)"
+previewToggleBtn.Font = Enum.Font.GothamBlack
+previewToggleBtn.TextSize = 9
+previewToggleBtn.BorderSizePixel = 0
+previewToggleBtn.ZIndex = 5
+previewToggleBtn.Parent = previewTopRow
+registerTheme(previewToggleBtn, "accent", "BackgroundColor3")
+registerTheme(previewToggleBtn, "btnText", "TextColor3")
+applyBrutalBorder(previewToggleBtn)
+
+local previewInfoLbl = Instance.new("TextLabel")
+previewInfoLbl.Size = UDim2.new(1, -155, 1, 0)
+previewInfoLbl.Position = UDim2.new(0, 152, 0, 0)
+previewInfoLbl.BackgroundTransparency = 1
+previewInfoLbl.Text = "SHAPE: CIRCLE | RATE: 0.35"
+previewInfoLbl.Font = Enum.Font.Code
+previewInfoLbl.TextSize = 9
+previewInfoLbl.TextXAlignment = Enum.TextXAlignment.Right
+previewInfoLbl.ZIndex = 5
+previewInfoLbl.Parent = previewTopRow
+registerTheme(previewInfoLbl, "subInk", "TextColor3")
+
+local previewCanvas = Instance.new("Frame")
+previewCanvas.Size = UDim2.new(1, 0, 0, 88)
+previewCanvas.BorderSizePixel = 0
+previewCanvas.ZIndex = 5
+previewCanvas.Parent = secPreviewBox
+registerTheme(previewCanvas, "canvas", "BackgroundColor3")
+applyBrutalBorder(previewCanvas)
+
+local crossH = Instance.new("Frame")
+crossH.Size = UDim2.new(1, 0, 0, 1)
+crossH.Position = UDim2.new(0, 0, 0.5, 0)
+crossH.BackgroundColor3 = Color3.fromRGB(65, 65, 75)
+crossH.BorderSizePixel = 0
+crossH.ZIndex = 5
+crossH.Parent = previewCanvas
+
+local crossV = Instance.new("Frame")
+crossV.Size = UDim2.new(0, 1, 1, 0)
+crossV.Position = UDim2.new(0.5, 0, 0, 0)
+crossV.BackgroundColor3 = Color3.fromRGB(65, 65, 75)
+crossV.BorderSizePixel = 0
+crossV.ZIndex = 5
+crossV.Parent = previewCanvas
+
+local previewDots = {}
+local function rebuildPreviewDots()
+    local th = getCurrentTheme()
+    for _, d in ipairs(previewDots) do
+        d:Destroy()
+    end
+    previewDots = {}
+    for i = 1, #workData.rig do
+        local dot = Instance.new("Frame")
+        dot.Size = UDim2.new(0, 14, 0, 14)
+        dot.AnchorPoint = Vector2.new(0.5, 0.5)
+        dot.Position = UDim2.new(0.5, 0, 0.5, 0)
+        dot.BackgroundColor3 = th.accent
+        dot.BorderSizePixel = 0
+        dot.ZIndex = 6
+        dot.Parent = previewCanvas
+        applyBrutalBorder(dot)
+
+        local num = Instance.new("TextLabel")
+        num.Size = UDim2.new(1, 0, 1, 0)
+        num.BackgroundTransparency = 1
+        num.Text = tostring(i)
+        num.Font = Enum.Font.GothamBlack
+        num.TextSize = 8
+        num.TextColor3 = Color3.fromRGB(10, 10, 10)
+        num.ZIndex = 7
+        num.Parent = dot
+
+        previewDots[i] = dot
+    end
+end
+
+previewToggleBtn.MouseButton1Click:Connect(function()
+    state.previewActive = not state.previewActive
+    local th = getCurrentTheme()
+    previewToggleBtn.Text = state.previewActive and "PREVIEW: AKTIF (ON)" or "PREVIEW: MATI (OFF)"
+    previewToggleBtn.BackgroundColor3 = state.previewActive and th.accent or th.surface
+    previewToggleBtn.TextColor3 = state.previewActive and th.btnText or th.ink
+    if state.previewActive then
+        rebuildPreviewDots()
+    end
+end)
+
+RunService.RenderStepped:Connect(function()
+    if not state.previewActive or not pageCustom.Visible or not main.Visible then return end
+    if #previewDots ~= #workData.rig then
+        rebuildPreviewDots()
+    end
+    previewInfoLbl.Text = string.upper(state.shape) .. " | RATE:" .. string.format("%.2f", state.rate) .. " | PH:" .. tostring(state.phase)
+    local t = os.clock() * (state.rate * 2.5)
+    local total = math.max(1, #previewDots)
+    for i, dot in ipairs(previewDots) do
+        local isSel = selectedMembers[i] == true
+        dot.Visible = isSel
+        if isSel then
+            local idxPos = i
+            if state.groups > 1 then
+                idxPos = ((i - 1) % state.groups) + 1
+            end
+            local denom = (state.groups > 1) and state.groups or total
+            local spread = (state.phase / 360) * ((idxPos - 1) / math.max(1, denom)) * math.pi * 2
+            if state.wing > 0 and i > (total / 2) then
+                spread = -spread
+            end
+            local ang = (state.dir == "<") and (-t + spread) or (t + spread)
+            if state.dir == "<>" then
+                ang = math.sin(t) * math.pi + spread
+            end
+            local ox, oy = 0, 0
+            if state.shape == "circle" then
+                ox = math.cos(ang) * state.sx * 0.42
+                oy = math.sin(ang) * state.sy * 0.42
+            elseif state.shape == "fig8" then
+                ox = math.sin(ang) * state.sx * 0.42
+                oy = math.sin(ang * 2) * state.sy * 0.42
+            elseif state.shape == "sine" then
+                if state.wax == "y" then
+                    oy = math.sin(ang) * state.sy * 0.42
+                else
+                    ox = math.sin(ang) * state.sx * 0.42
+                end
+            elseif state.shape == "saw" then
+                local saw = ((ang / (math.pi * 2)) % 1) * 2 - 1
+                if state.wax == "y" then
+                    oy = saw * state.sy * 0.42
+                else
+                    ox = saw * state.sx * 0.42
+                end
+            elseif state.shape == "square" then
+                local sq = (math.sin(ang) >= 0) and 1 or -1
+                ox = sq * state.sx * 0.42
+                oy = sq * state.sy * 0.25
+            else
+                ox = math.sin(ang * 1.3 + i) * state.sx * 0.4
+                oy = math.cos(ang * 1.7 - i) * state.sy * 0.4
+            end
+            dot.Position = UDim2.new(math.clamp(0.5 + ox, 0.06, 0.94), 0, math.clamp(0.5 + oy, 0.12, 0.88), 0)
+        end
+    end
+end)
+
+local secCustomTop = makeSection(pageCustom, "2. ATUR LAYER, TARGET & BENTUK GELOMBANG")
 
 local chipLayer = makeChipSelector(secCustomTop, "Mode Layer (mov = Gerak Tunggal, eff = Multi-Slot 6 Efek):", {"mov", "eff"}, state.layerMode, function(v)
     state.layerMode = v
@@ -1243,11 +1624,11 @@ local chipTarget = makeChipSelector(secCustomTop, "Target Parameter:", {"pos", "
     state.target = v
 end)
 
-local chipShape = makeChipSelector(secCustomTop, "Algoritma Bentuk (Shape):", {"circle", "fig8", "sine", "saw", "square", "random"}, state.shape, function(v)
+local chipShape = makeChipSelector(secCustomTop, "Bentuk Gerakan / Gelombang (Shape):", {"circle", "fig8", "sine", "saw", "square", "random"}, state.shape, function(v)
     state.shape = v
 end)
 
-local chipDir = makeChipSelector(secCustomTop, "Arah & Sumbu (Dir / Axis):", {">", "<", "<>", "rand"}, state.dir, function(v)
+local chipDir = makeChipSelector(secCustomTop, "Arah Gerakan (Dir):", {">", "<", "<>", "rand"}, state.dir, function(v)
     state.dir = v
 end)
 
@@ -1255,17 +1636,17 @@ local chipWax = makeChipSelector(secCustomTop, "Sumbu Utama (wax):", {"x", "y"},
     state.wax = v
 end)
 
-local secCustomSliders = makeSection(pageCustom, "2. PARAMETER PRESISI (SKALA 0.0 - 1.0 & FASE)")
+local secCustomSliders = makeSection(pageCustom, "3. PARAMETER GERAKAN & SEBARAN (SKALA 0.0 - 1.0)")
 
-local sldSlot = makeSliderRow(secCustomSliders, "Slot Effect (Layer eff)", 1, 6, state.slotIndex, true, function(v) state.slotIndex = v end)
-local sldRate = makeSliderRow(secCustomSliders, "Rate (Kecepatan)", 0.05, 5.0, state.rate, false, function(v) state.rate = v end)
-local sldSx = makeSliderRow(secCustomSliders, "Size X / Pan (sx)", 0.0, 1.0, state.sx, false, function(v) state.sx = v end)
-local sldSy = makeSliderRow(secCustomSliders, "Size Y / Tilt (sy)", 0.0, 1.0, state.sy, false, function(v) state.sy = v end)
-local sldPhase = makeSliderRow(secCustomSliders, "Phase (0 - 360 Deg)", 0, 360, state.phase, true, function(v) state.phase = v end)
-local sldWing = makeSliderRow(secCustomSliders, "Wing (Pantulan)", 0, 8, state.wing, true, function(v) state.wing = v end)
-local sldGroups = makeSliderRow(secCustomSliders, "Groups (Grup Fase)", 0, 8, state.groups, true, function(v) state.groups = v end)
+local sldSlot = makeSliderRow(secCustomSliders, "Slot Effect (Layer eff 1-6)", 1, 6, state.slotIndex, true, function(v) state.slotIndex = v end)
+local sldRate = makeSliderRow(secCustomSliders, "Kecepatan (rate)", 0.05, 5.0, state.rate, false, function(v) state.rate = v end)
+local sldSx = makeSliderRow(secCustomSliders, "Ukuran Pan / X (sx)", 0.0, 1.0, state.sx, false, function(v) state.sx = v end)
+local sldSy = makeSliderRow(secCustomSliders, "Ukuran Tilt / Y (sy)", 0.0, 1.0, state.sy, false, function(v) state.sy = v end)
+local sldPhase = makeSliderRow(secCustomSliders, "Sebaran Fase (0 - 360 Deg)", 0, 360, state.phase, true, function(v) state.phase = v end)
+local sldWing = makeSliderRow(secCustomSliders, "Wing / Cermin (wing)", 0, 8, state.wing, true, function(v) state.wing = v end)
+local sldGroups = makeSliderRow(secCustomSliders, "Groups / Kelompok (groups)", 0, 8, state.groups, true, function(v) state.groups = v end)
 local sldDty = makeSliderRow(secCustomSliders, "Duty Cycle (dty)", 0.0, 1.0, state.dty, false, function(v) state.dty = v end)
-local sldSoft = makeSliderRow(secCustomSliders, "Softness (soft)", 0.0, 1.0, state.soft, false, function(v) state.soft = v end)
+local sldSoft = makeSliderRow(secCustomSliders, "Softness / Halus (soft)", 0.0, 1.0, state.soft, false, function(v) state.soft = v end)
 
 customControls.syncFromState = function()
     chipLayer.setSelected(state.layerMode)
@@ -1286,571 +1667,80 @@ end
 
 local applyCustomBtn = Instance.new("TextButton")
 applyCustomBtn.Size = UDim2.new(1, 0, 0, 28)
-applyCustomBtn.Text = "TERAPKAN CUSTOM EFFECT KE CUE AKTIF"
+applyCustomBtn.Text = "TERAPKAN CUSTOM GERAKAN KE CUE AKTIF"
 applyCustomBtn.Font = Enum.Font.GothamBlack
 applyCustomBtn.TextSize = 10
 applyCustomBtn.BorderSizePixel = 0
 applyCustomBtn.ZIndex = 5
 applyCustomBtn.Parent = secCustomSliders
 registerTheme(applyCustomBtn, "accent", "BackgroundColor3")
-registerTheme(applyCustomBtn, "ink", "TextColor3")
-applyBrutalBorder(applyCustomBtn, false)
+registerTheme(applyCustomBtn, "btnText", "TextColor3")
+applyBrutalBorder(applyCustomBtn)
 
 applyCustomBtn.MouseButton1Click:Connect(function()
     applyEffectToCue(state.cueId, state.layerMode, state.slotIndex, state)
-    if refreshCuesListUI then refreshCuesListUI() end
-    setStatus("CUSTOM (" .. state.shape .. ") -> CUE " .. state.cueId, false)
 end)
 
-local secRgbPalette = makeSection(pageStatic, "1. PALET WARNA RGB & COLOR WHEEL INSTAN (12 WARNA)")
+local secSlotsMgr = makeSection(pageSlots, "1. INSPEKTOR 6 SLOT EFFECT DI CUE AKTIF (LAYER 'eff')")
 
-local rgbGridWrap = Instance.new("Frame")
-rgbGridWrap.Size = UDim2.new(1, 0, 0, 0)
-rgbGridWrap.AutomaticSize = Enum.AutomaticSize.Y
-rgbGridWrap.BackgroundTransparency = 1
-rgbGridWrap.ZIndex = 5
-rgbGridWrap.Parent = secRgbPalette
+local slotGridWrap = Instance.new("Frame")
+slotGridWrap.Size = UDim2.new(1, 0, 0, 0)
+slotGridWrap.AutomaticSize = Enum.AutomaticSize.Y
+slotGridWrap.BackgroundTransparency = 1
+slotGridWrap.ZIndex = 5
+slotGridWrap.Parent = secSlotsMgr
 
-local rgbGrid = Instance.new("UIGridLayout")
-rgbGrid.CellSize = UDim2.new(0.24, 0, 0, 24)
-rgbGrid.CellPadding = UDim2.new(0.013, 0, 0, 4)
-rgbGrid.Parent = rgbGridWrap
+local slotGrid = Instance.new("UIGridLayout")
+slotGrid.CellSize = UDim2.new(0.49, 0, 0, 32)
+slotGrid.CellPadding = UDim2.new(0.02, 0, 0, 5)
+slotGrid.Parent = slotGridWrap
 
-local activeSliderHandles = {}
+local slotActionRow = Instance.new("Frame")
+slotActionRow.Size = UDim2.new(1, 0, 0, 24)
+slotActionRow.BackgroundTransparency = 1
+slotActionRow.ZIndex = 5
+slotActionRow.Parent = secSlotsMgr
 
-for _, rgbItem in ipairs(RGB_COLOR_PRESETS) do
-    local b = Instance.new("TextButton")
-    b.BackgroundColor3 = rgbItem.color
-    b.Text = string.upper(rgbItem.name)
-    b.Font = Enum.Font.GothamBlack
-    b.TextSize = 9
-    local lum = (rgbItem.color.R * 0.299) + (rgbItem.color.G * 0.587) + (rgbItem.color.B * 0.114)
-    b.TextColor3 = (lum > 0.65) and Color3.fromRGB(12, 12, 12) or Color3.fromRGB(255, 255, 255)
-    b.BorderSizePixel = 0
-    b.ZIndex = 5
-    b.Parent = rgbGridWrap
-    applyBrutalBorder(b, false)
-
-    b.MouseButton1Click:Connect(function()
-        for k, val in pairs(rgbItem.vals) do
-            if state.editorValues[k] ~= nil then
-                state.editorValues[k] = val
-                if activeSliderHandles[k] then
-                    activeSliderHandles[k].setValue(val)
-                end
-            end
-        end
-        setStatus("WARNA '" .. rgbItem.name .. "' DITERAPKAN", false)
-    end)
-end
-
-local secStaticTop = makeSection(pageStatic, "2. EDITOR PARAMETER 12 FIXTURE, POSE & LAYER STATIS")
-
-local chipStaticLayer = makeChipSelector(secStaticTop, "Target Layer Statis Cue:", {"dim", "pos", "beam"}, state.staticLayerType, function(v)
-    state.staticLayerType = v
-end)
-
-local chipEditorFix = makeChipSelector(secStaticTop, "Tipe Fixture yang Diedit Parameternya:", {
-    "clara", "strobe", "mapple", "parled", "fogger", "blinder",
-    "flower", "pixel", "retro", "wall", "windmill", "sbar"
-}, state.editorFixtureType, function(v)
-    state.editorFixtureType = v
-    state.editorValues = deepCopy(FIXTURE_DEFAULTS[v] or FIXTURE_DEFAULTS.clara)
-    if rebuildDynamicFixtureSliders then
-        rebuildDynamicFixtureSliders()
+makeSmallActionBtn(slotActionRow, "Toggle ON/OFF Slot", 0, 135, "secondary", function()
+    local c = workData.cues[state.cueId]
+    if c and c.layer == "eff" and type(c.eff) == "table" and c.eff[state.slotIndex] then
+        local ef = c.eff[state.slotIndex]
+        ef.on = not ef.on
+        ef.unused = not ef.on
+        autoSaveTrigger()
+        refreshSlotsAndCuesUI()
+        setStatus("SLOT " .. state.slotIndex .. (ef.on and " ON" or " OFF"), false)
+    else
+        setStatus("CUE AKTIF BUKAN LAYER 'eff'", true)
     end
 end)
 
-local posePresetWrap = Instance.new("Frame")
-posePresetWrap.Size = UDim2.new(1, 0, 0, 0)
-posePresetWrap.AutomaticSize = Enum.AutomaticSize.Y
-posePresetWrap.BackgroundTransparency = 1
-posePresetWrap.ZIndex = 5
-posePresetWrap.Parent = secStaticTop
-
-local poseGrid = Instance.new("UIGridLayout")
-poseGrid.CellSize = UDim2.new(0.24, 0, 0, 24)
-poseGrid.CellPadding = UDim2.new(0.013, 0, 0, 4)
-poseGrid.Parent = posePresetWrap
-
-local dynamicSlidersContainer = Instance.new("Frame")
-dynamicSlidersContainer.Size = UDim2.new(1, 0, 0, 0)
-dynamicSlidersContainer.AutomaticSize = Enum.AutomaticSize.Y
-dynamicSlidersContainer.BackgroundTransparency = 1
-dynamicSlidersContainer.ZIndex = 5
-dynamicSlidersContainer.Parent = secStaticTop
-
-local dynLayout = Instance.new("UIListLayout")
-dynLayout.Padding = UDim.new(0, 4)
-dynLayout.Parent = dynamicSlidersContainer
-
-rebuildDynamicFixtureSliders = function()
-    for _, child in ipairs(dynamicSlidersContainer:GetChildren()) do
-        if child:IsA("Frame") then
-            child:Destroy()
-        end
+makeSmallActionBtn(slotActionRow, "Kosongkan Slot Ini", 141, 130, "danger", function()
+    local c = workData.cues[state.cueId]
+    if c and c.layer == "eff" and type(c.eff) == "table" then
+        c.eff[state.slotIndex] = makeEmptyEffSlot()
+        autoSaveTrigger()
+        refreshSlotsAndCuesUI()
+        setStatus("SLOT " .. state.slotIndex .. " DIRESET", false)
     end
-    activeSliderHandles = {}
-    local t = state.editorFixtureType
-    local keys = FIXTURE_KEYS_ORDER[t] or FIXTURE_KEYS_ORDER.clara
-    for _, k in ipairs(keys) do
-        local initVal = state.editorValues[k] or 0
-        local handle = makeSliderRow(dynamicSlidersContainer, string.upper(k) .. " (" .. k .. ")", 0, 1, initVal, false, function(v)
-            state.editorValues[k] = v
-        end)
-        activeSliderHandles[k] = handle
-    end
-end
-
-for _, preset in ipairs(POSE_PRESETS) do
-    local b = Instance.new("TextButton")
-    b.Text = string.upper(preset.name)
-    b.Font = Enum.Font.GothamBold
-    b.TextSize = 9
-    b.BorderSizePixel = 0
-    b.ZIndex = 5
-    b.Parent = posePresetWrap
-    registerTheme(b, "surface", "BackgroundColor3")
-    registerTheme(b, "ink", "TextColor3")
-    applyBrutalBorder(b, false)
-
-    b.MouseButton1Click:Connect(function()
-        for k, val in pairs(preset.vals) do
-            if state.editorValues[k] ~= nil then
-                state.editorValues[k] = val
-                if activeSliderHandles[k] then
-                    activeSliderHandles[k].setValue(val)
-                end
-            end
-        end
-        setStatus("POSE '" .. preset.name .. "' DIMUAT", false)
-    end)
-end
-
-local staticBtnRow = Instance.new("Frame")
-staticBtnRow.Size = UDim2.new(1, 0, 0, 26)
-staticBtnRow.BackgroundTransparency = 1
-staticBtnRow.ZIndex = 5
-staticBtnRow.Parent = secStaticTop
-
-makeSmallActionBtn(staticBtnRow, "Simpan Cue Statis", 0, 155, "accent", function()
-    local fxMap = {}
-    local indices = getSelectedMemberIndices()
-    for _, idx in ipairs(indices) do
-        local fix = workData.rig[idx]
-        if fix then
-            local fType = string.lower(fix.t or "clara")
-            fxMap[tostring(idx)] = {
-                t = fType,
-                v = makeFullV(fType, state.editorValues)
-            }
-        end
-    end
-    workData.cues[state.cueId] = {
-        layer = state.staticLayerType,
-        fx = fxMap,
-        eff = {}
-    }
-    autoSaveTrigger()
-    if refreshCuesListUI then refreshCuesListUI() end
-    setStatus("STATIC [" .. state.staticLayerType .. "] -> CUE " .. state.cueId, false)
 end)
 
-makeSmallActionBtn(staticBtnRow, "Set Default Rig", 161, 145, "secondary", function()
-    local indices = getSelectedMemberIndices()
-    for _, idx in ipairs(indices) do
-        local fix = workData.rig[idx]
-        if fix then
-            fix.v = makeFullV(fix.t, state.editorValues)
-        end
-    end
-    autoSaveTrigger()
-    setStatus("DEFAULT RIG DIPERBARUI", false)
-end)
-
-local secChase = makeSection(pageChase, "1. CHASE SEQUENCER (REKAM STEP DARI TAB STATIC / RGB)")
-
-makeSliderRow(secChase, "Chase Rate (Kecepatan)", 0.1, 10, state.chaseRate, false, function(v) state.chaseRate = v end)
-makeSliderRow(secChase, "Chase Glide (0 Patah - 1 Halus)", 0, 1, state.chaseGlide, false, function(v) state.chaseGlide = v end)
-makeChipSelector(secChase, "Chase Direction (dir):", {">", "<", "<>", "rand"}, state.chaseDir, function(v) state.chaseDir = v end)
-
-local chaseStatusLbl = Instance.new("TextLabel")
-chaseStatusLbl.Size = UDim2.new(1, 0, 0, 16)
-chaseStatusLbl.BackgroundTransparency = 1
-chaseStatusLbl.Text = "TOTAL STEP TEREKAM: 0 STEP"
-chaseStatusLbl.Font = Enum.Font.Code
-chaseStatusLbl.TextSize = 10
-chaseStatusLbl.TextXAlignment = Enum.TextXAlignment.Left
-chaseStatusLbl.ZIndex = 5
-chaseStatusLbl.Parent = secChase
-registerTheme(chaseStatusLbl, "ink", "TextColor3")
-
-refreshChaseStepsUI = function()
-    chaseStatusLbl.Text = "TOTAL STEP TEREKAM: " .. tostring(#state.chaseSteps) .. " STEP"
-end
-
-local chaseBtnRow = Instance.new("Frame")
-chaseBtnRow.Size = UDim2.new(1, 0, 0, 24)
-chaseBtnRow.BackgroundTransparency = 1
-chaseBtnRow.ZIndex = 5
-chaseBtnRow.Parent = secChase
-
-makeSmallActionBtn(chaseBtnRow, "+ Rekam Step", 0, 100, "secondary", function()
-    local frame = {}
-    local indices = getSelectedMemberIndices()
-    for _, idx in ipairs(indices) do
-        local fix = workData.rig[idx]
-        if fix then
-            local fType = string.lower(fix.t or "clara")
-            frame[tostring(idx)] = {
-                t = fType,
-                v = makeFullV(fType, state.editorValues)
-            }
-        end
-    end
-    table.insert(state.chaseSteps, frame)
-    refreshChaseStepsUI()
-    setStatus("STEP #" .. #state.chaseSteps .. " DIREKAM", false)
-end)
-
-makeSmallActionBtn(chaseBtnRow, "Simpan ke Cue", 105, 105, "accent", function()
-    if #state.chaseSteps == 0 then
-        setStatus("REKAM MINIMAL 1 STEP!", true)
-        return
-    end
-    workData.cues[state.cueId] = {
-        layer = "chs",
-        fx = {},
-        eff = {},
-        chase = {
-            glide = state.chaseGlide,
-            dir = state.chaseDir,
-            seq = false,
-            off = 0,
-            rate = state.chaseRate,
-            steps = deepCopy(state.chaseSteps)
-        }
-    }
-    autoSaveTrigger()
-    if refreshCuesListUI then refreshCuesListUI() end
-    setStatus("CHASE (" .. #state.chaseSteps .. " STEP) -> CUE " .. state.cueId, false)
-end)
-
-makeSmallActionBtn(chaseBtnRow, "Hapus Step", 215, 85, "danger", function()
-    state.chaseSteps = {}
-    refreshChaseStepsUI()
-    setStatus("BUFFER CHASE KOSONG", false)
-end)
-
-local secGlobal = makeSection(pageChase, "2. PENGATURAN GLOBAL WORKSPACE (FADE & GRAND MASTER)")
-
-local sldFade = makeSliderRow(secGlobal, "Global Fade Time (fade)", 0, 10, workData.fade, false, function(v)
-    workData.fade = v
-end)
-
-local sldGm = makeSliderRow(secGlobal, "Grand Master (gm 0-100)", 0, 100, workData.gm, true, function(v)
-    workData.gm = v
-end)
-
-local secRigGen = makeSection(pageRig, "1. AUTO-PATCH GENERATOR & CHANNEL FOOTPRINT")
-
-makeChipSelector(secRigGen, "Pilih Jenis Fixture:", {
-    "clara", "strobe", "mapple", "parled", "fogger", "blinder",
-    "flower", "pixel", "retro", "wall", "windmill", "sbar"
-}, state.rigType, function(v)
-    state.rigType = v
-end)
-
-makeSliderRow(secRigGen, "Jumlah Unit Lampu", 1, 32, state.rigCount, true, function(v)
-    state.rigCount = v
-end)
-
-makeSliderRow(secRigGen, "Alamat DMX Awal (Start Addr)", 1, 512, state.rigStartAddr, true, function(v)
-    state.rigStartAddr = v
-end)
-
-makeChipSelector(secRigGen, "Mode Alamat DMX:", {"independen", "multi"}, state.rigMode, function(v)
-    state.rigMode = v
-end)
-
-local rigBtnRow = Instance.new("Frame")
-rigBtnRow.Size = UDim2.new(1, 0, 0, 24)
-rigBtnRow.BackgroundTransparency = 1
-rigBtnRow.ZIndex = 5
-rigBtnRow.Parent = secRigGen
-
-makeSmallActionBtn(rigBtnRow, "Generate Rig", 0, 100, "accent", function()
-    local newRig = {}
-    local t = string.lower(state.rigType)
-    local step = FIXTURE_FOOTPRINTS[t] or 16
-    local currentAddr = state.rigStartAddr
-    for i = 1, state.rigCount do
-        local posX = (state.rigCount == 1) and 0.5 or (0.08 + ((i - 1) * (0.84 / math.max(1, state.rigCount - 1))))
-        table.insert(newRig, {
-            a = currentAddr,
-            x = math.floor(posX * 100 + 0.5) / 100,
-            y = 0.5,
-            t = t,
-            v = makeFullV(t)
-        })
-        if state.rigMode == "independen" then
-            currentAddr = currentAddr + step
-        end
-    end
-    workData.rig = newRig
-    resetSelectionAll()
-    autoSaveTrigger()
-    if refreshMembersUI then refreshMembersUI() end
-    if refreshRigEditorUI then refreshRigEditorUI() end
-    setStatus("PATCH: " .. state.rigCount .. "X " .. t, false)
-end)
-
-makeSmallActionBtn(rigBtnRow, "+ 1 Unit", 105, 76, "secondary", function()
-    local t = string.lower(state.rigType)
-    local nextAddr = state.rigStartAddr
-    for _, fix in ipairs(workData.rig) do
-        local fp = FIXTURE_FOOTPRINTS[string.lower(fix.t or "clara")] or 16
-        local endAddr = (fix.a or 1) + fp
-        if endAddr > nextAddr then
-            nextAddr = endAddr
-        end
-    end
-    if state.rigMode == "multi" and #workData.rig > 0 then
-        nextAddr = workData.rig[#workData.rig].a or 1
-    end
-    table.insert(workData.rig, {
-        a = nextAddr,
-        x = math.clamp(0.1 + (#workData.rig * 0.08), 0.05, 0.95),
-        y = 0.5,
-        t = t,
-        v = makeFullV(t)
-    })
-    selectedMembers[#workData.rig] = true
-    autoSaveTrigger()
-    if refreshMembersUI then refreshMembersUI() end
-    if refreshRigEditorUI then refreshRigEditorUI() end
-    setStatus("TAMBAH " .. t .. " DMX #" .. nextAddr, false)
-end)
-
-makeSmallActionBtn(rigBtnRow, "Re-Patch Semua", 186, 110, "surface", function()
-    local addr = state.rigStartAddr
-    for _, fix in ipairs(workData.rig) do
-        fix.a = addr
-        if state.rigMode == "independen" then
-            local fp = FIXTURE_FOOTPRINTS[string.lower(fix.t or "clara")] or 16
-            addr = addr + fp
-        end
-    end
-    autoSaveTrigger()
-    if refreshMembersUI then refreshMembersUI() end
-    if refreshRigEditorUI then refreshRigEditorUI() end
-    setStatus("DMX DI-PATCH ULANG", false)
-end)
-
-local secRigManual = makeSection(pageRig, "2. EDITOR MANUAL ALAMAT DMX & POSISI PANGGUNG PER UNIT")
-
-local rigEditorContainer = Instance.new("Frame")
-rigEditorContainer.Size = UDim2.new(1, 0, 0, 0)
-rigEditorContainer.AutomaticSize = Enum.AutomaticSize.Y
-rigEditorContainer.BackgroundTransparency = 1
-rigEditorContainer.ZIndex = 5
-rigEditorContainer.Parent = secRigManual
-
-local rigEdLayout = Instance.new("UIListLayout")
-rigEdLayout.Padding = UDim.new(0, 4)
-rigEdLayout.Parent = rigEditorContainer
-
-refreshRigEditorUI = function()
-    local th = getCurrentTheme()
-    for _, child in ipairs(rigEditorContainer:GetChildren()) do
-        if child:IsA("Frame") then
-            child:Destroy()
-        end
-    end
-    for i, fix in ipairs(workData.rig) do
-        local row = Instance.new("Frame")
-        row.Size = UDim2.new(1, 0, 0, 24)
-        row.BackgroundColor3 = th.surface
-        row.BorderSizePixel = 0
-        row.ZIndex = 5
-        row.Parent = rigEditorContainer
-        applyBrutalBorder(row, false)
-
-        local fp = FIXTURE_FOOTPRINTS[string.lower(fix.t or "clara")] or 16
-        local info = Instance.new("TextLabel")
-        info.Size = UDim2.new(0, 120, 1, 0)
-        info.Position = UDim2.new(0, 6, 0, 0)
-        info.BackgroundTransparency = 1
-        info.Text = string.format("#%02d %-7s (%dc)", i, string.upper(fix.t), fp)
-        info.Font = Enum.Font.GothamBlack
-        info.TextSize = 9
-        info.TextColor3 = th.ink
-        info.TextXAlignment = Enum.TextXAlignment.Left
-        info.ZIndex = 5
-        info.Parent = row
-
-        local addrLbl = Instance.new("TextLabel")
-        addrLbl.Size = UDim2.new(0, 28, 1, 0)
-        addrLbl.Position = UDim2.new(0, 126, 0, 0)
-        addrLbl.BackgroundTransparency = 1
-        addrLbl.Text = "DMX:"
-        addrLbl.Font = Enum.Font.GothamBold
-        addrLbl.TextSize = 9
-        addrLbl.TextColor3 = th.subInk
-        addrLbl.ZIndex = 5
-        addrLbl.Parent = row
-
-        local addrBox = Instance.new("TextBox")
-        addrBox.Size = UDim2.new(0, 38, 0, 18)
-        addrBox.Position = UDim2.new(0, 154, 0.5, -9)
-        addrBox.BackgroundColor3 = th.accent
-        addrBox.Text = tostring(fix.a)
-        addrBox.Font = Enum.Font.Code
-        addrBox.TextSize = 10
-        addrBox.TextColor3 = th.ink
-        addrBox.ClearTextOnFocus = false
-        addrBox.BorderSizePixel = 0
-        addrBox.ZIndex = 5
-        addrBox.Parent = row
-        applyBrutalBorder(addrBox, false)
-
-        addrBox.FocusLost:Connect(function()
-            local n = tonumber(addrBox.Text)
-            if n and n >= 1 and n <= 512 then
-                fix.a = math.floor(n)
-                addrBox.Text = tostring(fix.a)
-                autoSaveTrigger()
-                if refreshMembersUI then refreshMembersUI() end
-                setStatus("UNIT #" .. i .. " DMX -> " .. fix.a, false)
-            else
-                addrBox.Text = tostring(fix.a)
-            end
-        end)
-
-        local xLbl = Instance.new("TextLabel")
-        xLbl.Size = UDim2.new(0, 14, 1, 0)
-        xLbl.Position = UDim2.new(0, 196, 0, 0)
-        xLbl.BackgroundTransparency = 1
-        xLbl.Text = "X:"
-        xLbl.Font = Enum.Font.GothamBold
-        xLbl.TextSize = 9
-        xLbl.TextColor3 = th.subInk
-        xLbl.ZIndex = 5
-        xLbl.Parent = row
-
-        local xBox = Instance.new("TextBox")
-        xBox.Size = UDim2.new(0, 36, 0, 18)
-        xBox.Position = UDim2.new(0, 210, 0.5, -9)
-        xBox.BackgroundColor3 = th.chipBg
-        xBox.Text = string.format("%.2f", fix.x or 0.5)
-        xBox.Font = Enum.Font.Code
-        xBox.TextSize = 10
-        xBox.TextColor3 = th.ink
-        xBox.ClearTextOnFocus = false
-        xBox.BorderSizePixel = 0
-        xBox.ZIndex = 5
-        xBox.Parent = row
-        applyBrutalBorder(xBox, false)
-
-        xBox.FocusLost:Connect(function()
-            local n = tonumber(xBox.Text)
-            if n then
-                fix.x = math.clamp(math.floor(n * 100 + 0.5) / 100, 0, 1)
-                xBox.Text = string.format("%.2f", fix.x)
-                autoSaveTrigger()
-            else
-                xBox.Text = string.format("%.2f", fix.x or 0.5)
-            end
-        end)
-
-        local yLbl = Instance.new("TextLabel")
-        yLbl.Size = UDim2.new(0, 14, 1, 0)
-        yLbl.Position = UDim2.new(0, 250, 0, 0)
-        yLbl.BackgroundTransparency = 1
-        yLbl.Text = "Y:"
-        yLbl.Font = Enum.Font.GothamBold
-        yLbl.TextSize = 9
-        yLbl.TextColor3 = th.subInk
-        yLbl.ZIndex = 5
-        yLbl.Parent = row
-
-        local yBox = Instance.new("TextBox")
-        yBox.Size = UDim2.new(0, 36, 0, 18)
-        yBox.Position = UDim2.new(0, 264, 0.5, -9)
-        yBox.BackgroundColor3 = th.chipBg
-        yBox.Text = string.format("%.2f", fix.y or 0.5)
-        yBox.Font = Enum.Font.Code
-        yBox.TextSize = 10
-        yBox.TextColor3 = th.ink
-        yBox.ClearTextOnFocus = false
-        yBox.BorderSizePixel = 0
-        yBox.ZIndex = 5
-        yBox.Parent = row
-        applyBrutalBorder(yBox, false)
-
-        yBox.FocusLost:Connect(function()
-            local n = tonumber(yBox.Text)
-            if n then
-                fix.y = math.clamp(math.floor(n * 100 + 0.5) / 100, 0, 1)
-                yBox.Text = string.format("%.2f", fix.y)
-                autoSaveTrigger()
-            else
-                yBox.Text = string.format("%.2f", fix.y or 0.5)
-            end
-        end)
-
-        local delBtn = Instance.new("TextButton")
-        delBtn.Size = UDim2.new(0, 42, 0, 18)
-        delBtn.Position = UDim2.new(1, -46, 0.5, -9)
-        delBtn.BackgroundColor3 = th.danger
-        delBtn.Text = "DEL"
-        delBtn.Font = Enum.Font.GothamBlack
-        delBtn.TextSize = 9
-        delBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-        delBtn.BorderSizePixel = 0
-        delBtn.ZIndex = 5
-        delBtn.Parent = row
-        applyBrutalBorder(delBtn, false)
-
-        delBtn.MouseButton1Click:Connect(function()
-            if #workData.rig > 1 then
-                table.remove(workData.rig, i)
-                resetSelectionAll()
-                autoSaveTrigger()
-                refreshMembersUI()
-                refreshRigEditorUI()
-                setStatus("UNIT #" .. i .. " DIHAPUS", false)
-            else
-                setStatus("MINIMAL 1 UNIT DI RIG!", true)
-            end
-        end)
-    end
-end
-
-local secCueMgr = makeSection(pageShows, "1. INTERACTIVE CUE MANAGER (KLIK CUE = PILIH & MUAT KE SLIDER)")
+local secCueGrid = makeSection(pageSlots, "2. GRID CUE 1 - 24 (KLIK CUE BARU = SETUP DMX)")
 
 local cueQuickRow = Instance.new("Frame")
 cueQuickRow.Size = UDim2.new(1, 0, 0, 24)
 cueQuickRow.BackgroundTransparency = 1
 cueQuickRow.ZIndex = 5
-cueQuickRow.Parent = secCueMgr
+cueQuickRow.Parent = secCueGrid
 
-makeSmallActionBtn(cueQuickRow, "+ Cue Baru", 0, 84, "accent", function()
-    local maxId = 0
-    for k in pairs(workData.cues) do
-        local n = tonumber(k)
-        if n and n > maxId then
-            maxId = n
-        end
-    end
-    local nextKey = tostring(maxId + 1)
-    state.cueId = nextKey
-    applyEffectToCue(nextKey, "mov", 1, EFFECT_TEMPLATES[1])
-    if refreshCuesListUI then refreshCuesListUI() end
-    setStatus("CUE [" .. nextKey .. "] DIBUAT", false)
+makeSmallActionBtn(cueQuickRow, "Atur DMX Rig", 0, 95, "accent", function()
+    openRigSetupModal(function()
+        autoSaveTrigger()
+        setStatus("DMX RIG DIPERBARUI", false)
+    end)
 end)
 
-makeSmallActionBtn(cueQuickRow, "Duplikat Cue", 89, 92, "secondary", function()
+makeSmallActionBtn(cueQuickRow, "Duplikat Cue+1", 101, 105, "secondary", function()
     local src = workData.cues[state.cueId]
     if not src then
         setStatus("CUE " .. state.cueId .. " KOSONG!", true)
@@ -1864,33 +1754,41 @@ makeSmallActionBtn(cueQuickRow, "Duplikat Cue", 89, 92, "secondary", function()
     workData.cues[nextKey] = deepCopy(src)
     state.cueId = nextKey
     autoSaveTrigger()
-    if refreshCuesListUI then refreshCuesListUI() end
-    setStatus("DUPLIKAT -> CUE [" .. nextKey .. "]", false)
+    refreshSlotsAndCuesUI()
+    setStatus("DUPLIKAT -> CUE " .. nextKey, false)
 end)
 
-makeSmallActionBtn(cueQuickRow, "Hapus Cue", 186, 82, "danger", function()
+makeSmallActionBtn(cueQuickRow, "Hapus Cue", 212, 82, "danger", function()
     workData.cues[state.cueId] = nil
     autoSaveTrigger()
-    if refreshCuesListUI then refreshCuesListUI() end
+    refreshSlotsAndCuesUI()
     setStatus("CUE " .. state.cueId .. " DIHAPUS", false)
 end)
 
-local cueListContainer = Instance.new("Frame")
-cueListContainer.Size = UDim2.new(1, 0, 0, 0)
-cueListContainer.AutomaticSize = Enum.AutomaticSize.Y
-cueListContainer.BackgroundTransparency = 1
-cueListContainer.ZIndex = 5
-cueListContainer.Parent = secCueMgr
+local cueGridWrap = Instance.new("Frame")
+cueGridWrap.Size = UDim2.new(1, 0, 0, 0)
+cueGridWrap.AutomaticSize = Enum.AutomaticSize.Y
+cueGridWrap.BackgroundTransparency = 1
+cueGridWrap.ZIndex = 5
+cueGridWrap.Parent = secCueGrid
 
-local cueListLayout = Instance.new("UIListLayout")
-cueListLayout.Padding = UDim.new(0, 4)
-cueListLayout.Parent = cueListContainer
+local cueGridLayout = Instance.new("UIGridLayout")
+cueGridLayout.CellSize = UDim2.new(0.24, 0, 0, 32)
+cueGridLayout.CellPadding = UDim2.new(0.013, 0, 0, 4)
+cueGridLayout.Parent = cueGridWrap
 
 loadCueIntoEditor = function(cueKey)
     state.cueId = tostring(cueKey)
     local c = workData.cues[state.cueId]
     if not c then
-        if refreshCuesListUI then refreshCuesListUI() end
+        if refreshSlotsAndCuesUI then refreshSlotsAndCuesUI() end
+        if uiPrefs.promptRigOnNewCue then
+            openRigSetupModal(function()
+                setStatus("CUE " .. state.cueId .. " SIAP DIISI (" .. #workData.rig .. " UNIT)", false)
+            end)
+        else
+            setStatus("CUE " .. state.cueId .. " DIPILIH (KOSONG)", false)
+        end
         return
     end
     if (c.layer == "mov" or c.layer == "eff") and type(c.eff) == "table" then
@@ -1930,241 +1828,18 @@ loadCueIntoEditor = function(cueKey)
                 customControls.syncFromState()
             end
         end
-    elseif c.layer == "chs" and type(c.chase) == "table" then
-        state.chaseRate = tonumber(c.chase.rate) or 2
-        state.chaseGlide = tonumber(c.chase.glide) or 0.3
-        state.chaseDir = c.chase.dir or ">"
-        state.chaseSteps = deepCopy(c.chase.steps or {})
-        if refreshChaseStepsUI then refreshChaseStepsUI() end
-    elseif (c.layer == "dim" or c.layer == "pos" or c.layer == "beam") and type(c.fx) == "table" then
-        state.staticLayerType = c.layer
-        chipStaticLayer.setSelected(c.layer)
-        for kIdx, fxData in pairs(c.fx) do
-            if type(fxData) == "table" and type(fxData.v) == "table" then
-                local fType = string.lower(fxData.t or "clara")
-                state.editorFixtureType = fType
-                chipEditorFix.setSelected(fType)
-                state.editorValues = makeFullV(fType, fxData.v)
-                rebuildDynamicFixtureSliders()
-                break
-            end
-        end
     end
-    if refreshCuesListUI then refreshCuesListUI() end
-    setStatus("CUE [" .. state.cueId .. "] DIMUAT KE SLIDER", false)
+    if refreshSlotsAndCuesUI then refreshSlotsAndCuesUI() end
+    setStatus("CUE " .. state.cueId .. " (" .. string.upper(tostring(c.layer)) .. ") DIMUAT", false)
 end
-
-local secShowsMgr = makeSection(pageShows, "2. SHOW LIBRARY MANAGER (dmx_ui_shows.json)")
-
-local showInputRow = Instance.new("Frame")
-showInputRow.Size = UDim2.new(1, 0, 0, 24)
-showInputRow.BackgroundTransparency = 1
-showInputRow.ZIndex = 5
-showInputRow.Parent = secShowsMgr
-
-local showNameBox = Instance.new("TextBox")
-showNameBox.Size = UDim2.new(0, 136, 0, 22)
-showNameBox.Position = UDim2.new(0, 0, 0, 0)
-showNameBox.PlaceholderText = "Nama Show"
-showNameBox.Text = ""
-showNameBox.Font = Enum.Font.Code
-showNameBox.TextSize = 10
-showNameBox.ClearTextOnFocus = false
-showNameBox.BorderSizePixel = 0
-showNameBox.ZIndex = 5
-showNameBox.Parent = showInputRow
-registerTheme(showNameBox, "surface", "BackgroundColor3")
-registerTheme(showNameBox, "ink", "TextColor3")
-applyBrutalBorder(showNameBox, false)
-
-makeSmallActionBtn(showInputRow, "Simpan", 141, 62, "accent", function()
-    local name = string.gsub(showNameBox.Text, "^%s*(.-)%s*$", "%1")
-    if #name == 0 then
-        setStatus("ISI NAMA SHOW DULU!", true)
-        return
-    end
-    loadShowsFile()
-    workData = sanitizeWorkStructure(workData)
-    showsData[name] = {
-        data = deepCopy(workData),
-        ts = os.time()
-    }
-    local ok, msg = saveShowsFile()
-    if refreshShowsListUI then refreshShowsListUI() end
-    setStatus(ok and ("SHOW '" .. name .. "' TERSIMPAN") or msg, not ok)
-end)
-
-makeSmallActionBtn(showInputRow, "Muat", 208, 56, "secondary", function()
-    local name = string.gsub(showNameBox.Text, "^%s*(.-)%s*$", "%1")
-    loadShowsFile()
-    if showsData[name] and type(showsData[name].data) == "table" then
-        workData = sanitizeWorkStructure(deepCopy(showsData[name].data))
-        sldFade.setValue(workData.fade)
-        sldGm.setValue(workData.gm)
-        resetSelectionAll()
-        refreshMembersUI()
-        refreshRigEditorUI()
-        refreshCuesListUI()
-        setStatus("SHOW '" .. name .. "' DIMUAT", false)
-    else
-        setStatus("SHOW TIDAK DITEMUKAN", true)
-    end
-end)
-
-makeSmallActionBtn(showInputRow, "Hapus", 269, 56, "danger", function()
-    local name = string.gsub(showNameBox.Text, "^%s*(.-)%s*$", "%1")
-    loadShowsFile()
-    if showsData[name] then
-        showsData[name] = nil
-        saveShowsFile()
-        if refreshShowsListUI then refreshShowsListUI() end
-        setStatus("SHOW '" .. name .. "' DIHAPUS", false)
-    else
-        setStatus("SHOW TIDAK DITEMUKAN", true)
-    end
-end)
-
-local showsListLabel = Instance.new("TextLabel")
-showsListLabel.Size = UDim2.new(1, 0, 0, 0)
-showsListLabel.AutomaticSize = Enum.AutomaticSize.Y
-showsListLabel.Font = Enum.Font.Code
-showsListLabel.TextSize = 10
-showsListLabel.TextXAlignment = Enum.TextXAlignment.Left
-showsListLabel.TextYAlignment = Enum.TextYAlignment.Top
-showsListLabel.TextWrapped = true
-showsListLabel.BorderSizePixel = 0
-showsListLabel.ZIndex = 5
-showsListLabel.Parent = secShowsMgr
-registerTheme(showsListLabel, "surface", "BackgroundColor3")
-registerTheme(showsListLabel, "ink", "TextColor3")
-applyBrutalBorder(showsListLabel, false)
-local showsPad = Instance.new("UIPadding", showsListLabel)
-showsPad.PaddingTop = UDim.new(0, 5)
-showsPad.PaddingBottom = UDim.new(0, 5)
-showsPad.PaddingLeft = UDim.new(0, 6)
-showsPad.PaddingRight = UDim.new(0, 6)
-
-refreshShowsListUI = function()
-    local names = {}
-    for k in pairs(showsData) do
-        table.insert(names, tostring(k))
-    end
-    table.sort(names)
-    if #names == 0 then
-        showsListLabel.Text = "BELUM ADA SHOW TERSIMPAN DI DMX_UI_SHOWS.JSON."
-        return
-    end
-    local lines = {}
-    for _, n in ipairs(names) do
-        local entry = showsData[n]
-        local rigCount = (entry.data and entry.data.rig) and #entry.data.rig or 0
-        table.insert(lines, string.format("> %-14s | RIG: %d UNIT", string.upper(n), rigCount))
-    end
-    showsListLabel.Text = table.concat(lines, "\n")
-end
-
-local secPreview = makeSection(pageShows, "3. LIVE VISUAL SIMULATOR (PREVIEW GERAKAN X/Y DI UI)")
-
-local previewCanvas = Instance.new("Frame")
-previewCanvas.Size = UDim2.new(1, 0, 0, 95)
-previewCanvas.BorderSizePixel = 0
-previewCanvas.ZIndex = 5
-previewCanvas.Parent = secPreview
-registerTheme(previewCanvas, "canvas", "BackgroundColor3")
-applyBrutalBorder(previewCanvas, false)
-
-local previewDots = {}
-local function rebuildPreviewDots()
-    local th = getCurrentTheme()
-    for _, d in ipairs(previewDots) do
-        d:Destroy()
-    end
-    previewDots = {}
-    for i = 1, #workData.rig do
-        local dot = Instance.new("Frame")
-        dot.Size = UDim2.new(0, 14, 0, 14)
-        dot.AnchorPoint = Vector2.new(0.5, 0.5)
-        dot.Position = UDim2.new(0.5, 0, 0.5, 0)
-        dot.BackgroundColor3 = th.accent
-        dot.BorderSizePixel = 0
-        dot.ZIndex = 6
-        dot.Parent = previewCanvas
-        applyBrutalBorder(dot, false)
-
-        local num = Instance.new("TextLabel")
-        num.Size = UDim2.new(1, 0, 1, 0)
-        num.BackgroundTransparency = 1
-        num.Text = tostring(i)
-        num.Font = Enum.Font.GothamBlack
-        num.TextSize = 8
-        num.TextColor3 = Color3.fromRGB(10, 10, 10)
-        num.ZIndex = 7
-        num.Parent = dot
-
-        previewDots[i] = dot
-    end
-end
-
-local previewToggleBtn = Instance.new("TextButton")
-previewToggleBtn.Size = UDim2.new(0, 165, 0, 24)
-previewToggleBtn.Text = "MULAI LIVE PREVIEW"
-previewToggleBtn.Font = Enum.Font.GothamBlack
-previewToggleBtn.TextSize = 9
-previewToggleBtn.BorderSizePixel = 0
-previewToggleBtn.ZIndex = 5
-previewToggleBtn.Parent = secPreview
-registerTheme(previewToggleBtn, "secondary", "BackgroundColor3")
-registerTheme(previewToggleBtn, "ink", "TextColor3")
-applyBrutalBorder(previewToggleBtn, false)
-
-previewToggleBtn.MouseButton1Click:Connect(function()
-    state.previewActive = not state.previewActive
-    previewToggleBtn.Text = state.previewActive and "HENTIKAN PREVIEW" or "MULAI LIVE PREVIEW"
-    rebuildPreviewDots()
-end)
-
-RunService.RenderStepped:Connect(function()
-    if not state.previewActive or not pageShows.Visible or not main.Visible then return end
-    local t = os.clock() * (state.rate * 2.5)
-    for i, dot in ipairs(previewDots) do
-        local spread = (state.phase / 360) * ((i - 1) / math.max(1, #previewDots)) * math.pi * 2
-        if state.wing > 0 and i > (#previewDots / 2) then
-            spread = -spread
-        end
-        local ang = (state.dir == "<") and (-t + spread) or (t + spread)
-        local ox, oy = 0, 0
-        if state.shape == "circle" then
-            ox = math.cos(ang) * state.sx * 0.42
-            oy = math.sin(ang) * state.sy * 0.42
-        elseif state.shape == "fig8" then
-            ox = math.sin(ang) * state.sx * 0.42
-            oy = math.sin(ang * 2) * state.sy * 0.42
-        elseif state.shape == "sine" then
-            if state.wax == "y" then
-                oy = math.sin(ang) * state.sy * 0.42
-            else
-                ox = math.sin(ang) * state.sx * 0.42
-            end
-        elseif state.shape == "saw" then
-            local saw = ((ang / (math.pi * 2)) % 1) * 2 - 1
-            ox = saw * state.sx * 0.42
-        elseif state.shape == "square" then
-            local sq = (math.sin(ang) >= 0) and 1 or -1
-            ox = sq * state.sx * 0.42
-            oy = sq * state.sy * 0.25
-        else
-            ox = math.sin(ang * 1.3 + i) * state.sx * 0.4
-            oy = math.cos(ang * 1.7 - i) * state.sy * 0.4
-        end
-        dot.Position = UDim2.new(math.clamp(0.5 + ox, 0.06, 0.94), 0, math.clamp(0.5 + oy, 0.12, 0.88), 0)
-    end
-end)
 
 local applyFullTheme
 
-local secSetTheme = makeSection(pageSettings, "1. TEMA NEO-BRUTALIST (WARNA KONTRAS & GARIS TEGAS)")
+local secSetTheme = makeSection(pageSettings, "1. PILIH TEMA GELAP & NEO-BRUTALIST")
 
-makeChipSelector(secSetTheme, "Pilih Palet Tema UI:", {"Acid Lime", "Cyber Yellow", "Hyper Pink", "Brutal Dark"}, uiPrefs.themeName, function(v)
+makeChipSelector(secSetTheme, "Palet Warna UI (Default Gelap):", {
+    "Brutal Dark", "OLED Midnight", "Obsidian Neon", "Acid Lime", "Cyber Yellow"
+}, uiPrefs.themeName, function(v)
     uiPrefs.themeName = v
     savePrefs()
     applyFullTheme()
@@ -2173,44 +1848,66 @@ end)
 
 local secSetScale = makeSection(pageSettings, "2. UKURAN UI, BUBBLE & KETEBALAN GARIS")
 
-local sldUiScale = makeSliderRow(secSetScale, "Skala Ukuran UI (0.75 - 1.30)", 0.75, 1.30, uiPrefs.uiScale, false, function(v)
+makeSliderRow(secSetScale, "Skala Ukuran UI (0.75 - 1.30)", 0.75, 1.30, uiPrefs.uiScale, false, function(v)
     uiPrefs.uiScale = v
     uiScaleObj.Scale = v
     savePrefs()
 end)
 
-local sldBorder = makeSliderRow(secSetScale, "Ketebalan Border (1 - 4 px)", 1, 4, uiPrefs.borderThickness, true, function(v)
+makeSliderRow(secSetScale, "Ketebalan Border (1 - 4 px)", 1, 4, uiPrefs.borderThickness, true, function(v)
     uiPrefs.borderThickness = v
     savePrefs()
     applyFullTheme()
 end)
 
-local sldBubble = makeSliderRow(secSetScale, "Ukuran Bubble (38 - 68 px)", 38, 68, uiPrefs.bubbleSize, true, function(v)
+makeSliderRow(secSetScale, "Ukuran Bubble (36 - 66 px)", 36, 66, uiPrefs.bubbleSize, true, function(v)
     uiPrefs.bubbleSize = v
     bubbleBtn.Size = UDim2.new(0, v, 0, v)
     bubbleShadow.Size = UDim2.new(0, v, 0, v)
     savePrefs()
 end)
 
-local secSetOpt = makeSection(pageSettings, "3. OPTIMASI ALUR KERJA & BACKUP JSON")
+local secSetOpt = makeSection(pageSettings, "3. OPTIMASI PROMPT DMX, AUTO-SAVE & CLIPBOARD")
+
+local promptRigBtn = Instance.new("TextButton")
+promptRigBtn.Size = UDim2.new(1, 0, 0, 26)
+promptRigBtn.Text = uiPrefs.promptRigOnNewCue and "TANYA JUMLAH DMX SAAT BUAT CUE BARU: AKTIF" or "TANYA JUMLAH DMX SAAT BUAT CUE BARU: MATI"
+promptRigBtn.Font = Enum.Font.GothamBlack
+promptRigBtn.TextSize = 9
+promptRigBtn.BorderSizePixel = 0
+promptRigBtn.ZIndex = 5
+promptRigBtn.Parent = secSetOpt
+registerTheme(promptRigBtn, uiPrefs.promptRigOnNewCue and "accent" or "surface", "BackgroundColor3")
+registerTheme(promptRigBtn, uiPrefs.promptRigOnNewCue and "btnText" or "ink", "TextColor3")
+applyBrutalBorder(promptRigBtn)
+
+promptRigBtn.MouseButton1Click:Connect(function()
+    uiPrefs.promptRigOnNewCue = not uiPrefs.promptRigOnNewCue
+    promptRigBtn.Text = uiPrefs.promptRigOnNewCue and "TANYA JUMLAH DMX SAAT BUAT CUE BARU: AKTIF" or "TANYA JUMLAH DMX SAAT BUAT CUE BARU: MATI"
+    local th = getCurrentTheme()
+    promptRigBtn.BackgroundColor3 = uiPrefs.promptRigOnNewCue and th.accent or th.surface
+    promptRigBtn.TextColor3 = uiPrefs.promptRigOnNewCue and th.btnText or th.ink
+    savePrefs()
+end)
 
 local autoSaveBtn = Instance.new("TextButton")
 autoSaveBtn.Size = UDim2.new(1, 0, 0, 26)
 autoSaveBtn.Text = uiPrefs.autoSaveOnApply and "AUTO-SAVE KE WORK.JSON: AKTIF (ON)" or "AUTO-SAVE KE WORK.JSON: MATI (OFF)"
 autoSaveBtn.Font = Enum.Font.GothamBlack
-autoSaveBtn.TextSize = 10
+autoSaveBtn.TextSize = 9
 autoSaveBtn.BorderSizePixel = 0
 autoSaveBtn.ZIndex = 5
 autoSaveBtn.Parent = secSetOpt
-registerTheme(autoSaveBtn, uiPrefs.autoSaveOnApply and "accent" or "surface", "BackgroundColor3")
-registerTheme(autoSaveBtn, "ink", "TextColor3")
-applyBrutalBorder(autoSaveBtn, false)
+registerTheme(autoSaveBtn, uiPrefs.autoSaveOnApply and "secondary" or "surface", "BackgroundColor3")
+registerTheme(autoSaveBtn, uiPrefs.autoSaveOnApply and "btnText" or "ink", "TextColor3")
+applyBrutalBorder(autoSaveBtn)
 
 autoSaveBtn.MouseButton1Click:Connect(function()
     uiPrefs.autoSaveOnApply = not uiPrefs.autoSaveOnApply
     autoSaveBtn.Text = uiPrefs.autoSaveOnApply and "AUTO-SAVE KE WORK.JSON: AKTIF (ON)" or "AUTO-SAVE KE WORK.JSON: MATI (OFF)"
     local th = getCurrentTheme()
-    autoSaveBtn.BackgroundColor3 = uiPrefs.autoSaveOnApply and th.accent or th.surface
+    autoSaveBtn.BackgroundColor3 = uiPrefs.autoSaveOnApply and th.secondary or th.surface
+    autoSaveBtn.TextColor3 = uiPrefs.autoSaveOnApply and th.btnText or th.ink
     savePrefs()
     setStatus("AUTO-SAVE: " .. (uiPrefs.autoSaveOnApply and "ON" or "OFF"), false)
 end)
@@ -2227,54 +1924,20 @@ makeSmallActionBtn(setBtnRow, "Salin JSON Minify", 0, 125, "secondary", function
         local ok, enc = pcall(function() return HttpService:JSONEncode(workData) end)
         if ok then
             setclipboard(string.gsub(enc, "[\r\n]", ""))
-            setStatus("JSON MINIFY DISALIN KE CLIPBOARD", false)
+            setStatus("JSON MINIFY DISALIN", false)
         end
     else
-        setStatus("EXECUTOR TANPA SETCLIPBOARD", true)
+        setStatus("NO SETCLIPBOARD", true)
     end
 end)
 
-makeSmallActionBtn(setBtnRow, "Reset Posisi UI", 130, 110, "surface", function()
+makeSmallActionBtn(setBtnRow, "Reset Posisi UI", 131, 115, "surface", function()
     main.Position = UDim2.new(0.5, 0, 0.52, 0)
     mainShadow.Position = UDim2.new(0.5, 5, 0.52, 5)
     bubbleBtn.Position = UDim2.new(0.03, 0, 0.25, 0)
     bubbleShadow.Position = UDim2.new(0.03, 4, 0.25, 4)
-    setStatus("POSISI UI DIRESET KE TENGAH", false)
+    setStatus("POSISI UI DIRESET", false)
 end)
-
-makeSmallActionBtn(setBtnRow, "Reset Workspace", 245, 115, "danger", function()
-    workData = defaultWorkData()
-    resetSelectionAll()
-    sldFade.setValue(workData.fade)
-    sldGm.setValue(workData.gm)
-    refreshMembersUI()
-    refreshRigEditorUI()
-    refreshCuesListUI()
-    setStatus("WORKSPACE DIRESET KE DEFAULT", false)
-end)
-
-applyFullTheme = function()
-    local th = getCurrentTheme()
-    for _, item in ipairs(themeBindings) do
-        if item.obj and item.obj.Parent then
-            item.obj[item.prop] = th[item.role]
-        end
-    end
-    for _, desc in ipairs(screen:GetDescendants()) do
-        if desc:IsA("UIStroke") then
-            desc.Thickness = uiPrefs.borderThickness
-            desc.Color = Color3.fromRGB(0, 0, 0)
-        end
-    end
-    autoSaveBtn.BackgroundColor3 = uiPrefs.autoSaveOnApply and th.accent or th.surface
-    refreshTabStyles()
-    for _, cs in ipairs(chipSelectorsList) do
-        cs.retheme()
-    end
-    if refreshMembersUI then refreshMembersUI() end
-    if refreshRigEditorUI then refreshRigEditorUI() end
-    if refreshCuesListUI then refreshCuesListUI() end
-end
 
 local cueLabelFooter = Instance.new("TextLabel")
 cueLabelFooter.Size = UDim2.new(0, 44, 1, 0)
@@ -2299,88 +1962,144 @@ cueIdBox.BorderSizePixel = 0
 cueIdBox.ZIndex = 4
 cueIdBox.Parent = footerBar
 registerTheme(cueIdBox, "accent", "BackgroundColor3")
-registerTheme(cueIdBox, "ink", "TextColor3")
-applyBrutalBorder(cueIdBox, false)
+registerTheme(cueIdBox, "btnText", "TextColor3")
+applyBrutalBorder(cueIdBox)
 
 cueIdBox.FocusLost:Connect(function()
     local clean = string.gsub(cueIdBox.Text, "%s+", "")
     if #clean > 0 then
         state.cueId = clean
+        if workData.cues[state.cueId] == nil and uiPrefs.promptRigOnNewCue then
+            openRigSetupModal(function()
+                setStatus("CUE " .. state.cueId .. " SIAP (" .. #workData.rig .. " UNIT)", false)
+            end)
+        end
     else
         cueIdBox.Text = state.cueId
     end
-    if refreshCuesListUI then refreshCuesListUI() end
+    if refreshSlotsAndCuesUI then refreshSlotsAndCuesUI() end
 end)
 
-refreshCuesListUI = function()
+refreshSlotsAndCuesUI = function()
     local th = getCurrentTheme()
     cueIdBox.Text = state.cueId
-    for _, child in ipairs(cueListContainer:GetChildren()) do
-        if child:IsA("TextButton") or child:IsA("TextLabel") then
+
+    for _, child in ipairs(slotGridWrap:GetChildren()) do
+        if child:IsA("TextButton") then
             child:Destroy()
         end
     end
 
-    local keys = {}
-    for k in pairs(workData.cues) do
-        table.insert(keys, tostring(k))
-    end
-    table.sort(keys, function(a, b)
-        local na, nb = tonumber(a), tonumber(b)
-        if na and nb then return na < nb end
-        return a < b
-    end)
+    local activeCue = workData.cues[state.cueId]
+    local effList = (activeCue and type(activeCue.eff) == "table") and activeCue.eff or workData.eff
 
-    if #keys == 0 then
-        local emptyLbl = Instance.new("TextLabel")
-        emptyLbl.Size = UDim2.new(1, 0, 0, 22)
-        emptyLbl.BackgroundTransparency = 1
-        emptyLbl.Text = "BELUM ADA CUE TERSIMPAN DI DMX_UI_WORK.JSON."
-        emptyLbl.Font = Enum.Font.Code
-        emptyLbl.TextSize = 10
-        emptyLbl.TextColor3 = th.subInk
-        emptyLbl.TextXAlignment = Enum.TextXAlignment.Left
-        emptyLbl.ZIndex = 5
-        emptyLbl.Parent = cueListContainer
-        return
-    end
+    for sIdx = 1, 6 do
+        local ef = effList[sIdx] or makeEmptyEffSlot()
+        local isSelSlot = (sIdx == state.slotIndex)
+        local statusTxt = ef.on and (string.upper(tostring(ef.target)) .. ":" .. string.upper(tostring(ef.shape))) or "MATI"
+        local sb = Instance.new("TextButton")
+        sb.BackgroundColor3 = isSelSlot and th.accent or (ef.on and th.secondary or th.surface)
+        sb.Text = "SLOT " .. sIdx .. " [" .. statusTxt .. "]"
+        sb.Font = Enum.Font.GothamBlack
+        sb.TextSize = 9
+        sb.TextColor3 = (isSelSlot or ef.on) and th.btnText or th.ink
+        sb.TextTruncate = Enum.TextTruncate.AtEnd
+        sb.BorderSizePixel = 0
+        sb.ZIndex = 5
+        sb.Parent = slotGridWrap
+        applyBrutalBorder(sb)
 
-    for _, k in ipairs(keys) do
-        local c = workData.cues[k]
-        local isSelected = (k == state.cueId)
-        local detail = ""
-        if c.layer == "chs" and c.chase and c.chase.steps then
-            detail = "CHASE (" .. #c.chase.steps .. " STEPS)"
-        elseif c.layer == "dim" or c.layer == "pos" or c.layer == "beam" then
-            detail = "STATIC (" .. string.upper(tostring(c.layer)) .. ")"
-        elseif type(c.eff) == "table" then
-            local activeNames = {}
-            for sIdx, ef in ipairs(c.eff) do
-                if ef.on then
-                    table.insert(activeNames, "S" .. sIdx .. ":" .. string.upper(tostring(ef.target)) .. "/" .. string.upper(tostring(ef.shape)))
+        sb.MouseButton1Click:Connect(function()
+            state.slotIndex = sIdx
+            sldSlot.setValue(sIdx)
+            if ef.on then
+                state.target = ef.target or state.target
+                state.shape = ef.shape or state.shape
+                state.rate = tonumber(ef.rate) or state.rate
+                state.sx = tonumber(ef.sx) or state.sx
+                state.sy = tonumber(ef.sy) or state.sy
+                state.phase = tonumber(ef.phase) or state.phase
+                state.wing = tonumber(ef.wing) or state.wing
+                state.groups = tonumber(ef.groups) or state.groups
+                state.dir = ef.dir or state.dir
+                state.wax = ef.wax or state.wax
+                state.dty = tonumber(ef.dty) or state.dty
+                state.soft = tonumber(ef.soft) or state.soft
+                if customControls.syncFromState then
+                    customControls.syncFromState()
                 end
             end
-            detail = (#activeNames > 0) and table.concat(activeNames, ", ") or "OFF"
+            refreshSlotsAndCuesUI()
+            setStatus("SLOT " .. sIdx .. " DIPILIH", false)
+        end)
+    end
+
+    for _, child in ipairs(cueGridWrap:GetChildren()) do
+        if child:IsA("TextButton") then
+            child:Destroy()
+        end
+    end
+
+    for i = 1, 24 do
+        local k = tostring(i)
+        local c = workData.cues[k]
+        local isSelCue = (k == state.cueId)
+        local sub = "kosong"
+        if c then
+            if c.layer == "mov" and type(c.eff) == "table" and c.eff[1] then
+                sub = string.upper(tostring(c.eff[1].shape or "MOV"))
+            elseif c.layer == "eff" then
+                sub = "EFF-SLOT"
+            elseif c.layer == "chs" then
+                sub = "CHASE"
+            else
+                sub = string.upper(tostring(c.layer))
+            end
         end
 
-        local rowBtn = Instance.new("TextButton")
-        rowBtn.Size = UDim2.new(1, 0, 0, 24)
-        rowBtn.BackgroundColor3 = isSelected and th.accent or th.surface
-        rowBtn.Text = string.format(" %s CUE [%s] | %-4s | %s", isSelected and ">" or "-", k, string.upper(tostring(c.layer)), detail)
-        rowBtn.Font = Enum.Font.GothamBold
-        rowBtn.TextSize = 10
-        rowBtn.TextColor3 = th.ink
-        rowBtn.TextXAlignment = Enum.TextXAlignment.Left
-        rowBtn.TextTruncate = Enum.TextTruncate.AtEnd
-        rowBtn.BorderSizePixel = 0
-        rowBtn.ZIndex = 5
-        rowBtn.Parent = cueListContainer
-        applyBrutalBorder(rowBtn, false)
+        local cb = Instance.new("TextButton")
+        cb.BackgroundColor3 = isSelCue and th.accent or (c and th.secondary or th.surface)
+        cb.Text = "Cue " .. i .. "\n" .. sub
+        cb.Font = Enum.Font.GothamBold
+        cb.TextSize = 8
+        cb.TextColor3 = (isSelCue or c) and th.btnText or th.ink
+        cb.BorderSizePixel = 0
+        cb.ZIndex = 5
+        cb.Parent = cueGridWrap
+        applyBrutalBorder(cb)
 
-        rowBtn.MouseButton1Click:Connect(function()
+        cb.MouseButton1Click:Connect(function()
             loadCueIntoEditor(k)
         end)
     end
+end
+
+applyFullTheme = function()
+    local th = getCurrentTheme()
+    for _, item in ipairs(themeBindings) do
+        if item.obj and item.obj.Parent then
+            item.obj[item.prop] = th[item.role]
+        end
+    end
+    for _, desc in ipairs(screen:GetDescendants()) do
+        if desc:IsA("UIStroke") then
+            desc.Thickness = uiPrefs.borderThickness
+            desc.Color = Color3.fromRGB(0, 0, 0)
+        end
+    end
+    promptRigBtn.BackgroundColor3 = uiPrefs.promptRigOnNewCue and th.accent or th.surface
+    promptRigBtn.TextColor3 = uiPrefs.promptRigOnNewCue and th.btnText or th.ink
+    autoSaveBtn.BackgroundColor3 = uiPrefs.autoSaveOnApply and th.secondary or th.surface
+    autoSaveBtn.TextColor3 = uiPrefs.autoSaveOnApply and th.btnText or th.ink
+    previewToggleBtn.BackgroundColor3 = state.previewActive and th.accent or th.surface
+    previewToggleBtn.TextColor3 = state.previewActive and th.btnText or th.ink
+    refreshTabStyles()
+    for _, cs in ipairs(chipSelectorsList) do
+        cs.retheme()
+    end
+    if refreshMembersUI then refreshMembersUI() end
+    if refreshSlotsAndCuesUI then refreshSlotsAndCuesUI() end
+    rebuildPreviewDots()
 end
 
 local reloadBtn = Instance.new("TextButton")
@@ -2393,19 +2112,15 @@ reloadBtn.BorderSizePixel = 0
 reloadBtn.ZIndex = 4
 reloadBtn.Parent = footerBar
 registerTheme(reloadBtn, "secondary", "BackgroundColor3")
-registerTheme(reloadBtn, "ink", "TextColor3")
-applyBrutalBorder(reloadBtn, false)
+registerTheme(reloadBtn, "btnText", "TextColor3")
+applyBrutalBorder(reloadBtn)
 
 reloadBtn.MouseButton1Click:Connect(function()
     local ok, msg = loadWorkFile()
-    loadShowsFile()
-    sldFade.setValue(workData.fade)
-    sldGm.setValue(workData.gm)
     resetSelectionAll()
     refreshMembersUI()
-    refreshRigEditorUI()
-    refreshCuesListUI()
-    refreshShowsListUI()
+    refreshSlotsAndCuesUI()
+    rebuildPreviewDots()
     setStatus(msg, not ok)
 end)
 
@@ -2419,18 +2134,16 @@ saveBtn.BorderSizePixel = 0
 saveBtn.ZIndex = 4
 saveBtn.Parent = footerBar
 registerTheme(saveBtn, "accent", "BackgroundColor3")
-registerTheme(saveBtn, "ink", "TextColor3")
-applyBrutalBorder(saveBtn, false)
+registerTheme(saveBtn, "btnText", "TextColor3")
+applyBrutalBorder(saveBtn)
 
 saveBtn.MouseButton1Click:Connect(function()
     local ok, msg = saveWorkFile()
     setStatus(msg, not ok)
 end)
 
-rebuildDynamicFixtureSliders()
 refreshMembersUI()
-refreshRigEditorUI()
-refreshCuesListUI()
-refreshShowsListUI()
+refreshSlotsAndCuesUI()
+rebuildPreviewDots()
 applyFullTheme()
-switchTab("templates")
+switchTab("presets")
