@@ -74,6 +74,8 @@ local THEMES = {
 local uiPrefs = {
     themeName = "Brutal Dark",
     uiScale = 1.0,
+    winWidth = 520,
+    winHeight = 330,
     borderThickness = 2,
     autoSaveOnSaveCue = true,
     bubbleSize = 46,
@@ -89,7 +91,9 @@ local function loadPrefs()
             local ok2, dec = pcall(function() return HttpService:JSONDecode(raw) end)
             if ok2 and type(dec) == "table" then
                 if THEMES[dec.themeName] then uiPrefs.themeName = dec.themeName end
-                if tonumber(dec.uiScale) then uiPrefs.uiScale = math.clamp(tonumber(dec.uiScale), 0.75, 1.30) end
+                if tonumber(dec.uiScale) then uiPrefs.uiScale = math.clamp(tonumber(dec.uiScale), 0.20, 1.30) end
+                if tonumber(dec.winWidth) then uiPrefs.winWidth = math.clamp(math.floor(tonumber(dec.winWidth)), 320, 900) end
+                if tonumber(dec.winHeight) then uiPrefs.winHeight = math.clamp(math.floor(tonumber(dec.winHeight)), 220, 650) end
                 if tonumber(dec.borderThickness) then uiPrefs.borderThickness = math.clamp(math.floor(tonumber(dec.borderThickness)), 1, 4) end
                 if type(dec.autoSaveOnSaveCue) == "boolean" then uiPrefs.autoSaveOnSaveCue = dec.autoSaveOnSaveCue end
                 if tonumber(dec.bubbleSize) then uiPrefs.bubbleSize = math.clamp(math.floor(tonumber(dec.bubbleSize)), 36, 66) end
@@ -127,6 +131,21 @@ local FIXTURE_FOOTPRINTS = {
     sbar = 8
 }
 
+local FIXTURE_KEYS_ORDER = {
+    clara = {"dim", "strobe", "pan", "tilt", "speed", "color", "gobo", "gobor", "prism", "prism2", "prot", "frost", "focus", "ctrl"},
+    strobe = {"int", "shutter", "col1", "pos6", "fx2", "cont2", "macro1", "macro2"},
+    mapple = {"rdim", "rstrobe", "rc1", "rc2", "rc3", "rmac", "adim", "astrobe", "acol", "amac", "bdim", "bcol", "bmac", "mpos", "mmode"},
+    parled = {"dim", "strobe", "r", "g", "b", "w"},
+    fogger = {"fog"},
+    blinder = {"d1", "d2", "d3", "d4"},
+    flower = {"d1", "d2", "b1", "b2", "r1", "r2", "g1", "g2", "s1", "s2", "m1", "m2", "ms1", "ms2", "mo1", "mo2", "str"},
+    pixel = {"mdim", "mstrb", "mr", "mg", "mb", "meff", "mespd", "mstat", "mmac", "adim", "astrb", "aeff", "aespd", "astat", "tilt", "teff", "tspd", "tsprd", "zoom"},
+    retro = {"r", "g", "b", "str", "dins", "dref", "dring", "mref", "mring", "eref", "ering"},
+    wall = {"dim", "strobe", "r", "g", "b", "eff", "spd"},
+    windmill = {"dim", "str", "r", "g", "b", "rot", "ei", "eo"},
+    sbar = {"dim", "strobe", "r", "g", "b", "eff", "spd"}
+}
+
 local FIXTURE_DEFAULTS = {
     clara = {tilt=0.5, gobor=0, color=0, strobe=0, prism=0, pan=0.5, frost=0, ctrl=0, dim=1, focus=0.5, speed=0, gobo=0, prot=0, prism2=0},
     strobe = {shutter=0, col1=0, int=1, cont2=0, fx2=0, pos6=0.5, macro2=0, macro1=0},
@@ -155,6 +174,21 @@ local STEP_PRESETS = {
     {name="Kedip Ganjil-Genap", pattern="odd_even", glide=0.0, rate=4.0},
     {name="Lampu Lari (Runner)", pattern="runner", glide=0.10, rate=4.5},
     {name="Pelangi Berjalan", pattern="color_run", glide=0.20, rate=3.0}
+}
+
+local RGB_COLOR_PRESETS = {
+    {name="Pure Red", color=Color3.fromRGB(235, 55, 55), vals={r=1, g=0, b=0, w=0, mr=1, mg=0, mb=0, color=0.15, col1=0.15, acol=0.15, bcol=0.15}},
+    {name="Pure Green", color=Color3.fromRGB(50, 210, 95), vals={r=0, g=1, b=0, w=0, mr=0, mg=1, mb=0, color=0.30, col1=0.30, acol=0.30, bcol=0.30}},
+    {name="Pure Blue", color=Color3.fromRGB(55, 125, 245), vals={r=0, g=0, b=1, w=0, mr=0, mg=0, mb=1, color=0.45, col1=0.45, acol=0.45, bcol=0.45}},
+    {name="Cool White", color=Color3.fromRGB(235, 242, 255), vals={r=1, g=1, b=1, w=1, mr=1, mg=1, mb=1, color=0.0, col1=0.0, acol=0.0, bcol=0.0}},
+    {name="Warm White", color=Color3.fromRGB(255, 215, 155), vals={r=1, g=0.78, b=0.45, w=0.85, mr=1, mg=0.78, mb=0.45, color=0.08, col1=0.08, acol=0.08, bcol=0.08}},
+    {name="Cyan Aqua", color=Color3.fromRGB(45, 220, 230), vals={r=0, g=1, b=1, w=0, mr=0, mg=1, mb=1, color=0.55, col1=0.55, acol=0.55, bcol=0.55}},
+    {name="Magenta Pink", color=Color3.fromRGB(235, 65, 195), vals={r=1, g=0, b=1, w=0, mr=1, mg=0, mb=1, color=0.70, col1=0.70, acol=0.70, bcol=0.70}},
+    {name="Yellow Gold", color=Color3.fromRGB(245, 205, 45), vals={r=1, g=0.85, b=0, w=0, mr=1, mg=0.85, mb=0, color=0.22, col1=0.22, acol=0.22, bcol=0.22}},
+    {name="Amber Orange", color=Color3.fromRGB(245, 125, 35), vals={r=1, g=0.38, b=0, w=0, mr=1, mg=0.38, mb=0, color=0.12, col1=0.12, acol=0.12, bcol=0.12}},
+    {name="UV Purple", color=Color3.fromRGB(135, 60, 240), vals={r=0.45, g=0, b=1, w=0, mr=0.45, mg=0, mb=1, color=0.82, col1=0.82, acol=0.82, bcol=0.82}},
+    {name="Prism 9-Dot", color=Color3.fromRGB(90, 185, 215), vals={prism=0.6, gobo=0.35, color=0.35, focus=0.4}},
+    {name="Grid 9-Box", color=Color3.fromRGB(215, 75, 95), vals={gobo=0.91, color=0.62, prism=0, focus=0.5}}
 }
 
 local function deepCopy(orig)
@@ -339,6 +373,10 @@ local state = {
     previewActive = true,
     previewView = "top",
     layoutEditMode = false,
+    activeLayoutNode = 1,
+    editorFixtureType = "clara",
+    staticLayerType = "pos",
+    editorValues = deepCopy(FIXTURE_DEFAULTS.clara),
     rigType = (#workData.rig > 0 and workData.rig[1].t) or "clara",
     rigCount = math.max(1, #workData.rig),
     rigStartAddr = (#workData.rig > 0 and workData.rig[1].a) or 1,
@@ -376,18 +414,13 @@ uiScaleObj.Parent = screen
 local main = Instance.new("Frame")
 main.Name = "Main"
 main.AnchorPoint = Vector2.new(0.5, 0.5)
-main.Size = UDim2.new(0.86, 0, 0.84, 0)
+main.Size = UDim2.new(0, uiPrefs.winWidth, 0, uiPrefs.winHeight)
 main.Position = UDim2.new(0.5, 0, 0.52, 0)
 main.BackgroundTransparency = uiPrefs.bgTransparency
 main.BorderSizePixel = 0
 main.ZIndex = 2
 main.Parent = screen
 registerTheme(main, "bg", "BackgroundColor3")
-
-local sizeConstraint = Instance.new("UISizeConstraint")
-sizeConstraint.MinSize = Vector2.new(360, 260)
-sizeConstraint.MaxSize = Vector2.new(540, 360)
-sizeConstraint.Parent = main
 
 local function applyBrutalBorder(guiObj)
     local st = guiObj:FindFirstChildOfClass("UIStroke") or Instance.new("UIStroke")
@@ -442,9 +475,9 @@ local bubbleBtn = Instance.new("TextButton")
 bubbleBtn.Name = "FloatingBubble"
 bubbleBtn.Size = UDim2.new(0, uiPrefs.bubbleSize, 0, uiPrefs.bubbleSize)
 bubbleBtn.Position = UDim2.new(0.03, 0, 0.25, 0)
-bubbleBtn.Text = "STEP"
+bubbleBtn.Text = "APEX"
 bubbleBtn.Font = Enum.Font.GothamBlack
-bubbleBtn.TextSize = 12
+bubbleBtn.TextSize = 11
 bubbleBtn.BorderSizePixel = 0
 bubbleBtn.Visible = false
 bubbleBtn.ZIndex = 20
@@ -471,7 +504,7 @@ applyBrutalBorder(topBar)
 makeDraggableFrame(topBar, main, nil)
 
 local titleLbl = Instance.new("TextLabel")
-titleLbl.Size = UDim2.new(0, 170, 1, 0)
+titleLbl.Size = UDim2.new(0, 165, 1, 0)
 titleLbl.Position = UDim2.new(0, 10, 0, 0)
 titleLbl.BackgroundTransparency = 1
 titleLbl.Text = "APEX STEP // RK-512"
@@ -483,8 +516,8 @@ titleLbl.Parent = topBar
 registerTheme(titleLbl, "btnText", "TextColor3")
 
 local statusLbl = Instance.new("TextLabel")
-statusLbl.Size = UDim2.new(1, -250, 1, 0)
-statusLbl.Position = UDim2.new(0, 180, 0, 0)
+statusLbl.Size = UDim2.new(1, -245, 1, 0)
+statusLbl.Position = UDim2.new(0, 175, 0, 0)
 statusLbl.BackgroundTransparency = 1
 statusLbl.Text = "READY // " .. WORK_FILE
 statusLbl.Font = Enum.Font.Code
@@ -547,408 +580,9 @@ body.ClipsDescendants = true
 body.ZIndex = 3
 body.Parent = main
 
-local globalPreviewBox = Instance.new("Frame")
-globalPreviewBox.Size = UDim2.new(1, -16, 0, 114)
-globalPreviewBox.Position = UDim2.new(0, 8, 0, 5)
-globalPreviewBox.BackgroundTransparency = uiPrefs.bgTransparency
-globalPreviewBox.BorderSizePixel = 0
-globalPreviewBox.ZIndex = 3
-globalPreviewBox.Parent = body
-registerTheme(globalPreviewBox, "bg", "BackgroundColor3")
-applyBrutalBorder(globalPreviewBox)
-
-local pvBar = Instance.new("Frame")
-pvBar.Size = UDim2.new(1, 0, 0, 22)
-pvBar.BackgroundTransparency = 1
-pvBar.ZIndex = 4
-pvBar.Parent = globalPreviewBox
-
-local pvViewTopBtn = Instance.new("TextButton")
-pvViewTopBtn.Size = UDim2.new(0, 68, 0, 18)
-pvViewTopBtn.Position = UDim2.new(0, 4, 0, 2)
-pvViewTopBtn.Text = "VIEW: ATAS"
-pvViewTopBtn.Font = Enum.Font.GothamBlack
-pvViewTopBtn.TextSize = 8
-pvViewTopBtn.BorderSizePixel = 0
-pvViewTopBtn.ZIndex = 5
-pvViewTopBtn.Parent = pvBar
-applyBrutalBorder(pvViewTopBtn)
-
-local pvViewFrontBtn = Instance.new("TextButton")
-pvViewFrontBtn.Size = UDim2.new(0, 74, 0, 18)
-pvViewFrontBtn.Position = UDim2.new(0, 75, 0, 2)
-pvViewFrontBtn.Text = "VIEW: DEPAN"
-pvViewFrontBtn.Font = Enum.Font.GothamBlack
-pvViewFrontBtn.TextSize = 8
-pvViewFrontBtn.BorderSizePixel = 0
-pvViewFrontBtn.ZIndex = 5
-pvViewFrontBtn.Parent = pvBar
-applyBrutalBorder(pvViewFrontBtn)
-
-local pvDragToggleBtn = Instance.new("TextButton")
-pvDragToggleBtn.Size = UDim2.new(0, 84, 0, 18)
-pvDragToggleBtn.Position = UDim2.new(0, 152, 0, 2)
-pvDragToggleBtn.Text = "GESER: OFF"
-pvDragToggleBtn.Font = Enum.Font.GothamBlack
-pvDragToggleBtn.TextSize = 8
-pvDragToggleBtn.BorderSizePixel = 0
-pvDragToggleBtn.ZIndex = 5
-pvDragToggleBtn.Parent = pvBar
-applyBrutalBorder(pvDragToggleBtn)
-
-local pvShapeBarBtn = Instance.new("TextButton")
-pvShapeBarBtn.Size = UDim2.new(0, 46, 0, 18)
-pvShapeBarBtn.Position = UDim2.new(0, 239, 0, 2)
-pvShapeBarBtn.Text = "BARIS"
-pvShapeBarBtn.Font = Enum.Font.GothamBold
-pvShapeBarBtn.TextSize = 8
-pvShapeBarBtn.BorderSizePixel = 0
-pvShapeBarBtn.ZIndex = 5
-pvShapeBarBtn.Parent = pvBar
-registerTheme(pvShapeBarBtn, "surface", "BackgroundColor3")
-registerTheme(pvShapeBarBtn, "ink", "TextColor3")
-applyBrutalBorder(pvShapeBarBtn)
-
-local pvShapeArcBtn = Instance.new("TextButton")
-pvShapeArcBtn.Size = UDim2.new(0, 46, 0, 18)
-pvShapeArcBtn.Position = UDim2.new(0, 288, 0, 2)
-pvShapeArcBtn.Text = "BUSUR"
-pvShapeArcBtn.Font = Enum.Font.GothamBold
-pvShapeArcBtn.TextSize = 8
-pvShapeArcBtn.BorderSizePixel = 0
-pvShapeArcBtn.ZIndex = 5
-pvShapeArcBtn.Parent = pvBar
-registerTheme(pvShapeArcBtn, "surface", "BackgroundColor3")
-registerTheme(pvShapeArcBtn, "ink", "TextColor3")
-applyBrutalBorder(pvShapeArcBtn)
-
-local pvStatusLbl = Instance.new("TextLabel")
-pvStatusLbl.Size = UDim2.new(1, -342, 1, 0)
-pvStatusLbl.Position = UDim2.new(0, 338, 0, 0)
-pvStatusLbl.BackgroundTransparency = 1
-pvStatusLbl.Text = "READY"
-pvStatusLbl.Font = Enum.Font.Code
-pvStatusLbl.TextSize = 8
-pvStatusLbl.TextXAlignment = Enum.TextXAlignment.Right
-pvStatusLbl.TextTruncate = Enum.TextTruncate.AtEnd
-pvStatusLbl.ZIndex = 5
-pvStatusLbl.Parent = pvBar
-registerTheme(pvStatusLbl, "subInk", "TextColor3")
-
-local previewCanvas = Instance.new("Frame")
-previewCanvas.Size = UDim2.new(1, -8, 1, -26)
-previewCanvas.Position = UDim2.new(0, 4, 0, 22)
-previewCanvas.ClipsDescendants = true
-previewCanvas.BorderSizePixel = 0
-previewCanvas.ZIndex = 4
-previewCanvas.Parent = globalPreviewBox
-registerTheme(previewCanvas, "canvas", "BackgroundColor3")
-applyBrutalBorder(previewCanvas)
-
-local guideTopLbl = Instance.new("TextLabel")
-guideTopLbl.Size = UDim2.new(1, 0, 0, 12)
-guideTopLbl.Position = UDim2.new(0, 0, 0, 1)
-guideTopLbl.BackgroundTransparency = 1
-guideTopLbl.Text = "BELAKANG PANGGUNG (TRUSS)"
-guideTopLbl.Font = Enum.Font.Code
-guideTopLbl.TextSize = 8
-guideTopLbl.TextColor3 = Color3.fromRGB(115, 120, 135)
-guideTopLbl.ZIndex = 5
-guideTopLbl.Parent = previewCanvas
-
-local guideBotLbl = Instance.new("TextLabel")
-guideBotLbl.Size = UDim2.new(1, 0, 0, 12)
-guideBotLbl.Position = UDim2.new(0, 0, 1, -13)
-guideBotLbl.BackgroundTransparency = 1
-guideBotLbl.Text = "DEPAN / PENONTON"
-guideBotLbl.Font = Enum.Font.Code
-guideBotLbl.TextSize = 8
-guideBotLbl.TextColor3 = Color3.fromRGB(115, 120, 135)
-guideBotLbl.ZIndex = 5
-guideBotLbl.Parent = previewCanvas
-
-local previewFixtures = {}
-local rebuildPreviewDots
-
-local function refreshPreviewToolbar()
-    local th = getCurrentTheme()
-    local isTop = (state.previewView == "top")
-    pvViewTopBtn.BackgroundColor3 = isTop and th.accent or th.surface
-    pvViewTopBtn.TextColor3 = isTop and th.btnText or th.ink
-    pvViewFrontBtn.BackgroundColor3 = (not isTop) and th.accent or th.surface
-    pvViewFrontBtn.TextColor3 = (not isTop) and th.btnText or th.ink
-
-    pvDragToggleBtn.BackgroundColor3 = state.layoutEditMode and th.secondary or th.surface
-    pvDragToggleBtn.TextColor3 = state.layoutEditMode and th.btnText or th.ink
-    pvDragToggleBtn.Text = state.layoutEditMode and "GESER: ON" or "GESER: OFF"
-
-    if isTop then
-        guideTopLbl.Text = state.layoutEditMode and "MODE GESER LAYOUT: SERET LAMPU #1..N (BELAKANG)" or "TAMPAK ATAS (DENAH X/Y) - BELAKANG"
-        guideBotLbl.Text = "DEPAN / PENONTON"
-    else
-        guideTopLbl.Text = "TAMPAK DEPAN (TRUSS ATAS)"
-        guideBotLbl.Text = "LANTAI PANGGUNG / PENONTON"
-    end
-end
-
-pvViewTopBtn.MouseButton1Click:Connect(function()
-    state.previewView = "top"
-    refreshPreviewToolbar()
-    if rebuildPreviewDots then rebuildPreviewDots() end
-end)
-
-pvViewFrontBtn.MouseButton1Click:Connect(function()
-    state.previewView = "front"
-    refreshPreviewToolbar()
-    if rebuildPreviewDots then rebuildPreviewDots() end
-end)
-
-pvDragToggleBtn.MouseButton1Click:Connect(function()
-    state.layoutEditMode = not state.layoutEditMode
-    refreshPreviewToolbar()
-    if rebuildPreviewDots then rebuildPreviewDots() end
-    setStatus(state.layoutEditMode and "GESER POSISI LAMPU DI KANVAS ATAS" or "MODE SIMULASI GERAKAN AKTIF", false)
-end)
-
-pvShapeBarBtn.MouseButton1Click:Connect(function()
-    local total = math.max(1, #workData.rig)
-    for i, fix in ipairs(workData.rig) do
-        local px = (total == 1) and 0.5 or (0.10 + ((i - 1) * (0.80 / math.max(1, total - 1))))
-        fix.x = math.floor(px * 100 + 0.5) / 100
-        fix.y = 0.25
-    end
-    if rebuildPreviewDots then rebuildPreviewDots() end
-    setStatus("TATA LETAK: 1 BARIS LURUS", false)
-end)
-
-pvShapeArcBtn.MouseButton1Click:Connect(function()
-    local total = math.max(1, #workData.rig)
-    for i, fix in ipairs(workData.rig) do
-        local norm = (total == 1) and 0 or (((i - 1) / math.max(1, total - 1)) * 2 - 1)
-        local px = 0.5 + (norm * 0.42)
-        local py = 0.22 + ((1 - (norm * norm)) * 0.45)
-        fix.x = math.floor(px * 100 + 0.5) / 100
-        fix.y = math.floor(py * 100 + 0.5) / 100
-    end
-    if rebuildPreviewDots then rebuildPreviewDots() end
-    setStatus("TATA LETAK: BUSUR MELENGKUNG", false)
-end)
-
-rebuildPreviewDots = function()
-    local th = getCurrentTheme()
-    for _, item in ipairs(previewFixtures) do
-        if item.head then item.head:Destroy() end
-        if item.beam then item.beam:Destroy() end
-        if item.spot then item.spot:Destroy() end
-    end
-    previewFixtures = {}
-    local total = math.max(1, #workData.rig)
-
-    for i = 1, total do
-        local fix = workData.rig[i]
-        local fx = math.clamp(tonumber(fix.x) or 0.5, 0.06, 0.94)
-        local fy = math.clamp(tonumber(fix.y) or 0.25, 0.12, 0.88)
-
-        local beam = Instance.new("Frame")
-        beam.Size = UDim2.new(0, 10, 0, 36)
-        beam.AnchorPoint = Vector2.new(0.5, 0.5)
-        beam.BackgroundColor3 = th.accent
-        beam.BackgroundTransparency = 0.65
-        beam.BorderSizePixel = 0
-        beam.ZIndex = 6
-        beam.Parent = previewCanvas
-
-        local head = Instance.new("TextButton")
-        head.Size = UDim2.new(0, 18, 0, 18)
-        head.AnchorPoint = Vector2.new(0.5, 0.5)
-        head.Text = tostring(i)
-        head.Font = Enum.Font.GothamBlack
-        head.TextSize = 9
-        head.TextColor3 = th.btnText
-        head.BackgroundColor3 = state.layoutEditMode and th.secondary or th.header
-        head.AutoButtonColor = false
-        head.BorderSizePixel = 0
-        head.ZIndex = 8
-        head.Parent = previewCanvas
-        applyBrutalBorder(head)
-
-        local spot = Instance.new("Frame")
-        spot.Size = UDim2.new(0, 10, 0, 10)
-        spot.AnchorPoint = Vector2.new(0.5, 0.5)
-        spot.BackgroundColor3 = th.accent
-        spot.BorderSizePixel = 0
-        spot.ZIndex = 7
-        spot.Parent = previewCanvas
-        applyBrutalBorder(spot)
-
-        if state.previewView == "top" then
-            head.Position = UDim2.new(fx, 0, fy, 0)
-            spot.Position = UDim2.new(fx, 0, fy, 0)
-            beam.Position = UDim2.new(fx, 0, fy, 0)
-        else
-            head.Position = UDim2.new(fx, 0, 0.18, 0)
-            spot.Position = UDim2.new(fx, 0, 0.78, 0)
-            beam.Position = UDim2.new(fx, 0, 0.48, 0)
-        end
-
-        do
-            local draggingNode = false
-            head.InputBegan:Connect(function(input)
-                if not state.layoutEditMode then return end
-                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                    draggingNode = true
-                end
-            end)
-            UserInputService.InputChanged:Connect(function(input)
-                if draggingNode and state.layoutEditMode and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-                    local rx = math.clamp((input.Position.X - previewCanvas.AbsolutePosition.X) / math.max(1, previewCanvas.AbsoluteSize.X), 0.06, 0.94)
-                    local ry = math.clamp((input.Position.Y - previewCanvas.AbsolutePosition.Y) / math.max(1, previewCanvas.AbsoluteSize.Y), 0.12, 0.88)
-                    fix.x = math.floor(rx * 100 + 0.5) / 100
-                    if state.previewView == "top" then
-                        fix.y = math.floor(ry * 100 + 0.5) / 100
-                        head.Position = UDim2.new(fix.x, 0, fix.y, 0)
-                        spot.Position = UDim2.new(fix.x, 0, fix.y, 0)
-                        beam.Position = UDim2.new(fix.x, 0, fix.y, 0)
-                    else
-                        head.Position = UDim2.new(fix.x, 0, 0.18, 0)
-                        spot.Position = UDim2.new(fix.x, 0, 0.78, 0)
-                        beam.Position = UDim2.new(fix.x, 0, 0.48, 0)
-                    end
-                    pvStatusLbl.Text = string.format("#%d X:%.2f Y:%.2f", i, fix.x, fix.y)
-                end
-            end)
-            UserInputService.InputEnded:Connect(function(input)
-                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-                    if draggingNode then
-                        draggingNode = false
-                        setStatus(string.format("POSISI #%d DISIMPAN (X:%.2f Y:%.2f)", i, fix.x, fix.y), false)
-                    end
-                end
-            end)
-        end
-
-        previewFixtures[i] = {head = head, beam = beam, spot = spot, fix = fix}
-    end
-end
-
-RunService.RenderStepped:Connect(function()
-    if not state.previewActive or not main.Visible then return end
-    if #previewFixtures ~= #workData.rig then
-        rebuildPreviewDots()
-    end
-    local th = getCurrentTheme()
-    local totalSteps = #state.customSteps
-    local activeFrame = nil
-    local nextFrame = nil
-    local frac = 0
-
-    if not state.layoutEditMode then
-        if totalSteps > 0 then
-            local rawPos = (os.clock() * state.stepRate) % totalSteps
-            local idx1 = math.floor(rawPos) + 1
-            local idx2 = (idx1 % totalSteps) + 1
-            frac = rawPos - math.floor(rawPos)
-            activeFrame = state.customSteps[idx1]
-            nextFrame = state.customSteps[idx2]
-            pvStatusLbl.Text = "STEP " .. idx1 .. "/" .. totalSteps
-        else
-            pvStatusLbl.Text = string.format("P:%.2f T:%.2f", state.curPan, state.curTilt)
-        end
-    end
-
-    local totalFix = math.max(1, #previewFixtures)
-    local cw = math.max(1, previewCanvas.AbsoluteSize.X)
-    local ch = math.max(1, previewCanvas.AbsoluteSize.Y)
-
-    for i, item in ipairs(previewFixtures) do
-        local isSel = selectedMembers[i] == true
-        item.head.Visible = isSel or state.layoutEditMode
-        item.beam.Visible = isSel and (not state.layoutEditMode)
-        item.spot.Visible = isSel and (not state.layoutEditMode)
-
-        local fx = math.clamp(tonumber(item.fix.x) or 0.5, 0.06, 0.94)
-        local fy = math.clamp(tonumber(item.fix.y) or 0.25, 0.12, 0.88)
-
-        if state.layoutEditMode then
-            item.head.Rotation = 0
-            if state.previewView == "top" then
-                item.head.Position = UDim2.new(fx, 0, fy, 0)
-            else
-                item.head.Position = UDim2.new(fx, 0, 0.18, 0)
-            end
-        elseif isSel then
-            local panVal = state.curPan
-            local tiltVal = state.curTilt
-            local dimVal = state.curDim
-            local colVal = state.curColor
-
-            if state.curMirror and i > (totalFix / 2) then
-                panVal = 1 - panVal
-            end
-
-            if activeFrame and activeFrame[tostring(i)] and activeFrame[tostring(i)].v then
-                local v1 = activeFrame[tostring(i)].v
-                panVal = v1.pan or 0.5
-                tiltVal = v1.tilt or 0.5
-                dimVal = v1.dim or v1.int or v1.r or 1
-                colVal = v1.color or v1.col1 or 0
-                if state.stepGlide > 0 and nextFrame and nextFrame[tostring(i)] and nextFrame[tostring(i)].v then
-                    local v2 = nextFrame[tostring(i)].v
-                    local g = frac * state.stepGlide
-                    panVal = panVal + (((v2.pan or panVal) - panVal) * g)
-                    tiltVal = tiltVal + (((v2.tilt or tiltVal) - tiltVal) * g)
-                end
-            end
-
-            local startX, startY, targetX, targetY
-            if state.previewView == "top" then
-                startX = fx
-                startY = fy
-                local offX = (panVal - 0.5) * 0.34
-                local offY = (0.5 - tiltVal) * 0.42
-                targetX = math.clamp(startX + offX, 0.04, 0.96)
-                targetY = math.clamp(startY + 0.18 + offY, 0.08, 0.92)
-            else
-                startX = fx
-                startY = 0.18
-                targetX = math.clamp(startX + ((panVal - 0.5) * 0.44), 0.04, 0.96)
-                targetY = math.clamp(0.84 - (tiltVal * 0.46), 0.34, 0.88)
-            end
-
-            item.head.Position = UDim2.new(startX, 0, startY, 0)
-            item.spot.Position = UDim2.new(targetX, 0, targetY, 0)
-
-            local dx = (targetX - startX) * cw
-            local dy = (targetY - startY) * ch
-            local dist = math.sqrt((dx * dx) + (dy * dy))
-            local deg = math.deg(math.atan2(dy, dx)) - 90
-
-            item.beam.Position = UDim2.new(startX, dx * 0.5, startY, dy * 0.5)
-            item.beam.Size = UDim2.new(0, 10, 0, math.max(8, dist))
-            item.beam.Rotation = deg
-            item.head.Rotation = deg
-
-            if dimVal <= 0.05 then
-                item.beam.BackgroundTransparency = 0.96
-                item.spot.BackgroundColor3 = Color3.fromRGB(50, 50, 55)
-            else
-                item.beam.BackgroundTransparency = 0.60
-                if colVal > 0.02 then
-                    local c = Color3.fromHSV(colVal % 1, 0.9, 1)
-                    item.beam.BackgroundColor3 = c
-                    item.spot.BackgroundColor3 = c
-                else
-                    item.beam.BackgroundColor3 = th.accent
-                    item.spot.BackgroundColor3 = th.accent
-                end
-            end
-        end
-    end
-end)
-
 local navBar = Instance.new("ScrollingFrame")
-navBar.Size = UDim2.new(1, -16, 0, 26)
-navBar.Position = UDim2.new(0, 8, 0, 123)
+navBar.Size = UDim2.new(1, -16, 0, 28)
+navBar.Position = UDim2.new(0, 8, 0, 6)
 navBar.BackgroundTransparency = uiPrefs.bgTransparency
 navBar.BorderSizePixel = 0
 navBar.ScrollBarThickness = 0
@@ -962,19 +596,19 @@ applyBrutalBorder(navBar)
 
 local navLayout = Instance.new("UIListLayout")
 navLayout.FillDirection = Enum.FillDirection.Horizontal
-navLayout.Padding = UDim.new(0, 5)
+navLayout.Padding = UDim.new(0, 4)
 navLayout.HorizontalAlignment = Enum.HorizontalAlignment.Left
 navLayout.VerticalAlignment = Enum.VerticalAlignment.Center
 navLayout.Parent = navBar
 
 local navPad = Instance.new("UIPadding")
-navPad.PaddingLeft = UDim.new(0, 5)
-navPad.PaddingRight = UDim.new(0, 5)
+navPad.PaddingLeft = UDim.new(0, 4)
+navPad.PaddingRight = UDim.new(0, 4)
 navPad.Parent = navBar
 
 local contentArea = Instance.new("Frame")
-contentArea.Size = UDim2.new(1, -16, 1, -189)
-contentArea.Position = UDim2.new(0, 8, 0, 153)
+contentArea.Size = UDim2.new(1, -16, 1, -76)
+contentArea.Position = UDim2.new(0, 8, 0, 38)
 contentArea.BackgroundTransparency = uiPrefs.bgTransparency
 contentArea.BorderSizePixel = 0
 contentArea.ZIndex = 3
@@ -984,7 +618,7 @@ applyBrutalBorder(contentArea)
 
 local footerBar = Instance.new("Frame")
 footerBar.Size = UDim2.new(1, -16, 0, 30)
-footerBar.Position = UDim2.new(0, 8, 1, -33)
+footerBar.Position = UDim2.new(0, 8, 1, -34)
 footerBar.BackgroundTransparency = uiPrefs.bgTransparency
 footerBar.BorderSizePixel = 0
 footerBar.ZIndex = 3
@@ -1017,7 +651,7 @@ end
 
 local function createTab(key, label, width)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0, width or 88, 0, 18)
+    btn.Size = UDim2.new(0, width or 80, 0, 20)
     btn.Text = string.upper(label)
     btn.Font = Enum.Font.GothamBlack
     btn.TextSize = 9
@@ -1314,14 +948,20 @@ local function makeSmallActionBtn(parent, text, posX, width, roleKey, callback)
     return b
 end
 
-local pagePresets = createTab("presets", "Preset Step", 86)
-local pageCustom = createTab("custom", "Custom Step", 88)
-local pageCues = createTab("cues", "Simpan Cue", 84)
-local pageSettings = createTab("settings", "Settings", 72)
+local pagePresets = createTab("presets", "Preset Step", 78)
+local pageCustom = createTab("custom", "Custom Step", 80)
+local pagePreview = createTab("preview", "Live Preview", 84)
+local pageStatic = createTab("static", "Static / RGB", 80)
+local pageRig = createTab("rig", "Rig & DMX", 72)
+local pageCues = createTab("cues", "Simpan Cue", 78)
+local pageSettings = createTab("settings", "Settings", 68)
 
 local refreshMembersUI
 local refreshCustomStepsListUI
 local refreshCueGridUI
+local refreshRigEditorUI
+local rebuildDynamicFixtureSliders
+local rebuildPreviewDots
 local openRigSetupModal
 
 local rigModalOverlay = Instance.new("Frame")
@@ -1476,6 +1116,7 @@ modalConfirmBtn.MouseButton1Click:Connect(function()
     resetSelectionAll()
     rigModalOverlay.Visible = false
     if refreshMembersUI then refreshMembersUI() end
+    if refreshRigEditorUI then refreshRigEditorUI() end
     if rebuildPreviewDots then rebuildPreviewDots() end
     local cb = pendingAfterRigCallback
     pendingAfterRigCallback = nil
@@ -1548,6 +1189,7 @@ local function saveCurrentStepsToCue(cueKey)
 end
 
 local sldPresetRate, sldPresetGlide, chipPresetDir
+local refreshPreviewToolbar
 
 local function buildStepsFromPreset(preset)
     local indices = getSelectedMemberIndices()
@@ -1556,7 +1198,7 @@ local function buildStepsFromPreset(preset)
     local newSteps = {}
 
     state.layoutEditMode = false
-    refreshPreviewToolbar()
+    if refreshPreviewToolbar then refreshPreviewToolbar() end
 
     state.stepRate = preset.rate or 2.5
     state.stepGlide = preset.glide or 0.35
@@ -1657,7 +1299,7 @@ local function buildStepsFromPreset(preset)
 
     state.customSteps = newSteps
     if refreshCustomStepsListUI then refreshCustomStepsListUI() end
-    setStatus("PREVIEW: " .. string.upper(preset.name) .. " (" .. #newSteps .. " STEP)", false)
+    setStatus("JADI " .. #newSteps .. " STEP (" .. string.upper(preset.name) .. ") -> CEK PREVIEW / SIMPAN", false)
 end
 
 local secMembers = makeSection(pagePresets, "1. PILIH LAMPU TARGET & TAP TEMPO BPM")
@@ -1812,7 +1454,7 @@ end
 local secCustomPad = makeSection(pageCustom, "1. ATUR POSISI LAMPU (GESER KOTAK XY & REKAM STEP)")
 
 local xyPad = Instance.new("TextButton")
-xyPad.Size = UDim2.new(1, 0, 0, 82)
+xyPad.Size = UDim2.new(1, 0, 0, 88)
 xyPad.Text = ""
 xyPad.AutoButtonColor = false
 xyPad.BorderSizePixel = 0
@@ -2059,6 +1701,729 @@ refreshCustomStepsListUI = function()
     end
 end
 
+local secPvMain = makeSection(pagePreview, "LIVE STAGE PREVIEW (ATAS / DEPAN + GESER SENTUH & D-PAD)")
+
+local pvToolRow1 = Instance.new("Frame")
+pvToolRow1.Size = UDim2.new(1, 0, 0, 22)
+pvToolRow1.BackgroundTransparency = 1
+pvToolRow1.ZIndex = 5
+pvToolRow1.Parent = secPvMain
+
+local pvViewTopBtn = Instance.new("TextButton")
+pvViewTopBtn.Size = UDim2.new(0, 74, 0, 21)
+pvViewTopBtn.Position = UDim2.new(0, 0, 0, 0)
+pvViewTopBtn.Text = "VIEW: ATAS"
+pvViewTopBtn.Font = Enum.Font.GothamBlack
+pvViewTopBtn.TextSize = 9
+pvViewTopBtn.BorderSizePixel = 0
+pvViewTopBtn.ZIndex = 5
+pvViewTopBtn.Parent = pvToolRow1
+applyBrutalBorder(pvViewTopBtn)
+
+local pvViewFrontBtn = Instance.new("TextButton")
+pvViewFrontBtn.Size = UDim2.new(0, 80, 0, 21)
+pvViewFrontBtn.Position = UDim2.new(0, 78, 0, 0)
+pvViewFrontBtn.Text = "VIEW: DEPAN"
+pvViewFrontBtn.Font = Enum.Font.GothamBlack
+pvViewFrontBtn.TextSize = 9
+pvViewFrontBtn.BorderSizePixel = 0
+pvViewFrontBtn.ZIndex = 5
+pvViewFrontBtn.Parent = pvToolRow1
+applyBrutalBorder(pvViewFrontBtn)
+
+local pvDragToggleBtn = Instance.new("TextButton")
+pvDragToggleBtn.Size = UDim2.new(0, 88, 0, 21)
+pvDragToggleBtn.Position = UDim2.new(0, 162, 0, 0)
+pvDragToggleBtn.Text = "GESER: OFF"
+pvDragToggleBtn.Font = Enum.Font.GothamBlack
+pvDragToggleBtn.TextSize = 9
+pvDragToggleBtn.BorderSizePixel = 0
+pvDragToggleBtn.ZIndex = 5
+pvDragToggleBtn.Parent = pvToolRow1
+applyBrutalBorder(pvDragToggleBtn)
+
+local pvShapeBarBtn = Instance.new("TextButton")
+pvShapeBarBtn.Size = UDim2.new(0, 48, 0, 21)
+pvShapeBarBtn.Position = UDim2.new(0, 254, 0, 0)
+pvShapeBarBtn.Text = "BARIS"
+pvShapeBarBtn.Font = Enum.Font.GothamBold
+pvShapeBarBtn.TextSize = 9
+pvShapeBarBtn.BorderSizePixel = 0
+pvShapeBarBtn.ZIndex = 5
+pvShapeBarBtn.Parent = pvToolRow1
+registerTheme(pvShapeBarBtn, "surface", "BackgroundColor3")
+registerTheme(pvShapeBarBtn, "ink", "TextColor3")
+applyBrutalBorder(pvShapeBarBtn)
+
+local pvShapeArcBtn = Instance.new("TextButton")
+pvShapeArcBtn.Size = UDim2.new(0, 48, 0, 21)
+pvShapeArcBtn.Position = UDim2.new(0, 306, 0, 0)
+pvShapeArcBtn.Text = "BUSUR"
+pvShapeArcBtn.Font = Enum.Font.GothamBold
+pvShapeArcBtn.TextSize = 9
+pvShapeArcBtn.BorderSizePixel = 0
+pvShapeArcBtn.ZIndex = 5
+pvShapeArcBtn.Parent = pvToolRow1
+registerTheme(pvShapeArcBtn, "surface", "BackgroundColor3")
+registerTheme(pvShapeArcBtn, "ink", "TextColor3")
+applyBrutalBorder(pvShapeArcBtn)
+
+local previewCanvas = Instance.new("Frame")
+previewCanvas.Size = UDim2.new(1, 0, 0, 175)
+previewCanvas.ClipsDescendants = true
+previewCanvas.BorderSizePixel = 0
+previewCanvas.ZIndex = 5
+previewCanvas.Parent = secPvMain
+registerTheme(previewCanvas, "canvas", "BackgroundColor3")
+applyBrutalBorder(previewCanvas)
+
+local guideTopLbl = Instance.new("TextLabel")
+guideTopLbl.Size = UDim2.new(1, 0, 0, 14)
+guideTopLbl.Position = UDim2.new(0, 0, 0, 2)
+guideTopLbl.BackgroundTransparency = 1
+guideTopLbl.Text = "BELAKANG PANGGUNG (TRUSS)"
+guideTopLbl.Font = Enum.Font.Code
+guideTopLbl.TextSize = 9
+guideTopLbl.TextColor3 = Color3.fromRGB(130, 135, 150)
+guideTopLbl.ZIndex = 6
+guideTopLbl.Parent = previewCanvas
+
+local guideBotLbl = Instance.new("TextLabel")
+guideBotLbl.Size = UDim2.new(1, 0, 0, 14)
+guideBotLbl.Position = UDim2.new(0, 0, 1, -15)
+guideBotLbl.BackgroundTransparency = 1
+guideBotLbl.Text = "DEPAN / PENONTON"
+guideBotLbl.Font = Enum.Font.Code
+guideBotLbl.TextSize = 9
+guideBotLbl.TextColor3 = Color3.fromRGB(130, 135, 150)
+guideBotLbl.ZIndex = 6
+guideBotLbl.Parent = previewCanvas
+
+local dpadRow = Instance.new("Frame")
+dpadRow.Size = UDim2.new(1, 0, 0, 24)
+dpadRow.BackgroundTransparency = 1
+dpadRow.ZIndex = 5
+dpadRow.Parent = secPvMain
+
+local dpadTargetLbl = Instance.new("TextLabel")
+dpadTargetLbl.Size = UDim2.new(0, 130, 1, 0)
+dpadTargetLbl.Position = UDim2.new(0, 0, 0, 0)
+dpadTargetLbl.BackgroundTransparency = 1
+dpadTargetLbl.Text = "UNIT #1 (X:0.10 Y:0.25)"
+dpadTargetLbl.Font = Enum.Font.Code
+dpadTargetLbl.TextSize = 9
+dpadTargetLbl.TextXAlignment = Enum.TextXAlignment.Left
+dpadTargetLbl.ZIndex = 5
+dpadTargetLbl.Parent = dpadRow
+registerTheme(dpadTargetLbl, "ink", "TextColor3")
+
+local function nudgeActiveFixture(dx, dy)
+    local idx = math.clamp(state.activeLayoutNode, 1, math.max(1, #workData.rig))
+    local fix = workData.rig[idx]
+    if not fix then return end
+    fix.x = math.clamp(math.floor(((fix.x or 0.5) + dx) * 100 + 0.5) / 100, 0.05, 0.95)
+    fix.y = math.clamp(math.floor(((fix.y or 0.25) + dy) * 100 + 0.5) / 100, 0.10, 0.90)
+    dpadTargetLbl.Text = string.format("UNIT #%d (X:%.2f Y:%.2f)", idx, fix.x, fix.y)
+    if rebuildPreviewDots then rebuildPreviewDots() end
+    if refreshRigEditorUI then refreshRigEditorUI() end
+end
+
+makeSmallActionBtn(dpadRow, "◄ KIRI", 132, 48, "surface", function() nudgeActiveFixture(-0.04, 0) end)
+makeSmallActionBtn(dpadRow, "► KANAN", 184, 54, "surface", function() nudgeActiveFixture(0.04, 0) end)
+makeSmallActionBtn(dpadRow, "▲ ATAS", 242, 48, "surface", function() nudgeActiveFixture(0, -0.04) end)
+makeSmallActionBtn(dpadRow, "▼ BAWAH", 294, 54, "surface", function() nudgeActiveFixture(0, 0.04) end)
+
+local previewFixtures = {}
+
+refreshPreviewToolbar = function()
+    local th = getCurrentTheme()
+    local isTop = (state.previewView == "top")
+    pvViewTopBtn.BackgroundColor3 = isTop and th.accent or th.surface
+    pvViewTopBtn.TextColor3 = isTop and th.btnText or th.ink
+    pvViewFrontBtn.BackgroundColor3 = (not isTop) and th.accent or th.surface
+    pvViewFrontBtn.TextColor3 = (not isTop) and th.btnText or th.ink
+
+    pvDragToggleBtn.BackgroundColor3 = state.layoutEditMode and th.secondary or th.surface
+    pvDragToggleBtn.TextColor3 = state.layoutEditMode and th.btnText or th.ink
+    pvDragToggleBtn.Text = state.layoutEditMode and "GESER: ON" or "GESER: OFF"
+
+    if isTop then
+        guideTopLbl.Text = state.layoutEditMode and "GESER BEBAS (ATAS/BAWAH/KIRI/KANAN) - BELAKANG" or "TAMPAK ATAS (DENAH X/Y) - BELAKANG"
+        guideBotLbl.Text = "DEPAN / PENONTON"
+    else
+        guideTopLbl.Text = state.layoutEditMode and "GESER BEBAS POSISI & TINGGI LAMPU - ATAS" or "TAMPAK DEPAN (PANGGUNG)"
+        guideBotLbl.Text = "LANTAI PANGGUNG / PENONTON"
+    end
+end
+
+pvViewTopBtn.MouseButton1Click:Connect(function()
+    state.previewView = "top"
+    refreshPreviewToolbar()
+    if rebuildPreviewDots then rebuildPreviewDots() end
+end)
+
+pvViewFrontBtn.MouseButton1Click:Connect(function()
+    state.previewView = "front"
+    refreshPreviewToolbar()
+    if rebuildPreviewDots then rebuildPreviewDots() end
+end)
+
+pvDragToggleBtn.MouseButton1Click:Connect(function()
+    state.layoutEditMode = not state.layoutEditMode
+    refreshPreviewToolbar()
+    if rebuildPreviewDots then rebuildPreviewDots() end
+    setStatus(state.layoutEditMode and "MODE GESER LAYOUT AKTIF (SENTUH / D-PAD)" or "MODE SIMULASI STEP AKTIF", false)
+end)
+
+pvShapeBarBtn.MouseButton1Click:Connect(function()
+    local total = math.max(1, #workData.rig)
+    for i, fix in ipairs(workData.rig) do
+        local px = (total == 1) and 0.5 or (0.10 + ((i - 1) * (0.80 / math.max(1, total - 1))))
+        fix.x = math.floor(px * 100 + 0.5) / 100
+        fix.y = 0.25
+    end
+    if rebuildPreviewDots then rebuildPreviewDots() end
+    if refreshRigEditorUI then refreshRigEditorUI() end
+    setStatus("TATA LETAK: 1 BARIS LURUS", false)
+end)
+
+pvShapeArcBtn.MouseButton1Click:Connect(function()
+    local total = math.max(1, #workData.rig)
+    for i, fix in ipairs(workData.rig) do
+        local norm = (total == 1) and 0 or (((i - 1) / math.max(1, total - 1)) * 2 - 1)
+        local px = 0.5 + (norm * 0.42)
+        local py = 0.22 + ((1 - (norm * norm)) * 0.48)
+        fix.x = math.floor(px * 100 + 0.5) / 100
+        fix.y = math.floor(py * 100 + 0.5) / 100
+    end
+    if rebuildPreviewDots then rebuildPreviewDots() end
+    if refreshRigEditorUI then refreshRigEditorUI() end
+    setStatus("TATA LETAK: BUSUR MELENGKUNG", false)
+end)
+
+rebuildPreviewDots = function()
+    local th = getCurrentTheme()
+    for _, item in ipairs(previewFixtures) do
+        if item.head then item.head:Destroy() end
+        if item.beam then item.beam:Destroy() end
+        if item.spot then item.spot:Destroy() end
+    end
+    previewFixtures = {}
+    local total = math.max(1, #workData.rig)
+
+    for i = 1, total do
+        local fix = workData.rig[i]
+        local fx = math.clamp(tonumber(fix.x) or 0.5, 0.05, 0.95)
+        local fy = math.clamp(tonumber(fix.y) or 0.25, 0.10, 0.90)
+        local isSelectedNode = (i == state.activeLayoutNode)
+
+        local beam = Instance.new("Frame")
+        beam.Size = UDim2.new(0, 12, 0, 50)
+        beam.AnchorPoint = Vector2.new(0.5, 0.5)
+        beam.BackgroundColor3 = th.accent
+        beam.BackgroundTransparency = 0.65
+        beam.BorderSizePixel = 0
+        beam.ZIndex = 6
+        beam.Parent = previewCanvas
+
+        local head = Instance.new("TextButton")
+        head.Size = UDim2.new(0, 22, 0, 22)
+        head.AnchorPoint = Vector2.new(0.5, 0.5)
+        head.Text = tostring(i)
+        head.Font = Enum.Font.GothamBlack
+        head.TextSize = 10
+        head.TextColor3 = th.btnText
+        head.BackgroundColor3 = isSelectedNode and th.accent or (state.layoutEditMode and th.secondary or th.header)
+        head.AutoButtonColor = false
+        head.BorderSizePixel = 0
+        head.ZIndex = 8
+        head.Parent = previewCanvas
+        applyBrutalBorder(head)
+
+        local spot = Instance.new("Frame")
+        spot.Size = UDim2.new(0, 12, 0, 12)
+        spot.AnchorPoint = Vector2.new(0.5, 0.5)
+        spot.BackgroundColor3 = th.accent
+        spot.BorderSizePixel = 0
+        spot.ZIndex = 7
+        spot.Parent = previewCanvas
+        applyBrutalBorder(spot)
+
+        head.Position = UDim2.new(fx, 0, fy, 0)
+        spot.Position = UDim2.new(fx, 0, fy, 0)
+        beam.Position = UDim2.new(fx, 0, fy, 0)
+
+        do
+            local draggingNode = false
+            head.InputBegan:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                    state.activeLayoutNode = i
+                    dpadTargetLbl.Text = string.format("UNIT #%d (X:%.2f Y:%.2f)", i, fix.x, fix.y)
+                    if state.layoutEditMode then
+                        draggingNode = true
+                    end
+                    for idxN, itN in ipairs(previewFixtures) do
+                        itN.head.BackgroundColor3 = (idxN == state.activeLayoutNode) and th.accent or (state.layoutEditMode and th.secondary or th.header)
+                    end
+                end
+            end)
+            UserInputService.InputChanged:Connect(function(input)
+                if draggingNode and state.layoutEditMode and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+                    local rx = math.clamp((input.Position.X - previewCanvas.AbsolutePosition.X) / math.max(1, previewCanvas.AbsoluteSize.X), 0.05, 0.95)
+                    local ry = math.clamp((input.Position.Y - previewCanvas.AbsolutePosition.Y) / math.max(1, previewCanvas.AbsoluteSize.Y), 0.10, 0.90)
+                    fix.x = math.floor(rx * 100 + 0.5) / 100
+                    fix.y = math.floor(ry * 100 + 0.5) / 100
+                    head.Position = UDim2.new(fix.x, 0, fix.y, 0)
+                    spot.Position = UDim2.new(fix.x, 0, fix.y, 0)
+                    beam.Position = UDim2.new(fix.x, 0, fix.y, 0)
+                    dpadTargetLbl.Text = string.format("UNIT #%d (X:%.2f Y:%.2f)", i, fix.x, fix.y)
+                end
+            end)
+            UserInputService.InputEnded:Connect(function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                    if draggingNode then
+                        draggingNode = false
+                        if refreshRigEditorUI then refreshRigEditorUI() end
+                        setStatus(string.format("POSISI #%d DISIMPAN (X:%.2f Y:%.2f)", i, fix.x, fix.y), false)
+                    end
+                end
+            end)
+        end
+
+        previewFixtures[i] = {head = head, beam = beam, spot = spot, fix = fix}
+    end
+end
+
+RunService.RenderStepped:Connect(function()
+    if not pagePreview.Visible or not main.Visible then return end
+    if #previewFixtures ~= #workData.rig then
+        rebuildPreviewDots()
+    end
+    local th = getCurrentTheme()
+    local totalSteps = #state.customSteps
+    local activeFrame = nil
+    local nextFrame = nil
+    local frac = 0
+
+    if not state.layoutEditMode and totalSteps > 0 then
+        local rawPos = (os.clock() * state.stepRate) % totalSteps
+        local idx1 = math.floor(rawPos) + 1
+        local idx2 = (idx1 % totalSteps) + 1
+        frac = rawPos - math.floor(rawPos)
+        activeFrame = state.customSteps[idx1]
+        nextFrame = state.customSteps[idx2]
+    end
+
+    local totalFix = math.max(1, #previewFixtures)
+    local cw = math.max(1, previewCanvas.AbsoluteSize.X)
+    local ch = math.max(1, previewCanvas.AbsoluteSize.Y)
+
+    for i, item in ipairs(previewFixtures) do
+        local isSel = selectedMembers[i] == true
+        item.head.Visible = isSel or state.layoutEditMode
+        item.beam.Visible = isSel and (not state.layoutEditMode)
+        item.spot.Visible = isSel and (not state.layoutEditMode)
+
+        local fx = math.clamp(tonumber(item.fix.x) or 0.5, 0.05, 0.95)
+        local fy = math.clamp(tonumber(item.fix.y) or 0.25, 0.10, 0.90)
+
+        if state.layoutEditMode then
+            item.head.Rotation = 0
+            item.head.Position = UDim2.new(fx, 0, fy, 0)
+        elseif isSel then
+            local panVal = state.curPan
+            local tiltVal = state.curTilt
+            local dimVal = state.curDim
+            local colVal = state.curColor
+
+            if state.curMirror and i > (totalFix / 2) then
+                panVal = 1 - panVal
+            end
+
+            if activeFrame and activeFrame[tostring(i)] and activeFrame[tostring(i)].v then
+                local v1 = activeFrame[tostring(i)].v
+                panVal = v1.pan or 0.5
+                tiltVal = v1.tilt or 0.5
+                dimVal = v1.dim or v1.int or v1.r or 1
+                colVal = v1.color or v1.col1 or 0
+                if state.stepGlide > 0 and nextFrame and nextFrame[tostring(i)] and nextFrame[tostring(i)].v then
+                    local v2 = nextFrame[tostring(i)].v
+                    local g = frac * state.stepGlide
+                    panVal = panVal + (((v2.pan or panVal) - panVal) * g)
+                    tiltVal = tiltVal + (((v2.tilt or tiltVal) - tiltVal) * g)
+                end
+            end
+
+            local startX, startY, targetX, targetY
+            if state.previewView == "top" then
+                startX = fx
+                startY = fy
+                local offX = (panVal - 0.5) * 0.36
+                local offY = (0.5 - tiltVal) * 0.42
+                targetX = math.clamp(startX + offX, 0.04, 0.96)
+                targetY = math.clamp(startY + 0.16 + offY, 0.08, 0.92)
+            else
+                startX = fx
+                startY = fy
+                targetX = math.clamp(startX + ((panVal - 0.5) * 0.44), 0.04, 0.96)
+                targetY = math.clamp(startY + 0.48 - (tiltVal * 0.42), 0.15, 0.92)
+            end
+
+            item.head.Position = UDim2.new(startX, 0, startY, 0)
+            item.spot.Position = UDim2.new(targetX, 0, targetY, 0)
+
+            local dx = (targetX - startX) * cw
+            local dy = (targetY - startY) * ch
+            local dist = math.sqrt((dx * dx) + (dy * dy))
+            local deg = math.deg(math.atan2(dy, dx)) - 90
+
+            item.beam.Position = UDim2.new(startX, dx * 0.5, startY, dy * 0.5)
+            item.beam.Size = UDim2.new(0, 12, 0, math.max(10, dist))
+            item.beam.Rotation = deg
+            item.head.Rotation = deg
+
+            if dimVal <= 0.05 then
+                item.beam.BackgroundTransparency = 0.96
+                item.spot.BackgroundColor3 = Color3.fromRGB(50, 50, 55)
+            else
+                item.beam.BackgroundTransparency = 0.58
+                if colVal > 0.02 then
+                    local c = Color3.fromHSV(colVal % 1, 0.9, 1)
+                    item.beam.BackgroundColor3 = c
+                    item.spot.BackgroundColor3 = c
+                else
+                    item.beam.BackgroundColor3 = th.accent
+                    item.spot.BackgroundColor3 = th.accent
+                end
+            end
+        end
+    end
+end)
+
+local secRgbPalette = makeSection(pageStatic, "1. PALET WARNA RGB & GOBO/PRISM INSTAN")
+
+local rgbGridWrap = Instance.new("Frame")
+rgbGridWrap.Size = UDim2.new(1, 0, 0, 0)
+rgbGridWrap.AutomaticSize = Enum.AutomaticSize.Y
+rgbGridWrap.BackgroundTransparency = 1
+rgbGridWrap.ZIndex = 5
+rgbGridWrap.Parent = secRgbPalette
+
+local rgbGrid = Instance.new("UIGridLayout")
+rgbGrid.CellSize = UDim2.new(0.24, 0, 0, 24)
+rgbGrid.CellPadding = UDim2.new(0.013, 0, 0, 4)
+rgbGrid.Parent = rgbGridWrap
+
+local activeSliderHandles = {}
+
+for _, rgbItem in ipairs(RGB_COLOR_PRESETS) do
+    local b = Instance.new("TextButton")
+    b.BackgroundColor3 = rgbItem.color
+    b.Text = string.upper(rgbItem.name)
+    b.Font = Enum.Font.GothamBlack
+    b.TextSize = 8
+    local lum = (rgbItem.color.R * 0.299) + (rgbItem.color.G * 0.587) + (rgbItem.color.B * 0.114)
+    b.TextColor3 = (lum > 0.65) and Color3.fromRGB(12, 12, 12) or Color3.fromRGB(255, 255, 255)
+    b.BorderSizePixel = 0
+    b.ZIndex = 5
+    b.Parent = rgbGridWrap
+    applyBrutalBorder(b)
+
+    b.MouseButton1Click:Connect(function()
+        for k, val in pairs(rgbItem.vals) do
+            if state.editorValues[k] ~= nil then
+                state.editorValues[k] = val
+                if activeSliderHandles[k] then
+                    activeSliderHandles[k].setValue(val)
+                end
+            end
+        end
+        setStatus("WARNA/EFEK '" .. rgbItem.name .. "' DITERAPKAN", false)
+    end)
+end
+
+local secStaticTop = makeSection(pageStatic, "2. EDITOR PARAMETER 12 FIXTURE & SIMPAN CUE STATIS")
+
+local chipStaticLayer = makeChipSelector(secStaticTop, "Target Layer Statis Cue:", {"dim", "pos", "beam"}, state.staticLayerType, function(v)
+    state.staticLayerType = v
+end)
+
+local chipEditorFix = makeChipSelector(secStaticTop, "Tipe Fixture:", {
+    "clara", "strobe", "mapple", "parled", "fogger", "blinder",
+    "flower", "pixel", "retro", "wall", "windmill", "sbar"
+}, state.editorFixtureType, function(v)
+    state.editorFixtureType = v
+    state.editorValues = deepCopy(FIXTURE_DEFAULTS[v] or FIXTURE_DEFAULTS.clara)
+    if rebuildDynamicFixtureSliders then
+        rebuildDynamicFixtureSliders()
+    end
+end)
+
+local dynamicSlidersContainer = Instance.new("Frame")
+dynamicSlidersContainer.Size = UDim2.new(1, 0, 0, 0)
+dynamicSlidersContainer.AutomaticSize = Enum.AutomaticSize.Y
+dynamicSlidersContainer.BackgroundTransparency = 1
+dynamicSlidersContainer.ZIndex = 5
+dynamicSlidersContainer.Parent = secStaticTop
+
+local dynLayout = Instance.new("UIListLayout")
+dynLayout.Padding = UDim.new(0, 4)
+dynLayout.Parent = dynamicSlidersContainer
+
+rebuildDynamicFixtureSliders = function()
+    for _, child in ipairs(dynamicSlidersContainer:GetChildren()) do
+        if child:IsA("Frame") then
+            child:Destroy()
+        end
+    end
+    activeSliderHandles = {}
+    local t = state.editorFixtureType
+    local keys = FIXTURE_KEYS_ORDER[t] or FIXTURE_KEYS_ORDER.clara
+    for _, k in ipairs(keys) do
+        local initVal = state.editorValues[k] or 0
+        local handle = makeSliderRow(dynamicSlidersContainer, string.upper(k) .. " (" .. k .. ")", 0, 1, initVal, false, function(v)
+            state.editorValues[k] = v
+        end)
+        activeSliderHandles[k] = handle
+    end
+end
+
+local staticBtnRow = Instance.new("Frame")
+staticBtnRow.Size = UDim2.new(1, 0, 0, 24)
+staticBtnRow.BackgroundTransparency = 1
+staticBtnRow.ZIndex = 5
+staticBtnRow.Parent = secStaticTop
+
+makeSmallActionBtn(staticBtnRow, "Simpan Cue Statis", 0, 145, "accent", function()
+    executeWithRigCheck(state.cueId, function()
+        local fxMap = {}
+        local indices = getSelectedMemberIndices()
+        for _, idx in ipairs(indices) do
+            local fix = workData.rig[idx]
+            if fix then
+                local fType = string.lower(fix.t or "clara")
+                fxMap[tostring(idx)] = {
+                    t = fType,
+                    v = makeFullV(fType, state.editorValues)
+                }
+            end
+        end
+        workData.cues[state.cueId] = {
+            layer = state.staticLayerType,
+            fx = fxMap,
+            eff = {}
+        }
+        if uiPrefs.autoSaveOnSaveCue then saveWorkFile() end
+        if refreshCueGridUI then refreshCueGridUI() end
+        setStatus("STATIC [" .. state.staticLayerType .. "] -> CUE " .. state.cueId, false)
+    end)
+end)
+
+makeSmallActionBtn(staticBtnRow, "Set Default Rig", 151, 135, "secondary", function()
+    local indices = getSelectedMemberIndices()
+    for _, idx in ipairs(indices) do
+        local fix = workData.rig[idx]
+        if fix then
+            fix.v = makeFullV(fix.t, state.editorValues)
+        end
+    end
+    setStatus("DEFAULT RIG DIPERBARUI", false)
+end)
+
+local secRigGen = makeSection(pageRig, "1. AUTO-PATCH GENERATOR 12 FIXTURE")
+
+makeChipSelector(secRigGen, "Pilih Jenis Fixture:", {
+    "clara", "strobe", "mapple", "parled", "fogger", "blinder",
+    "flower", "pixel", "retro", "wall", "windmill", "sbar"
+}, state.rigType, function(v)
+    state.rigType = v
+end)
+
+makeSliderRow(secRigGen, "Jumlah Unit Lampu", 1, 32, state.rigCount, true, function(v) state.rigCount = v end)
+makeSliderRow(secRigGen, "Alamat DMX Awal", 1, 512, state.rigStartAddr, true, function(v) state.rigStartAddr = v end)
+makeChipSelector(secRigGen, "Mode Alamat DMX:", {"independen", "multi"}, state.rigMode, function(v) state.rigMode = v end)
+
+local rigBtnRow = Instance.new("Frame")
+rigBtnRow.Size = UDim2.new(1, 0, 0, 22)
+rigBtnRow.BackgroundTransparency = 1
+rigBtnRow.ZIndex = 5
+rigBtnRow.Parent = secRigGen
+
+makeSmallActionBtn(rigBtnRow, "Generate Rig", 0, 102, "accent", function()
+    workData.rig = buildAutoPatchedRig(state.rigType, state.rigCount, state.rigStartAddr, state.rigMode)
+    state.rigConfigured = true
+    resetSelectionAll()
+    if refreshMembersUI then refreshMembersUI() end
+    if refreshRigEditorUI then refreshRigEditorUI() end
+    if rebuildPreviewDots then rebuildPreviewDots() end
+    setStatus("PATCH: " .. state.rigCount .. "X " .. string.upper(state.rigType), false)
+end)
+
+makeSmallActionBtn(rigBtnRow, "+ 1 Unit", 107, 78, "secondary", function()
+    local t = string.lower(state.rigType)
+    local nextAddr = state.rigStartAddr
+    for _, fix in ipairs(workData.rig) do
+        local fp = FIXTURE_FOOTPRINTS[string.lower(fix.t or "clara")] or 16
+        local endAddr = (fix.a or 1) + fp
+        if endAddr > nextAddr then nextAddr = endAddr end
+    end
+    if state.rigMode == "multi" and #workData.rig > 0 then
+        nextAddr = workData.rig[#workData.rig].a or 1
+    end
+    table.insert(workData.rig, {
+        a = nextAddr,
+        x = math.clamp(0.1 + (#workData.rig * 0.08), 0.05, 0.95),
+        y = 0.25,
+        t = t,
+        v = makeFullV(t)
+    })
+    selectedMembers[#workData.rig] = true
+    if refreshMembersUI then refreshMembersUI() end
+    if refreshRigEditorUI then refreshRigEditorUI() end
+    if rebuildPreviewDots then rebuildPreviewDots() end
+    setStatus("TAMBAH " .. string.upper(t) .. " DMX #" .. nextAddr, false)
+end)
+
+local secRigManual = makeSection(pageRig, "2. EDITOR MANUAL ALAMAT DMX & POSISI X/Y PER UNIT")
+
+local rigEditorContainer = Instance.new("Frame")
+rigEditorContainer.Size = UDim2.new(1, 0, 0, 0)
+rigEditorContainer.AutomaticSize = Enum.AutomaticSize.Y
+rigEditorContainer.BackgroundTransparency = 1
+rigEditorContainer.ZIndex = 5
+rigEditorContainer.Parent = secRigManual
+
+local rigEdLayout = Instance.new("UIListLayout")
+rigEdLayout.Padding = UDim.new(0, 4)
+rigEdLayout.Parent = rigEditorContainer
+
+refreshRigEditorUI = function()
+    local th = getCurrentTheme()
+    for _, child in ipairs(rigEditorContainer:GetChildren()) do
+        if child:IsA("Frame") then child:Destroy() end
+    end
+    for i, fix in ipairs(workData.rig) do
+        local row = Instance.new("Frame")
+        row.Size = UDim2.new(1, 0, 0, 23)
+        row.BackgroundColor3 = th.surface
+        row.BorderSizePixel = 0
+        row.ZIndex = 5
+        row.Parent = rigEditorContainer
+        applyBrutalBorder(row)
+
+        local fp = FIXTURE_FOOTPRINTS[string.lower(fix.t or "clara")] or 16
+        local info = Instance.new("TextLabel")
+        info.Size = UDim2.new(0, 118, 1, 0)
+        info.Position = UDim2.new(0, 6, 0, 0)
+        info.BackgroundTransparency = 1
+        info.Text = string.format("#%02d %-7s(%dc)", i, string.upper(fix.t), fp)
+        info.Font = Enum.Font.GothamBlack
+        info.TextSize = 9
+        info.TextColor3 = th.ink
+        info.TextXAlignment = Enum.TextXAlignment.Left
+        info.ZIndex = 5
+        info.Parent = row
+
+        local addrBox = Instance.new("TextBox")
+        addrBox.Size = UDim2.new(0, 38, 0, 18)
+        addrBox.Position = UDim2.new(0, 128, 0.5, -9)
+        addrBox.BackgroundColor3 = th.accent
+        addrBox.Text = tostring(fix.a)
+        addrBox.Font = Enum.Font.Code
+        addrBox.TextSize = 10
+        addrBox.TextColor3 = th.btnText
+        addrBox.ClearTextOnFocus = false
+        addrBox.BorderSizePixel = 0
+        addrBox.ZIndex = 5
+        addrBox.Parent = row
+        applyBrutalBorder(addrBox)
+
+        addrBox.FocusLost:Connect(function()
+            local n = tonumber(addrBox.Text)
+            if n and n >= 1 and n <= 512 then
+                fix.a = math.floor(n)
+                addrBox.Text = tostring(fix.a)
+                if refreshMembersUI then refreshMembersUI() end
+            else
+                addrBox.Text = tostring(fix.a)
+            end
+        end)
+
+        local xBox = Instance.new("TextBox")
+        xBox.Size = UDim2.new(0, 38, 0, 18)
+        xBox.Position = UDim2.new(0, 172, 0.5, -9)
+        xBox.BackgroundColor3 = th.chipBg
+        xBox.Text = string.format("%.2f", fix.x or 0.5)
+        xBox.Font = Enum.Font.Code
+        xBox.TextSize = 10
+        xBox.TextColor3 = th.ink
+        xBox.ClearTextOnFocus = false
+        xBox.BorderSizePixel = 0
+        xBox.ZIndex = 5
+        xBox.Parent = row
+        applyBrutalBorder(xBox)
+
+        xBox.FocusLost:Connect(function()
+            local n = tonumber(xBox.Text)
+            if n then
+                fix.x = math.clamp(math.floor(n * 100 + 0.5) / 100, 0.05, 0.95)
+                xBox.Text = string.format("%.2f", fix.x)
+                if rebuildPreviewDots then rebuildPreviewDots() end
+            else
+                xBox.Text = string.format("%.2f", fix.x or 0.5)
+            end
+        end)
+
+        local yBox = Instance.new("TextBox")
+        yBox.Size = UDim2.new(0, 38, 0, 18)
+        yBox.Position = UDim2.new(0, 215, 0.5, -9)
+        yBox.BackgroundColor3 = th.chipBg
+        yBox.Text = string.format("%.2f", fix.y or 0.25)
+        yBox.Font = Enum.Font.Code
+        yBox.TextSize = 10
+        yBox.TextColor3 = th.ink
+        yBox.ClearTextOnFocus = false
+        yBox.BorderSizePixel = 0
+        yBox.ZIndex = 5
+        yBox.Parent = row
+        applyBrutalBorder(yBox)
+
+        yBox.FocusLost:Connect(function()
+            local n = tonumber(yBox.Text)
+            if n then
+                fix.y = math.clamp(math.floor(n * 100 + 0.5) / 100, 0.10, 0.90)
+                yBox.Text = string.format("%.2f", fix.y)
+                if rebuildPreviewDots then rebuildPreviewDots() end
+            else
+                yBox.Text = string.format("%.2f", fix.y or 0.25)
+            end
+        end)
+
+        local delBtn = Instance.new("TextButton")
+        delBtn.Size = UDim2.new(0, 36, 0, 18)
+        delBtn.Position = UDim2.new(1, -40, 0.5, -9)
+        delBtn.BackgroundColor3 = th.danger
+        delBtn.Text = "DEL"
+        delBtn.Font = Enum.Font.GothamBlack
+        delBtn.TextSize = 9
+        delBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        delBtn.BorderSizePixel = 0
+        delBtn.ZIndex = 5
+        delBtn.Parent = row
+        applyBrutalBorder(delBtn)
+
+        delBtn.MouseButton1Click:Connect(function()
+            if #workData.rig > 1 then
+                table.remove(workData.rig, i)
+                resetSelectionAll()
+                refreshMembersUI()
+                refreshRigEditorUI()
+                rebuildPreviewDots()
+            end
+        end)
+    end
+end
+
 local secCueGrid = makeSection(pageCues, "PILIH & SIMPAN KE SLOT CUE 1 - 24 (RKDESIGN)")
 
 local cueQuickRow = Instance.new("Frame")
@@ -2156,7 +2521,33 @@ end
 
 local applyFullTheme
 
-local secSetTheme = makeSection(pageSettings, "1. PILIH TEMA GELAP & TRANSPARANSI / BLUR")
+local secSetScale = makeSection(pageSettings, "1. UKURAN JENDELA (PANJANG/LEBAR/TINGGI) & SKALA (0.20 - 1.30)")
+
+local sldUiScale = makeSliderRow(secSetScale, "Skala UI (0.20 - 1.30)", 0.20, 1.30, uiPrefs.uiScale, false, function(v)
+    uiPrefs.uiScale = v
+    uiScaleObj.Scale = v
+    savePrefs()
+end)
+
+local sldWinW = makeSliderRow(secSetScale, "Lebar Jendela (320 - 900)", 320, 900, uiPrefs.winWidth, true, function(v)
+    uiPrefs.winWidth = v
+    main.Size = UDim2.new(0, uiPrefs.winWidth, 0, uiPrefs.winHeight)
+    savePrefs()
+end)
+
+local sldWinH = makeSliderRow(secSetScale, "Tinggi Jendela (220 - 650)", 220, 650, uiPrefs.winHeight, true, function(v)
+    uiPrefs.winHeight = v
+    main.Size = UDim2.new(0, uiPrefs.winWidth, 0, uiPrefs.winHeight)
+    savePrefs()
+end)
+
+makeSliderRow(secSetScale, "Ukuran Bubble (36 - 66 px)", 36, 66, uiPrefs.bubbleSize, true, function(v)
+    uiPrefs.bubbleSize = v
+    bubbleBtn.Size = UDim2.new(0, v, 0, v)
+    savePrefs()
+end)
+
+local secSetTheme = makeSection(pageSettings, "2. TEMA GELAP, TRANSPARANSI & EFEK BLUR")
 
 makeChipSelector(secSetTheme, "Palet Warna UI (Default Gelap):", {
     "Brutal Dark", "OLED Midnight", "Obsidian Neon", "Acid Lime"
@@ -2196,27 +2587,7 @@ blurToggleBtn.MouseButton1Click:Connect(function()
     savePrefs()
 end)
 
-local secSetScale = makeSection(pageSettings, "2. UKURAN UI, BUBBLE & KETEBALAN GARIS")
-
-makeSliderRow(secSetScale, "Skala Ukuran UI (0.75 - 1.30)", 0.75, 1.30, uiPrefs.uiScale, false, function(v)
-    uiPrefs.uiScale = v
-    uiScaleObj.Scale = v
-    savePrefs()
-end)
-
-makeSliderRow(secSetScale, "Ketebalan Border (1 - 4 px)", 1, 4, uiPrefs.borderThickness, true, function(v)
-    uiPrefs.borderThickness = v
-    savePrefs()
-    applyFullTheme()
-end)
-
-makeSliderRow(secSetScale, "Ukuran Bubble (36 - 66 px)", 36, 66, uiPrefs.bubbleSize, true, function(v)
-    uiPrefs.bubbleSize = v
-    bubbleBtn.Size = UDim2.new(0, v, 0, v)
-    savePrefs()
-end)
-
-local secSetOpt = makeSection(pageSettings, "3. OPTIMASI PROMPT DMX & AUTO-SAVE")
+local secSetOpt = makeSection(pageSettings, "3. OPTIMASI PROMPT DMX & RESET")
 
 local promptRigBtn = Instance.new("TextButton")
 promptRigBtn.Size = UDim2.new(1, 0, 0, 24)
@@ -2258,10 +2629,19 @@ makeSmallActionBtn(setBtnRow, "Salin JSON Minify", 0, 125, "secondary", function
     end
 end)
 
-makeSmallActionBtn(setBtnRow, "Reset Posisi UI", 131, 115, "surface", function()
+makeSmallActionBtn(setBtnRow, "Reset Ukuran & Posisi", 131, 145, "surface", function()
+    uiPrefs.uiScale = 1.0
+    uiPrefs.winWidth = 520
+    uiPrefs.winHeight = 330
+    uiScaleObj.Scale = 1.0
+    main.Size = UDim2.new(0, 520, 0, 330)
     main.Position = UDim2.new(0.5, 0, 0.52, 0)
     bubbleBtn.Position = UDim2.new(0.03, 0, 0.25, 0)
-    setStatus("POSISI UI DIRESET", false)
+    sldUiScale.setValue(1.0)
+    sldWinW.setValue(520)
+    sldWinH.setValue(330)
+    savePrefs()
+    setStatus("UKURAN & POSISI DIRESET", false)
 end)
 
 local cueLabelFooter = Instance.new("TextLabel")
@@ -2343,7 +2723,6 @@ applyFullTheme = function()
         end
     end
     main.BackgroundTransparency = uiPrefs.bgTransparency
-    globalPreviewBox.BackgroundTransparency = uiPrefs.bgTransparency
     navBar.BackgroundTransparency = uiPrefs.bgTransparency
     contentArea.BackgroundTransparency = uiPrefs.bgTransparency
     footerBar.BackgroundTransparency = uiPrefs.bgTransparency
@@ -2373,12 +2752,15 @@ applyFullTheme = function()
     if refreshMembersUI then refreshMembersUI() end
     if refreshCustomStepsListUI then refreshCustomStepsListUI() end
     if refreshCueGridUI then refreshCueGridUI() end
+    if refreshRigEditorUI then refreshRigEditorUI() end
     rebuildPreviewDots()
 end
 
+rebuildDynamicFixtureSliders()
 refreshMembersUI()
 refreshCustomStepsListUI()
 refreshCueGridUI()
+refreshRigEditorUI()
 rebuildPreviewDots()
 applyFullTheme()
 switchTab("presets")
