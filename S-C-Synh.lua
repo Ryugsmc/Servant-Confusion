@@ -16,6 +16,179 @@ if Lighting:FindFirstChild("ApexDMXBlur") then
     Lighting:FindFirstChild("ApexDMXBlur"):Destroy()
 end
 
+local LANGS = {
+    ["Indonesia"] = {
+        tab_preset = "Preset Step",
+        tab_custom = "Custom Step",
+        tab_preview = "Live Preview",
+        tab_static = "Static / RGB",
+        tab_rig = "Rig & DMX",
+        tab_cue = "Simpan Cue",
+        tab_settings = "Settings",
+        btn_guide = "? PANDUAN",
+        btn_save_cue = "SIMPAN KE CUE",
+        btn_export = "EXPORT WORK.JSON",
+        lbl_pan = "Pan (Kiri - Kanan)",
+        lbl_tilt = "Tilt (Bawah - Atas)",
+        lbl_dim = "Dimmer (Terang)",
+        lbl_color = "Warna (Color)",
+        lbl_strobe = "Strobe (Kedip)",
+        lbl_rate = "Kecepatan (Rate)",
+        lbl_glide = "Kehalusan (Glide)",
+        btn_rec_step = "+ REKAM STEP",
+        btn_del_all = "HAPUS SEMUA",
+        btn_mirror_off = "CERMIN KIRI-KANAN: MATI",
+        btn_mirror_on = "CERMIN KIRI-KANAN: AKTIF",
+        hint_empty = "LANGKAH 1: PILIH PRESET DI TAB 1 ATAU REKAM STEP DI CUSTOM STEP.",
+        hint_ready = "LANGKAH 2: CEK LIVE PREVIEW LALU TEKAN 'SIMPAN KE CUE' & 'EXPORT WORK.JSON'.",
+        hint_edit = "MODE GESER AKTIF: SERET LAMPU / PAKAI D-PAD / PILIH BENTUK FORMASI."
+    },
+    ["Sehari-hari"] = {
+        tab_preset = "Gerak Instan",
+        tab_custom = "Bikin Sendiri",
+        tab_preview = "Lihat Panggung",
+        tab_static = "Warna & Pose",
+        tab_rig = "Atur Lampu",
+        tab_cue = "Slot Cue",
+        tab_settings = "Pengaturan",
+        btn_guide = "? CARA PAKAI",
+        btn_save_cue = "MASUKIN KE CUE",
+        btn_export = "SIMPAN FILE",
+        lbl_pan = "Geser Kiri - Kanan",
+        lbl_tilt = "Dongak Atas - Bawah",
+        lbl_dim = "Terang Lampu",
+        lbl_color = "Ganti Warna",
+        lbl_strobe = "Kedip Cepat",
+        lbl_rate = "Seberapa Cepat",
+        lbl_glide = "Biar Gerak Mulus",
+        btn_rec_step = "+ CATAT GERAKAN",
+        btn_del_all = "HAPUS SEMUA",
+        btn_mirror_off = "MIRROR SIMETRIS: MATI",
+        btn_mirror_on = "MIRROR SIMETRIS: NYALA",
+        hint_empty = "TINGGAL KLIK GERAKAN INSTAN ATAU BIKIN SENDIRI TITIK PER TITIK.",
+        hint_ready = "GERAKAN UDAH JADI! TINGGAL KLIK 'MASUKIN KE CUE' TERUS 'SIMPAN FILE'.",
+        hint_edit = "TINGGAL SERET LAMPU PAKAI JARI ATAU PILIH BENTUK KOTAK/LINGKARAN/KATA."
+    },
+    ["Jawa"] = {
+        tab_preset = "Gerak Cepet",
+        tab_custom = "Gawe Dewe",
+        tab_preview = "Delok Panggung",
+        tab_static = "Werno & Diam",
+        tab_rig = "Atur Lampu",
+        tab_cue = "Simpen Cue",
+        tab_settings = "Setelan",
+        btn_guide = "? CARANE",
+        btn_save_cue = "SIMPEN NING CUE",
+        btn_export = "SIMPEN JSON",
+        lbl_pan = "Kiwo - Tengen (Pan)",
+        lbl_tilt = "Ngisor - Duwur (Tilt)",
+        lbl_dim = "Padange Lampu",
+        lbl_color = "Werno Lampu",
+        lbl_strobe = "Kedip Cepet",
+        lbl_rate = "Cepete Gerak",
+        lbl_glide = "Aluse Gerak",
+        btn_rec_step = "+ CATET GERAK",
+        btn_del_all = "BUSEK KABEH",
+        btn_mirror_off = "KOCO KIWO-TENGEN: MATI",
+        btn_mirror_on = "KOCO KIWO-TENGEN: URIP",
+        hint_empty = "LANGKAH 1: PILIH GERAK CEPET UTAWA GAWE DEWE NING TAB SEBELAH.",
+        hint_ready = "WES DADI STEP-E! LANGSUNG KLIK 'SIMPEN NING CUE' KARO 'SIMPEN JSON'.",
+        hint_edit = "GESER LAMPUNE NANG LAYAR UTAWA PILIH BENTUK BUNDER/KOTAK/TULISAN."
+    },
+    ["Sunda"] = {
+        tab_preset = "Gerak Instan",
+        tab_custom = "Jieun Sorangan",
+        tab_preview = "Tingali Panggung",
+        tab_static = "Warna & Cicing",
+        tab_rig = "Atur Lampu",
+        tab_cue = "Simpen Cue",
+        tab_settings = "Setelan",
+        btn_guide = "? Pituduh",
+        btn_save_cue = "SIMPEN KANA CUE",
+        btn_export = "SIMPEN JSON",
+        lbl_pan = "Kenca - Katuhu (Pan)",
+        lbl_tilt = "Handap - Luhur (Tilt)",
+        lbl_dim = "Caangna Lampu",
+        lbl_color = "Warna Lampu",
+        lbl_strobe = "Kiceup Gancang",
+        lbl_rate = "Gancangna Gerak",
+        lbl_glide = "Lemesna Gerak",
+        btn_rec_step = "+ CATET GERAK",
+        btn_del_all = "HAPUS KABEH",
+        btn_mirror_off = "EUNTEUNG KENCA-KATUHU: PAEH",
+        btn_mirror_on = "EUNTEUNG KENCA-KATUHU: HURUNG",
+        hint_empty = "LENGKAH 1: PILIH GERAK INSTAN ATAWA JIEUN SORANGAN DI TAB GIGIREUN.",
+        hint_ready = "GEUS JADI! KARI KLIK 'SIMPEN KANA CUE' JEUNG 'SIMPEN JSON'.",
+        hint_edit = "GESER LAMPU DINA LAYAR ATAWA PILIH BENTUK BULEUD/KOTAK/KECAP."
+    },
+    ["English"] = {
+        tab_preset = "Step Presets",
+        tab_custom = "Custom Step",
+        tab_preview = "Live Preview",
+        tab_static = "Static / RGB",
+        tab_rig = "Rig & DMX",
+        tab_cue = "Save Cue",
+        tab_settings = "Settings",
+        btn_guide = "? GUIDE",
+        btn_save_cue = "STORE TO CUE",
+        btn_export = "EXPORT WORK.JSON",
+        lbl_pan = "Pan (Left - Right)",
+        lbl_tilt = "Tilt (Down - Up)",
+        lbl_dim = "Dimmer Intensity",
+        lbl_color = "Color Wheel / RGB",
+        lbl_strobe = "Strobe Shutter",
+        lbl_rate = "Step Speed (Rate)",
+        lbl_glide = "Smooth Glide",
+        btn_rec_step = "+ RECORD STEP",
+        btn_del_all = "CLEAR ALL",
+        btn_mirror_off = "MIRROR PAN: OFF",
+        btn_mirror_on = "MIRROR PAN: ON",
+        hint_empty = "STEP 1: PICK A PRESET OR RECORD CUSTOM POSITIONS IN CUSTOM STEP.",
+        hint_ready = "STEP 2: CHECK LIVE PREVIEW THEN CLICK 'STORE TO CUE' & 'EXPORT WORK.JSON'.",
+        hint_edit = "LAYOUT EDIT: DRAG FIXTURES / USE D-PAD / APPLY SHAPE OR WORD FORMATION."
+    }
+}
+
+local TUTORIALS = {
+    {
+        title = "1. CARA BUAT GERAKAN PRESET (TERCEPAT)",
+        steps = {
+            "Buka tab PRESET STEP, lalu pilih lampu target (Semua / Ganjil / Genap).",
+            "Atur jumlah step (misal 8 Step) & kecepatan (Rate) atau ketuk TAP BPM.",
+            "Klik salah satu pola preset (misal Circle Putar / Kipas Cermin).",
+            "Cek hasilnya di tab LIVE PREVIEW, lalu tekan SIMPAN KE CUE & EXPORT WORK.JSON."
+        }
+    },
+    {
+        title = "2. CARA BIKIN CUSTOM GERAKAN (STEP MANUAL)",
+        steps = {
+            "Buka tab CUSTOM STEP.",
+            "Geser titik di kotak hitam XY Pad (Kiri-Kanan = Pan, Atas-Bawah = Tilt).",
+            "Tekan '+ REKAM STEP' untuk mencatat posisi pertama (Step 01).",
+            "Geser titik ke posisi kedua, lalu tekan '+ REKAM STEP' lagi (Step 02), dst.",
+            "Jika sudah selesai, tekan SIMPAN KE CUE & EXPORT WORK.JSON."
+        }
+    },
+    {
+        title = "3. CARA ATUR JUMLAH & ALAMAT DMX LAMPU",
+        steps = {
+            "Buka tab RIG & DMX (atau klik SETUP DMX di tab awal).",
+            "Pilih jenis lampu (Clara 16ch, Parled 6ch, Strobe 8ch, dll).",
+            "Atur jumlah unit lampu, alamat DMX awal (1), dan mode Independen.",
+            "Tekan GENERATE RIG agar alamat DMX tiap lampu otomatis tersusun rapi."
+        }
+    },
+    {
+        title = "4. CARA TATA LETAK PANGGUNG (BENTUK & KATA)",
+        steps = {
+            "Buka tab LIVE PREVIEW, lalu aktifkan tombol GESER: ON.",
+            "Kamu bisa menyeret lampu pakai sentuhan, tombol D-Pad, atau pilih template bentuk (Kotak, Lingkaran, Segitiga, Segi 5/6/7).",
+            "Untuk membentuk Huruf, Angka, atau Kata (maks 8 huruf), ketik teks di kotak Formasi Kata lalu tekan TERAPKAN KATA.",
+            "Jangan lupa tekan EXPORT WORK.JSON agar tata letak tersimpan ke RKDESIGN."
+        }
+    }
+}
+
 local THEMES = {
     ["Brutal Dark"] = {
         bg = Color3.fromRGB(18, 18, 22),
@@ -73,9 +246,10 @@ local THEMES = {
 
 local uiPrefs = {
     themeName = "Brutal Dark",
+    langName = "Sehari-hari",
     uiScale = 1.0,
-    winWidth = 520,
-    winHeight = 330,
+    winWidth = 540,
+    winHeight = 350,
     borderThickness = 2,
     autoSaveOnSaveCue = true,
     bubbleSize = 46,
@@ -91,9 +265,10 @@ local function loadPrefs()
             local ok2, dec = pcall(function() return HttpService:JSONDecode(raw) end)
             if ok2 and type(dec) == "table" then
                 if THEMES[dec.themeName] then uiPrefs.themeName = dec.themeName end
+                if LANGS[dec.langName] then uiPrefs.langName = dec.langName end
                 if tonumber(dec.uiScale) then uiPrefs.uiScale = math.clamp(tonumber(dec.uiScale), 0.20, 1.30) end
-                if tonumber(dec.winWidth) then uiPrefs.winWidth = math.clamp(math.floor(tonumber(dec.winWidth)), 320, 900) end
-                if tonumber(dec.winHeight) then uiPrefs.winHeight = math.clamp(math.floor(tonumber(dec.winHeight)), 220, 650) end
+                if tonumber(dec.winWidth) then uiPrefs.winWidth = math.clamp(math.floor(tonumber(dec.winWidth)), 320, 950) end
+                if tonumber(dec.winHeight) then uiPrefs.winHeight = math.clamp(math.floor(tonumber(dec.winHeight)), 220, 700) end
                 if tonumber(dec.borderThickness) then uiPrefs.borderThickness = math.clamp(math.floor(tonumber(dec.borderThickness)), 1, 4) end
                 if type(dec.autoSaveOnSaveCue) == "boolean" then uiPrefs.autoSaveOnSaveCue = dec.autoSaveOnSaveCue end
                 if tonumber(dec.bubbleSize) then uiPrefs.bubbleSize = math.clamp(math.floor(tonumber(dec.bubbleSize)), 36, 66) end
@@ -115,6 +290,141 @@ local function savePrefs()
 end
 
 loadPrefs()
+
+local function tr(key)
+    local dict = LANGS[uiPrefs.langName] or LANGS["Indonesia"]
+    return dict[key] or LANGS["Indonesia"][key] or key
+end
+
+local GLYPH_5X7 = {
+    A={"01110","10001","10001","11111","10001","10001","10001"},
+    B={"11110","10001","10001","11110","10001","10001","11110"},
+    C={"01111","10000","10000","10000","10000","10000","01111"},
+    D={"11110","10001","10001","10001","10001","10001","11110"},
+    E={"11111","10000","10000","11110","10000","10000","11111"},
+    F={"11111","10000","10000","11110","10000","10000","10000"},
+    G={"01111","10000","10000","10111","10001","10001","01111"},
+    H={"10001","10001","10001","11111","10001","10001","10001"},
+    I={"11111","00100","00100","00100","00100","00100","11111"},
+    J={"00111","00010","00010","00010","10010","10010","01100"},
+    K={"10001","10010","10100","11000","10100","10010","10001"},
+    L={"10000","10000","10000","10000","10000","10000","11111"},
+    M={"10001","11011","10101","10001","10001","10001","10001"},
+    N={"10001","11001","10101","10011","10001","10001","10001"},
+    O={"01110","10001","10001","10001","10001","10001","01110"},
+    P={"11110","10001","10001","11110","10000","10000","10000"},
+    Q={"01110","10001","10001","10001","10101","10010","01101"},
+    R={"11110","10001","10001","11110","10100","10010","10001"},
+    S={"01111","10000","10000","01110","00001","00001","11110"},
+    T={"11111","00100","00100","00100","00100","00100","00100"},
+    U={"10001","10001","10001","10001","10001","10001","01110"},
+    V={"10001","10001","10001","10001","10001","01010","00100"},
+    W={"10001","10001","10001","10001","10101","11011","10001"},
+    X={"10001","10001","01010","00100","01010","10001","10001"},
+    Y={"10001","10001","01010","00100","00100","00100","00100"},
+    Z={"11111","00001","00010","00100","01000","10000","11111"},
+    ["0"]={"01110","10001","10011","10101","11001","10001","01110"},
+    ["1"]={"00100","01100","00100","00100","00100","00100","01110"},
+    ["2"]={"01110","10001","00001","00110","01000","10000","11111"},
+    ["3"]={"11110","00001","00001","01110","00001","00001","11110"},
+    ["4"]={"00010","00110","01010","10010","11111","00010","00010"},
+    ["5"]={"11111","10000","11110","00001","00001","10001","01110"},
+    ["6"]={"01110","10000","10000","11110","10001","10001","01110"},
+    ["7"]={"11111","00001","00010","00100","01000","01000","01000"},
+    ["8"]={"01110","10001","10001","01110","10001","10001","01110"},
+    ["9"]={"01110","10001","10001","01111","00001","00001","01110"}
+}
+
+local function samplePolygonPerimeter(vertices, count)
+    local pts = {}
+    local n = #vertices
+    if n == 0 or count <= 0 then return pts end
+    if count == 1 then
+        return {{x = vertices[1].x, y = vertices[1].y}}
+    end
+    local segLens = {}
+    local totalLen = 0
+    for i = 1, n do
+        local a = vertices[i]
+        local b = vertices[(i % n) + 1]
+        local d = math.sqrt((b.x - a.x)^2 + (b.y - a.y)^2)
+        segLens[i] = d
+        totalLen = totalLen + d
+    end
+    for k = 0, count - 1 do
+        local targetDist = (k / count) * totalLen
+        local acc = 0
+        for i = 1, n do
+            local d = segLens[i]
+            if acc + d >= targetDist or i == n then
+                local a = vertices[i]
+                local b = vertices[(i % n) + 1]
+                local t = (d > 0) and ((targetDist - acc) / d) or 0
+                table.insert(pts, {
+                    x = a.x + (b.x - a.x) * t,
+                    y = a.y + (b.y - a.y) * t
+                })
+                break
+            end
+            acc = acc + d
+        end
+    end
+    return pts
+end
+
+local function makeRegularPolygon(sides, radiusX, radiusY, startAngleDeg)
+    local verts = {}
+    for i = 0, sides - 1 do
+        local rad = math.rad(startAngleDeg + (i * (360 / sides)))
+        table.insert(verts, {
+            x = 0.5 + math.cos(rad) * radiusX,
+            y = 0.5 + math.sin(rad) * radiusY
+        })
+    end
+    return verts
+end
+
+local function generateWordPoints(wordStr, maxPoints)
+    local clean = string.upper(string.sub(string.gsub(tostring(wordStr or ""), "[^%w]", ""), 1, 8))
+    if #clean == 0 then return {} end
+    local rawDots = {}
+    local charW = 5
+    local gap = 1
+    local totalCols = (#clean * charW) + ((#clean - 1) * gap)
+    for cIdx = 1, #clean do
+        local ch = string.sub(clean, cIdx, cIdx)
+        local glyph = GLYPH_5X7[ch]
+        if glyph then
+            local colOffset = (cIdx - 1) * (charW + gap)
+            for row = 1, 7 do
+                local line = glyph[row]
+                for col = 1, 5 do
+                    if string.sub(line, col, col) == "1" then
+                        table.insert(rawDots, {
+                            gx = colOffset + (col - 1),
+                            gy = row - 1
+                        })
+                    end
+                end
+            end
+        end
+    end
+    if #rawDots == 0 then return {} end
+    table.sort(rawDots, function(a, b)
+        if a.gx == b.gx then return a.gy < b.gy end
+        return a.gx < b.gx
+    end)
+    local out = {}
+    local count = math.min(maxPoints, #rawDots)
+    for i = 1, count do
+        local pickIdx = math.clamp(math.floor(((i - 0.5) / count) * #rawDots) + 1, 1, #rawDots)
+        local d = rawDots[pickIdx]
+        local nx = 0.08 + ((d.gx / math.max(1, totalCols - 1)) * 0.84)
+        local ny = 0.18 + ((d.gy / 6) * 0.64)
+        table.insert(out, {x = nx, y = ny})
+    end
+    return out
+end
 
 local FIXTURE_FOOTPRINTS = {
     clara = 16,
@@ -374,6 +684,7 @@ local state = {
     previewView = "top",
     layoutEditMode = false,
     activeLayoutNode = 1,
+    canvasHeight = 200,
     editorFixtureType = "clara",
     staticLayerType = "pos",
     editorValues = deepCopy(FIXTURE_DEFAULTS.clara),
@@ -382,7 +693,8 @@ local state = {
     rigStartAddr = (#workData.rig > 0 and workData.rig[1].a) or 1,
     rigMode = "independen",
     rigConfigured = false,
-    bpm = 120
+    bpm = 120,
+    activeGuideIdx = 1
 }
 
 local themeBindings = {}
@@ -504,24 +816,37 @@ applyBrutalBorder(topBar)
 makeDraggableFrame(topBar, main, nil)
 
 local titleLbl = Instance.new("TextLabel")
-titleLbl.Size = UDim2.new(0, 165, 1, 0)
-titleLbl.Position = UDim2.new(0, 10, 0, 0)
+titleLbl.Size = UDim2.new(0, 145, 1, 0)
+titleLbl.Position = UDim2.new(0, 8, 0, 0)
 titleLbl.BackgroundTransparency = 1
 titleLbl.Text = "APEX STEP // RK-512"
 titleLbl.Font = Enum.Font.GothamBlack
-titleLbl.TextSize = 12
+titleLbl.TextSize = 11
 titleLbl.TextXAlignment = Enum.TextXAlignment.Left
 titleLbl.ZIndex = 4
 titleLbl.Parent = topBar
 registerTheme(titleLbl, "btnText", "TextColor3")
 
+local guideTopBtn = Instance.new("TextButton")
+guideTopBtn.Size = UDim2.new(0, 74, 0, 20)
+guideTopBtn.Position = UDim2.new(0, 155, 0, 5)
+guideTopBtn.Text = tr("btn_guide")
+guideTopBtn.Font = Enum.Font.GothamBlack
+guideTopBtn.TextSize = 9
+guideTopBtn.BorderSizePixel = 0
+guideTopBtn.ZIndex = 4
+guideTopBtn.Parent = topBar
+registerTheme(guideTopBtn, "secondary", "BackgroundColor3")
+registerTheme(guideTopBtn, "btnText", "TextColor3")
+applyBrutalBorder(guideTopBtn)
+
 local statusLbl = Instance.new("TextLabel")
-statusLbl.Size = UDim2.new(1, -245, 1, 0)
-statusLbl.Position = UDim2.new(0, 175, 0, 0)
+statusLbl.Size = UDim2.new(1, -295, 1, 0)
+statusLbl.Position = UDim2.new(0, 234, 0, 0)
 statusLbl.BackgroundTransparency = 1
-statusLbl.Text = "READY // " .. WORK_FILE
+statusLbl.Text = "READY"
 statusLbl.Font = Enum.Font.Code
-statusLbl.TextSize = 10
+statusLbl.TextSize = 9
 statusLbl.TextXAlignment = Enum.TextXAlignment.Right
 statusLbl.TextTruncate = Enum.TextTruncate.AtEnd
 statusLbl.ZIndex = 4
@@ -582,7 +907,7 @@ body.Parent = main
 
 local navBar = Instance.new("ScrollingFrame")
 navBar.Size = UDim2.new(1, -16, 0, 28)
-navBar.Position = UDim2.new(0, 8, 0, 6)
+navBar.Position = UDim2.new(0, 8, 0, 5)
 navBar.BackgroundTransparency = uiPrefs.bgTransparency
 navBar.BorderSizePixel = 0
 navBar.ScrollBarThickness = 0
@@ -607,8 +932,8 @@ navPad.PaddingRight = UDim.new(0, 4)
 navPad.Parent = navBar
 
 local contentArea = Instance.new("Frame")
-contentArea.Size = UDim2.new(1, -16, 1, -76)
-contentArea.Position = UDim2.new(0, 8, 0, 38)
+contentArea.Size = UDim2.new(1, -16, 1, -96)
+contentArea.Position = UDim2.new(0, 8, 0, 37)
 contentArea.BackgroundTransparency = uiPrefs.bgTransparency
 contentArea.BorderSizePixel = 0
 contentArea.ZIndex = 3
@@ -616,9 +941,45 @@ contentArea.Parent = body
 registerTheme(contentArea, "surface", "BackgroundColor3")
 applyBrutalBorder(contentArea)
 
+local hintBanner = Instance.new("Frame")
+hintBanner.Size = UDim2.new(1, -16, 0, 20)
+hintBanner.Position = UDim2.new(0, 8, 1, -56)
+hintBanner.BackgroundTransparency = uiPrefs.bgTransparency
+hintBanner.BorderSizePixel = 0
+hintBanner.ZIndex = 3
+hintBanner.Parent = body
+registerTheme(hintBanner, "chipBg", "BackgroundColor3")
+applyBrutalBorder(hintBanner)
+
+local hintTextLbl = Instance.new("TextLabel")
+hintTextLbl.Size = UDim2.new(1, -68, 1, 0)
+hintTextLbl.Position = UDim2.new(0, 6, 0, 0)
+hintTextLbl.BackgroundTransparency = 1
+hintTextLbl.Text = tr("hint_empty")
+hintTextLbl.Font = Enum.Font.Code
+hintTextLbl.TextSize = 8
+hintTextLbl.TextXAlignment = Enum.TextXAlignment.Left
+hintTextLbl.TextTruncate = Enum.TextTruncate.AtEnd
+hintTextLbl.ZIndex = 4
+hintTextLbl.Parent = hintBanner
+registerTheme(hintTextLbl, "ink", "TextColor3")
+
+local hintOpenGuideBtn = Instance.new("TextButton")
+hintOpenGuideBtn.Size = UDim2.new(0, 58, 0, 16)
+hintOpenGuideBtn.Position = UDim2.new(1, -60, 0.5, -8)
+hintOpenGuideBtn.Text = "TUTORIAL"
+hintOpenGuideBtn.Font = Enum.Font.GothamBlack
+hintOpenGuideBtn.TextSize = 8
+hintOpenGuideBtn.BorderSizePixel = 0
+hintOpenGuideBtn.ZIndex = 4
+hintOpenGuideBtn.Parent = hintBanner
+registerTheme(hintOpenGuideBtn, "accent", "BackgroundColor3")
+registerTheme(hintOpenGuideBtn, "btnText", "TextColor3")
+applyBrutalBorder(hintOpenGuideBtn)
+
 local footerBar = Instance.new("Frame")
 footerBar.Size = UDim2.new(1, -16, 0, 30)
-footerBar.Position = UDim2.new(0, 8, 1, -34)
+footerBar.Position = UDim2.new(0, 8, 1, -33)
 footerBar.BackgroundTransparency = uiPrefs.bgTransparency
 footerBar.BorderSizePixel = 0
 footerBar.ZIndex = 3
@@ -628,8 +989,19 @@ applyBrutalBorder(footerBar)
 
 makeDraggableFrame(footerBar, main, nil)
 
+local function refreshSmartHint()
+    if state.layoutEditMode then
+        hintTextLbl.Text = tr("hint_edit")
+    elseif #state.customSteps == 0 then
+        hintTextLbl.Text = tr("hint_empty")
+    else
+        hintTextLbl.Text = tr("hint_ready")
+    end
+end
+
 local pages = {}
 local tabButtons = {}
+local tabLangKeys = {}
 local activeTabKey = "presets"
 
 local function refreshTabStyles()
@@ -638,6 +1010,9 @@ local function refreshTabStyles()
         local isAct = (k == activeTabKey)
         btn.BackgroundColor3 = isAct and th.accent or th.chipBg
         btn.TextColor3 = isAct and th.btnText or th.ink
+        if tabLangKeys[k] then
+            btn.Text = string.upper(tr(tabLangKeys[k]))
+        end
     end
 end
 
@@ -649,10 +1024,10 @@ local function switchTab(tabKey)
     refreshTabStyles()
 end
 
-local function createTab(key, label, width)
+local function createTab(key, langKey, width)
     local btn = Instance.new("TextButton")
-    btn.Size = UDim2.new(0, width or 80, 0, 20)
-    btn.Text = string.upper(label)
+    btn.Size = UDim2.new(0, width or 84, 0, 20)
+    btn.Text = string.upper(tr(langKey))
     btn.Font = Enum.Font.GothamBlack
     btn.TextSize = 9
     btn.BorderSizePixel = 0
@@ -679,6 +1054,7 @@ local function createTab(key, label, width)
 
     pages[key] = scroll
     tabButtons[key] = btn
+    tabLangKeys[key] = langKey
 
     btn.MouseButton1Click:Connect(function()
         switchTab(key)
@@ -735,7 +1111,7 @@ local function makeSliderRow(parent, labelText, minVal, maxVal, defaultVal, isIn
     row.Parent = parent
 
     local lbl = Instance.new("TextLabel")
-    lbl.Size = UDim2.new(0, 132, 1, 0)
+    lbl.Size = UDim2.new(0, 134, 1, 0)
     lbl.BackgroundTransparency = 1
     lbl.Text = labelText
     lbl.Font = Enum.Font.GothamBold
@@ -747,8 +1123,8 @@ local function makeSliderRow(parent, labelText, minVal, maxVal, defaultVal, isIn
     registerTheme(lbl, "ink", "TextColor3")
 
     local track = Instance.new("TextButton")
-    track.Size = UDim2.new(1, -190, 0, 11)
-    track.Position = UDim2.new(0, 136, 0.5, -5)
+    track.Size = UDim2.new(1, -192, 0, 11)
+    track.Position = UDim2.new(0, 138, 0.5, -5)
     track.Text = ""
     track.AutoButtonColor = false
     track.BorderSizePixel = 0
@@ -835,6 +1211,7 @@ local function makeSliderRow(parent, labelText, minVal, maxVal, defaultVal, isIn
 
     return {
         row = row,
+        label = lbl,
         setValue = function(v)
             applyValue(v, false)
         end,
@@ -948,13 +1325,13 @@ local function makeSmallActionBtn(parent, text, posX, width, roleKey, callback)
     return b
 end
 
-local pagePresets = createTab("presets", "Preset Step", 78)
-local pageCustom = createTab("custom", "Custom Step", 80)
-local pagePreview = createTab("preview", "Live Preview", 84)
-local pageStatic = createTab("static", "Static / RGB", 80)
-local pageRig = createTab("rig", "Rig & DMX", 72)
-local pageCues = createTab("cues", "Simpan Cue", 78)
-local pageSettings = createTab("settings", "Settings", 68)
+local pagePresets = createTab("presets", "tab_preset", 84)
+local pageCustom = createTab("custom", "tab_custom", 86)
+local pagePreview = createTab("preview", "tab_preview", 88)
+local pageStatic = createTab("static", "tab_static", 84)
+local pageRig = createTab("rig", "tab_rig", 76)
+local pageCues = createTab("cues", "tab_cue", 82)
+local pageSettings = createTab("settings", "tab_settings", 76)
 
 local refreshMembersUI
 local refreshCustomStepsListUI
@@ -963,6 +1340,131 @@ local refreshRigEditorUI
 local rebuildDynamicFixtureSliders
 local rebuildPreviewDots
 local openRigSetupModal
+
+local guideModalOverlay = Instance.new("Frame")
+guideModalOverlay.Name = "GuideModal"
+guideModalOverlay.Size = UDim2.new(1, 0, 1, 0)
+guideModalOverlay.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+guideModalOverlay.BackgroundTransparency = 0.40
+guideModalOverlay.BorderSizePixel = 0
+guideModalOverlay.Visible = false
+guideModalOverlay.ZIndex = 40
+guideModalOverlay.Parent = main
+
+local guideModalBox = Instance.new("Frame")
+guideModalBox.Size = UDim2.new(0.90, 0, 0.86, 0)
+guideModalBox.Position = UDim2.new(0.05, 0, 0.07, 0)
+guideModalBox.BorderSizePixel = 0
+guideModalBox.ZIndex = 41
+guideModalBox.Parent = guideModalOverlay
+registerTheme(guideModalBox, "bg", "BackgroundColor3")
+applyBrutalBorder(guideModalBox)
+
+local guideModalHeader = Instance.new("Frame")
+guideModalHeader.Size = UDim2.new(1, 0, 0, 28)
+guideModalHeader.BorderSizePixel = 0
+guideModalHeader.ZIndex = 42
+guideModalHeader.Parent = guideModalBox
+registerTheme(guideModalHeader, "header", "BackgroundColor3")
+applyBrutalBorder(guideModalHeader)
+
+local guideModalTitle = Instance.new("TextLabel")
+guideModalTitle.Size = UDim2.new(1, -38, 1, 0)
+guideModalTitle.Position = UDim2.new(0, 8, 0, 0)
+guideModalTitle.BackgroundTransparency = 1
+guideModalTitle.Text = "PUSAT PANDUAN & TUTORIAL INTERAKTIF"
+guideModalTitle.Font = Enum.Font.GothamBlack
+guideModalTitle.TextSize = 10
+guideModalTitle.TextXAlignment = Enum.TextXAlignment.Left
+guideModalTitle.ZIndex = 43
+guideModalTitle.Parent = guideModalHeader
+registerTheme(guideModalTitle, "btnText", "TextColor3")
+
+local guideCloseBtn = Instance.new("TextButton")
+guideCloseBtn.Size = UDim2.new(0, 24, 0, 20)
+guideCloseBtn.Position = UDim2.new(1, -28, 0, 4)
+guideCloseBtn.Text = "X"
+guideCloseBtn.Font = Enum.Font.GothamBlack
+guideCloseBtn.TextSize = 11
+guideCloseBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+guideCloseBtn.BorderSizePixel = 0
+guideCloseBtn.ZIndex = 44
+guideCloseBtn.Parent = guideModalHeader
+registerTheme(guideCloseBtn, "danger", "BackgroundColor3")
+applyBrutalBorder(guideCloseBtn)
+
+local guideBodyScroll = Instance.new("ScrollingFrame")
+guideBodyScroll.Size = UDim2.new(1, -12, 1, -36)
+guideBodyScroll.Position = UDim2.new(0, 6, 0, 32)
+guideBodyScroll.BackgroundTransparency = 1
+guideBodyScroll.BorderSizePixel = 0
+guideBodyScroll.ScrollBarThickness = 4
+guideBodyScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
+guideBodyScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+guideBodyScroll.ZIndex = 42
+guideBodyScroll.Parent = guideModalBox
+
+local guideListLayout = Instance.new("UIListLayout")
+guideListLayout.Padding = UDim.new(0, 6)
+guideListLayout.Parent = guideBodyScroll
+
+for _, tut in ipairs(TUTORIALS) do
+    local card = Instance.new("Frame")
+    card.Size = UDim2.new(1, -6, 0, 0)
+    card.AutomaticSize = Enum.AutomaticSize.Y
+    card.BorderSizePixel = 0
+    card.ZIndex = 43
+    card.Parent = guideBodyScroll
+    registerTheme(card, "surface", "BackgroundColor3")
+    applyBrutalBorder(card)
+
+    local pad = Instance.new("UIPadding", card)
+    pad.PaddingTop = UDim.new(0, 6)
+    pad.PaddingBottom = UDim.new(0, 6)
+    pad.PaddingLeft = UDim.new(0, 8)
+    pad.PaddingRight = UDim.new(0, 8)
+
+    local lay = Instance.new("UIListLayout", card)
+    lay.Padding = UDim.new(0, 3)
+
+    local thdr = Instance.new("TextLabel")
+    thdr.Size = UDim2.new(1, 0, 0, 15)
+    thdr.BackgroundTransparency = 1
+    thdr.Text = tut.title
+    thdr.Font = Enum.Font.GothamBlack
+    thdr.TextSize = 10
+    thdr.TextXAlignment = Enum.TextXAlignment.Left
+    thdr.ZIndex = 44
+    thdr.Parent = card
+    registerTheme(thdr, "accent", "TextColor3")
+
+    for sIdx, line in ipairs(tut.steps) do
+        local slbl = Instance.new("TextLabel")
+        slbl.Size = UDim2.new(1, 0, 0, 0)
+        slbl.AutomaticSize = Enum.AutomaticSize.Y
+        slbl.BackgroundTransparency = 1
+        slbl.Text = sIdx .. ". " .. line
+        slbl.Font = Enum.Font.Gotham
+        slbl.TextSize = 9
+        slbl.TextWrapped = true
+        slbl.TextXAlignment = Enum.TextXAlignment.Left
+        slbl.ZIndex = 44
+        slbl.Parent = card
+        registerTheme(slbl, "ink", "TextColor3")
+    end
+end
+
+guideTopBtn.MouseButton1Click:Connect(function()
+    guideModalOverlay.Visible = not guideModalOverlay.Visible
+end)
+
+hintOpenGuideBtn.MouseButton1Click:Connect(function()
+    guideModalOverlay.Visible = true
+end)
+
+guideCloseBtn.MouseButton1Click:Connect(function()
+    guideModalOverlay.Visible = false
+end)
 
 local rigModalOverlay = Instance.new("Frame")
 rigModalOverlay.Name = "RigSetupModal"
@@ -1184,6 +1686,7 @@ local function saveCurrentStepsToCue(cueKey)
             saveWorkFile()
         end
         if refreshCueGridUI then refreshCueGridUI() end
+        refreshSmartHint()
         setStatus("TERSIMPAN KE CUE " .. cueKey .. " (" .. #state.customSteps .. " STEP)", false)
     end)
 end
@@ -1299,6 +1802,7 @@ local function buildStepsFromPreset(preset)
 
     state.customSteps = newSteps
     if refreshCustomStepsListUI then refreshCustomStepsListUI() end
+    refreshSmartHint()
     setStatus("JADI " .. #newSteps .. " STEP (" .. string.upper(preset.name) .. ") -> CEK PREVIEW / SIMPAN", false)
 end
 
@@ -1407,11 +1911,11 @@ makeChipSelector(secPresetOpt, "Jumlah Step Otomatis (steps):", {4, 8, 12, 16}, 
     state.presetStepsCount = v
 end)
 
-sldPresetRate = makeSliderRow(secPresetOpt, "Kecepatan Step (rate)", 0.2, 10.0, state.stepRate, false, function(v)
+sldPresetRate = makeSliderRow(secPresetOpt, tr("lbl_rate"), 0.2, 10.0, state.stepRate, false, function(v)
     state.stepRate = v
 end)
 
-sldPresetGlide = makeSliderRow(secPresetOpt, "Kehalusan Gerak (glide)", 0.0, 1.0, state.stepGlide, false, function(v)
+sldPresetGlide = makeSliderRow(secPresetOpt, tr("lbl_glide"), 0.0, 1.0, state.stepGlide, false, function(v)
     state.stepGlide = v
 end)
 
@@ -1489,7 +1993,7 @@ xyCursor.Parent = xyPad
 registerTheme(xyCursor, "accent", "BackgroundColor3")
 applyBrutalBorder(xyCursor)
 
-local sldCustomPan, sldCustomTilt
+local sldCustomPan, sldCustomTilt, sldCustomDim, sldCustomColor, sldCustomStrobe
 
 local function syncPadFromPanTilt()
     xyCursor.Position = UDim2.new(state.curPan, 0, 1 - state.curTilt, 0)
@@ -1524,23 +2028,23 @@ do
     end)
 end
 
-sldCustomPan = makeSliderRow(secCustomPad, "Pan (0.1 Kiri - 0.9 Kanan)", 0, 1, state.curPan, false, function(v)
+sldCustomPan = makeSliderRow(secCustomPad, tr("lbl_pan"), 0, 1, state.curPan, false, function(v)
     state.curPan = v
     xyCursor.Position = UDim2.new(state.curPan, 0, 1 - state.curTilt, 0)
 end)
 
-sldCustomTilt = makeSliderRow(secCustomPad, "Tilt (0.1 Bawah - 0.9 Atas)", 0, 1, state.curTilt, false, function(v)
+sldCustomTilt = makeSliderRow(secCustomPad, tr("lbl_tilt"), 0, 1, state.curTilt, false, function(v)
     state.curTilt = v
     xyCursor.Position = UDim2.new(state.curPan, 0, 1 - state.curTilt, 0)
 end)
 
-makeSliderRow(secCustomPad, "Dimmer / Terang (dim)", 0, 1, state.curDim, false, function(v) state.curDim = v end)
-makeSliderRow(secCustomPad, "Warna (color)", 0, 1, state.curColor, false, function(v) state.curColor = v end)
-makeSliderRow(secCustomPad, "Strobe / Kedip (strobe)", 0, 1, state.curStrobe, false, function(v) state.curStrobe = v end)
+sldCustomDim = makeSliderRow(secCustomPad, tr("lbl_dim"), 0, 1, state.curDim, false, function(v) state.curDim = v end)
+sldCustomColor = makeSliderRow(secCustomPad, tr("lbl_color"), 0, 1, state.curColor, false, function(v) state.curColor = v end)
+sldCustomStrobe = makeSliderRow(secCustomPad, tr("lbl_strobe"), 0, 1, state.curStrobe, false, function(v) state.curStrobe = v end)
 
 local mirrorBtn = Instance.new("TextButton")
 mirrorBtn.Size = UDim2.new(1, 0, 0, 22)
-mirrorBtn.Text = "MODE CERMIN KIRI-KANAN (MIRROR PAN): MATI"
+mirrorBtn.Text = tr("btn_mirror_off")
 mirrorBtn.Font = Enum.Font.GothamBlack
 mirrorBtn.TextSize = 9
 mirrorBtn.BorderSizePixel = 0
@@ -1553,7 +2057,7 @@ applyBrutalBorder(mirrorBtn)
 mirrorBtn.MouseButton1Click:Connect(function()
     state.curMirror = not state.curMirror
     local th = getCurrentTheme()
-    mirrorBtn.Text = state.curMirror and "MODE CERMIN KIRI-KANAN (MIRROR PAN): AKTIF" or "MODE CERMIN KIRI-KANAN (MIRROR PAN): MATI"
+    mirrorBtn.Text = state.curMirror and tr("btn_mirror_on") or tr("btn_mirror_off")
     mirrorBtn.BackgroundColor3 = state.curMirror and th.secondary or th.surface
     mirrorBtn.TextColor3 = state.curMirror and th.btnText or th.ink
 end)
@@ -1566,7 +2070,7 @@ stepActionRow.BackgroundTransparency = 1
 stepActionRow.ZIndex = 5
 stepActionRow.Parent = secCustomSteps
 
-makeSmallActionBtn(stepActionRow, "+ Rekam Step", 0, 102, "accent", function()
+local btnRecStep = makeSmallActionBtn(stepActionRow, tr("btn_rec_step"), 0, 108, "accent", function()
     local frame = {}
     local indices = getSelectedMemberIndices()
     local totalSel = math.max(1, #indices)
@@ -1603,16 +2107,18 @@ makeSmallActionBtn(stepActionRow, "+ Rekam Step", 0, 102, "accent", function()
     end
     table.insert(state.customSteps, frame)
     if refreshCustomStepsListUI then refreshCustomStepsListUI() end
+    refreshSmartHint()
     setStatus("STEP #" .. #state.customSteps .. " DIREKAM", false)
 end)
 
-makeSmallActionBtn(stepActionRow, "Simpan ke Cue", 107, 108, "secondary", function()
+local btnSaveCueMid = makeSmallActionBtn(stepActionRow, tr("btn_save_cue"), 113, 108, "secondary", function()
     saveCurrentStepsToCue(state.cueId)
 end)
 
-makeSmallActionBtn(stepActionRow, "Hapus Semua", 220, 88, "danger", function()
+local btnDelAllSteps = makeSmallActionBtn(stepActionRow, tr("btn_del_all"), 226, 88, "danger", function()
     state.customSteps = {}
     if refreshCustomStepsListUI then refreshCustomStepsListUI() end
+    refreshSmartHint()
     setStatus("SEMUA STEP DIHAPUS", false)
 end)
 
@@ -1696,12 +2202,13 @@ refreshCustomStepsListUI = function()
         del.MouseButton1Click:Connect(function()
             table.remove(state.customSteps, sIdx)
             refreshCustomStepsListUI()
+            refreshSmartHint()
             setStatus("STEP #" .. sIdx .. " DIHAPUS", false)
         end)
     end
 end
 
-local secPvMain = makeSection(pagePreview, "LIVE STAGE PREVIEW (ATAS / DEPAN + GESER SENTUH & D-PAD)")
+local secPvMain = makeSection(pagePreview, "1. LIVE STAGE PREVIEW (ATAS / DEPAN + GESER BEBAS)")
 
 local pvToolRow1 = Instance.new("Frame")
 pvToolRow1.Size = UDim2.new(1, 0, 0, 22)
@@ -1742,34 +2249,18 @@ pvDragToggleBtn.ZIndex = 5
 pvDragToggleBtn.Parent = pvToolRow1
 applyBrutalBorder(pvDragToggleBtn)
 
-local pvShapeBarBtn = Instance.new("TextButton")
-pvShapeBarBtn.Size = UDim2.new(0, 48, 0, 21)
-pvShapeBarBtn.Position = UDim2.new(0, 254, 0, 0)
-pvShapeBarBtn.Text = "BARIS"
-pvShapeBarBtn.Font = Enum.Font.GothamBold
-pvShapeBarBtn.TextSize = 9
-pvShapeBarBtn.BorderSizePixel = 0
-pvShapeBarBtn.ZIndex = 5
-pvShapeBarBtn.Parent = pvToolRow1
-registerTheme(pvShapeBarBtn, "surface", "BackgroundColor3")
-registerTheme(pvShapeBarBtn, "ink", "TextColor3")
-applyBrutalBorder(pvShapeBarBtn)
+makeSmallActionBtn(pvToolRow1, "PANJANG +", 254, 62, "surface", function()
+    state.canvasHeight = math.clamp(state.canvasHeight + 45, 150, 420)
+    previewCanvas.Size = UDim2.new(1, 0, 0, state.canvasHeight)
+end)
 
-local pvShapeArcBtn = Instance.new("TextButton")
-pvShapeArcBtn.Size = UDim2.new(0, 48, 0, 21)
-pvShapeArcBtn.Position = UDim2.new(0, 306, 0, 0)
-pvShapeArcBtn.Text = "BUSUR"
-pvShapeArcBtn.Font = Enum.Font.GothamBold
-pvShapeArcBtn.TextSize = 9
-pvShapeArcBtn.BorderSizePixel = 0
-pvShapeArcBtn.ZIndex = 5
-pvShapeArcBtn.Parent = pvToolRow1
-registerTheme(pvShapeArcBtn, "surface", "BackgroundColor3")
-registerTheme(pvShapeArcBtn, "ink", "TextColor3")
-applyBrutalBorder(pvShapeArcBtn)
+makeSmallActionBtn(pvToolRow1, "PENDEK -", 320, 62, "surface", function()
+    state.canvasHeight = math.clamp(state.canvasHeight - 45, 150, 420)
+    previewCanvas.Size = UDim2.new(1, 0, 0, state.canvasHeight)
+end)
 
 local previewCanvas = Instance.new("Frame")
-previewCanvas.Size = UDim2.new(1, 0, 0, 175)
+previewCanvas.Size = UDim2.new(1, 0, 0, state.canvasHeight)
 previewCanvas.ClipsDescendants = true
 previewCanvas.BorderSizePixel = 0
 previewCanvas.ZIndex = 5
@@ -1822,7 +2313,7 @@ local function nudgeActiveFixture(dx, dy)
     local fix = workData.rig[idx]
     if not fix then return end
     fix.x = math.clamp(math.floor(((fix.x or 0.5) + dx) * 100 + 0.5) / 100, 0.05, 0.95)
-    fix.y = math.clamp(math.floor(((fix.y or 0.25) + dy) * 100 + 0.5) / 100, 0.10, 0.90)
+    fix.y = math.clamp(math.floor(((fix.y or 0.25) + dy) * 100 + 0.5) / 100, 0.08, 0.92)
     dpadTargetLbl.Text = string.format("UNIT #%d (X:%.2f Y:%.2f)", idx, fix.x, fix.y)
     if rebuildPreviewDots then rebuildPreviewDots() end
     if refreshRigEditorUI then refreshRigEditorUI() end
@@ -1832,6 +2323,131 @@ makeSmallActionBtn(dpadRow, "◄ KIRI", 132, 48, "surface", function() nudgeActi
 makeSmallActionBtn(dpadRow, "► KANAN", 184, 54, "surface", function() nudgeActiveFixture(0.04, 0) end)
 makeSmallActionBtn(dpadRow, "▲ ATAS", 242, 48, "surface", function() nudgeActiveFixture(0, -0.04) end)
 makeSmallActionBtn(dpadRow, "▼ BAWAH", 294, 54, "surface", function() nudgeActiveFixture(0, 0.04) end)
+
+local secFormations = makeSection(pagePreview, "2. TEMPLATE BENTUK FORMASI & HURUF / ANGKA / KATA (MAX 8)")
+
+local function applyFormationPoints(pts, labelName)
+    local total = #workData.rig
+    if total == 0 or #pts == 0 then return end
+    for i = 1, total do
+        local p = pts[((i - 1) % #pts) + 1]
+        workData.rig[i].x = math.clamp(math.floor(p.x * 100 + 0.5) / 100, 0.05, 0.95)
+        workData.rig[i].y = math.clamp(math.floor(p.y * 100 + 0.5) / 100, 0.08, 0.92)
+    end
+    state.layoutEditMode = true
+    refreshPreviewToolbar()
+    refreshSmartHint()
+    if rebuildPreviewDots then rebuildPreviewDots() end
+    if refreshRigEditorUI then refreshRigEditorUI() end
+    setStatus("FORMASI: " .. string.upper(labelName), false)
+end
+
+local shapeGridWrap = Instance.new("Frame")
+shapeGridWrap.Size = UDim2.new(1, 0, 0, 0)
+shapeGridWrap.AutomaticSize = Enum.AutomaticSize.Y
+shapeGridWrap.BackgroundTransparency = 1
+shapeGridWrap.ZIndex = 5
+shapeGridWrap.Parent = secFormations
+
+local shapeGrid = Instance.new("UIGridLayout")
+shapeGrid.CellSize = UDim2.new(0.24, 0, 0, 24)
+shapeGrid.CellPadding = UDim2.new(0.013, 0, 0, 4)
+shapeGrid.Parent = shapeGridWrap
+
+local SHAPE_FORMATIONS = {
+    {name = "Baris Lurus", build = function(n)
+        local pts = {}
+        for i = 1, n do
+            local px = (n == 1) and 0.5 or (0.08 + ((i - 1) * (0.84 / math.max(1, n - 1))))
+            table.insert(pts, {x = px, y = 0.25})
+        end
+        return pts
+    end},
+    {name = "Busur", build = function(n)
+        local pts = {}
+        for i = 1, n do
+            local norm = (n == 1) and 0 or (((i - 1) / math.max(1, n - 1)) * 2 - 1)
+            table.insert(pts, {x = 0.5 + norm * 0.42, y = 0.22 + ((1 - norm * norm) * 0.50)})
+        end
+        return pts
+    end},
+    {name = "Lingkaran", build = function(n)
+        return samplePolygonPerimeter(makeRegularPolygon(32, 0.36, 0.36, -90), n)
+    end},
+    {name = "Kotak", build = function(n)
+        return samplePolygonPerimeter({{x=0.16,y=0.16},{x=0.84,y=0.16},{x=0.84,y=0.84},{x=0.16,y=0.84}}, n)
+    end},
+    {name = "Segitiga", build = function(n)
+        return samplePolygonPerimeter(makeRegularPolygon(3, 0.40, 0.40, -90), n)
+    end},
+    {name = "Segi Lima", build = function(n)
+        return samplePolygonPerimeter(makeRegularPolygon(5, 0.38, 0.38, -90), n)
+    end},
+    {name = "Segi Enam", build = function(n)
+        return samplePolygonPerimeter(makeRegularPolygon(6, 0.38, 0.38, 0), n)
+    end},
+    {name = "Segi Tujuh", build = function(n)
+        return samplePolygonPerimeter(makeRegularPolygon(7, 0.38, 0.38, -90), n)
+    end}
+}
+
+for _, sf in ipairs(SHAPE_FORMATIONS) do
+    local b = Instance.new("TextButton")
+    b.Text = string.upper(sf.name)
+    b.Font = Enum.Font.GothamBlack
+    b.TextSize = 8
+    b.BorderSizePixel = 0
+    b.ZIndex = 5
+    b.Parent = shapeGridWrap
+    registerTheme(b, "surface", "BackgroundColor3")
+    registerTheme(b, "ink", "TextColor3")
+    applyBrutalBorder(b)
+
+    b.MouseButton1Click:Connect(function()
+        applyFormationPoints(sf.build(#workData.rig), sf.name)
+    end)
+end
+
+local wordRow = Instance.new("Frame")
+wordRow.Size = UDim2.new(1, 0, 0, 24)
+wordRow.BackgroundTransparency = 1
+wordRow.ZIndex = 5
+wordRow.Parent = secFormations
+
+local wordBox = Instance.new("TextBox")
+wordBox.Size = UDim2.new(0, 175, 0, 22)
+wordBox.Position = UDim2.new(0, 0, 0, 0)
+wordBox.PlaceholderText = "Huruf / Angka / Kata (Max 8)"
+wordBox.Text = ""
+wordBox.Font = Enum.Font.Code
+wordBox.TextSize = 10
+wordBox.ClearTextOnFocus = false
+wordBox.BorderSizePixel = 0
+wordBox.ZIndex = 5
+wordBox.Parent = wordRow
+registerTheme(wordBox, "surface", "BackgroundColor3")
+registerTheme(wordBox, "ink", "TextColor3")
+applyBrutalBorder(wordBox)
+
+wordBox:GetPropertyChangedSignal("Text"):Connect(function()
+    if #wordBox.Text > 8 then
+        wordBox.Text = string.sub(wordBox.Text, 1, 8)
+    end
+end)
+
+makeSmallActionBtn(wordRow, "Bentuk Kata / Huruf", 181, 145, "accent", function()
+    local txt = string.sub(wordBox.Text, 1, 8)
+    if #txt == 0 then
+        setStatus("KETIK HURUF/ANGKA/KATA DULU (MAX 8)", true)
+        return
+    end
+    local pts = generateWordPoints(txt, #workData.rig)
+    if #pts > 0 then
+        applyFormationPoints(pts, "KATA: " .. string.upper(txt))
+    else
+        setStatus("KARAKTER TIDAK VALID (GUNAKAN A-Z / 0-9)", true)
+    end
+end)
 
 local previewFixtures = {}
 
@@ -1871,34 +2487,9 @@ end)
 pvDragToggleBtn.MouseButton1Click:Connect(function()
     state.layoutEditMode = not state.layoutEditMode
     refreshPreviewToolbar()
+    refreshSmartHint()
     if rebuildPreviewDots then rebuildPreviewDots() end
     setStatus(state.layoutEditMode and "MODE GESER LAYOUT AKTIF (SENTUH / D-PAD)" or "MODE SIMULASI STEP AKTIF", false)
-end)
-
-pvShapeBarBtn.MouseButton1Click:Connect(function()
-    local total = math.max(1, #workData.rig)
-    for i, fix in ipairs(workData.rig) do
-        local px = (total == 1) and 0.5 or (0.10 + ((i - 1) * (0.80 / math.max(1, total - 1))))
-        fix.x = math.floor(px * 100 + 0.5) / 100
-        fix.y = 0.25
-    end
-    if rebuildPreviewDots then rebuildPreviewDots() end
-    if refreshRigEditorUI then refreshRigEditorUI() end
-    setStatus("TATA LETAK: 1 BARIS LURUS", false)
-end)
-
-pvShapeArcBtn.MouseButton1Click:Connect(function()
-    local total = math.max(1, #workData.rig)
-    for i, fix in ipairs(workData.rig) do
-        local norm = (total == 1) and 0 or (((i - 1) / math.max(1, total - 1)) * 2 - 1)
-        local px = 0.5 + (norm * 0.42)
-        local py = 0.22 + ((1 - (norm * norm)) * 0.48)
-        fix.x = math.floor(px * 100 + 0.5) / 100
-        fix.y = math.floor(py * 100 + 0.5) / 100
-    end
-    if rebuildPreviewDots then rebuildPreviewDots() end
-    if refreshRigEditorUI then refreshRigEditorUI() end
-    setStatus("TATA LETAK: BUSUR MELENGKUNG", false)
 end)
 
 rebuildPreviewDots = function()
@@ -1914,7 +2505,7 @@ rebuildPreviewDots = function()
     for i = 1, total do
         local fix = workData.rig[i]
         local fx = math.clamp(tonumber(fix.x) or 0.5, 0.05, 0.95)
-        local fy = math.clamp(tonumber(fix.y) or 0.25, 0.10, 0.90)
+        local fy = math.clamp(tonumber(fix.y) or 0.25, 0.08, 0.92)
         local isSelectedNode = (i == state.activeLayoutNode)
 
         local beam = Instance.new("Frame")
@@ -1970,7 +2561,7 @@ rebuildPreviewDots = function()
             UserInputService.InputChanged:Connect(function(input)
                 if draggingNode and state.layoutEditMode and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
                     local rx = math.clamp((input.Position.X - previewCanvas.AbsolutePosition.X) / math.max(1, previewCanvas.AbsoluteSize.X), 0.05, 0.95)
-                    local ry = math.clamp((input.Position.Y - previewCanvas.AbsolutePosition.Y) / math.max(1, previewCanvas.AbsoluteSize.Y), 0.10, 0.90)
+                    local ry = math.clamp((input.Position.Y - previewCanvas.AbsolutePosition.Y) / math.max(1, previewCanvas.AbsoluteSize.Y), 0.08, 0.92)
                     fix.x = math.floor(rx * 100 + 0.5) / 100
                     fix.y = math.floor(ry * 100 + 0.5) / 100
                     head.Position = UDim2.new(fix.x, 0, fix.y, 0)
@@ -2025,7 +2616,7 @@ RunService.RenderStepped:Connect(function()
         item.spot.Visible = isSel and (not state.layoutEditMode)
 
         local fx = math.clamp(tonumber(item.fix.x) or 0.5, 0.05, 0.95)
-        local fy = math.clamp(tonumber(item.fix.y) or 0.25, 0.10, 0.90)
+        local fy = math.clamp(tonumber(item.fix.y) or 0.25, 0.08, 0.92)
 
         if state.layoutEditMode then
             item.head.Rotation = 0
@@ -2391,7 +2982,7 @@ refreshRigEditorUI = function()
         yBox.FocusLost:Connect(function()
             local n = tonumber(yBox.Text)
             if n then
-                fix.y = math.clamp(math.floor(n * 100 + 0.5) / 100, 0.10, 0.90)
+                fix.y = math.clamp(math.floor(n * 100 + 0.5) / 100, 0.08, 0.92)
                 yBox.Text = string.format("%.2f", fix.y)
                 if rebuildPreviewDots then rebuildPreviewDots() end
             else
@@ -2506,6 +3097,7 @@ refreshCueGridUI = function()
                 if sldPresetGlide then sldPresetGlide.setValue(state.stepGlide) end
                 if chipPresetDir then chipPresetDir.setSelected(state.stepDir) end
                 refreshCustomStepsListUI()
+                refreshSmartHint()
                 setStatus("CUE " .. k .. " (" .. #state.customSteps .. " STEP) DIMUAT", false)
             elseif not c and uiPrefs.promptRigOnNewCue then
                 openRigSetupModal(function()
@@ -2520,8 +3112,20 @@ refreshCueGridUI = function()
 end
 
 local applyFullTheme
+local applyLanguageTexts
 
-local secSetScale = makeSection(pageSettings, "1. UKURAN JENDELA (PANJANG/LEBAR/TINGGI) & SKALA (0.20 - 1.30)")
+local secSetLang = makeSection(pageSettings, "1. PILIH BAHASA TAMPILAN (5 BAHASA)")
+
+makeChipSelector(secSetLang, "Bahasa Menu & Panduan:", {
+    "Sehari-hari", "Indonesia", "Jawa", "Sunda", "English"
+}, uiPrefs.langName, function(v)
+    uiPrefs.langName = v
+    savePrefs()
+    applyLanguageTexts()
+    setStatus("BAHASA: " .. string.upper(v), false)
+end)
+
+local secSetScale = makeSection(pageSettings, "2. UKURAN JENDELA (PANJANG/LEBAR/TINGGI) & SKALA (0.20 - 1.30)")
 
 local sldUiScale = makeSliderRow(secSetScale, "Skala UI (0.20 - 1.30)", 0.20, 1.30, uiPrefs.uiScale, false, function(v)
     uiPrefs.uiScale = v
@@ -2529,13 +3133,13 @@ local sldUiScale = makeSliderRow(secSetScale, "Skala UI (0.20 - 1.30)", 0.20, 1.
     savePrefs()
 end)
 
-local sldWinW = makeSliderRow(secSetScale, "Lebar Jendela (320 - 900)", 320, 900, uiPrefs.winWidth, true, function(v)
+local sldWinW = makeSliderRow(secSetScale, "Lebar Jendela (320 - 950)", 320, 950, uiPrefs.winWidth, true, function(v)
     uiPrefs.winWidth = v
     main.Size = UDim2.new(0, uiPrefs.winWidth, 0, uiPrefs.winHeight)
     savePrefs()
 end)
 
-local sldWinH = makeSliderRow(secSetScale, "Tinggi Jendela (220 - 650)", 220, 650, uiPrefs.winHeight, true, function(v)
+local sldWinH = makeSliderRow(secSetScale, "Tinggi Jendela (220 - 700)", 220, 700, uiPrefs.winHeight, true, function(v)
     uiPrefs.winHeight = v
     main.Size = UDim2.new(0, uiPrefs.winWidth, 0, uiPrefs.winHeight)
     savePrefs()
@@ -2547,7 +3151,7 @@ makeSliderRow(secSetScale, "Ukuran Bubble (36 - 66 px)", 36, 66, uiPrefs.bubbleS
     savePrefs()
 end)
 
-local secSetTheme = makeSection(pageSettings, "2. TEMA GELAP, TRANSPARANSI & EFEK BLUR")
+local secSetTheme = makeSection(pageSettings, "3. TEMA GELAP, TRANSPARANSI & EFEK BLUR")
 
 makeChipSelector(secSetTheme, "Palet Warna UI (Default Gelap):", {
     "Brutal Dark", "OLED Midnight", "Obsidian Neon", "Acid Lime"
@@ -2587,7 +3191,7 @@ blurToggleBtn.MouseButton1Click:Connect(function()
     savePrefs()
 end)
 
-local secSetOpt = makeSection(pageSettings, "3. OPTIMASI PROMPT DMX & RESET")
+local secSetOpt = makeSection(pageSettings, "4. OPTIMASI PROMPT DMX & RESET")
 
 local promptRigBtn = Instance.new("TextButton")
 promptRigBtn.Size = UDim2.new(1, 0, 0, 24)
@@ -2631,15 +3235,15 @@ end)
 
 makeSmallActionBtn(setBtnRow, "Reset Ukuran & Posisi", 131, 145, "surface", function()
     uiPrefs.uiScale = 1.0
-    uiPrefs.winWidth = 520
-    uiPrefs.winHeight = 330
+    uiPrefs.winWidth = 540
+    uiPrefs.winHeight = 350
     uiScaleObj.Scale = 1.0
-    main.Size = UDim2.new(0, 520, 0, 330)
+    main.Size = UDim2.new(0, 540, 0, 350)
     main.Position = UDim2.new(0.5, 0, 0.52, 0)
     bubbleBtn.Position = UDim2.new(0.03, 0, 0.25, 0)
     sldUiScale.setValue(1.0)
-    sldWinW.setValue(520)
-    sldWinH.setValue(330)
+    sldWinW.setValue(540)
+    sldWinH.setValue(350)
     savePrefs()
     setStatus("UKURAN & POSISI DIRESET", false)
 end)
@@ -2681,9 +3285,9 @@ cueIdBox.FocusLost:Connect(function()
 end)
 
 local saveCueFooterBtn = Instance.new("TextButton")
-saveCueFooterBtn.Size = UDim2.new(0, 108, 0, 20)
-saveCueFooterBtn.Position = UDim2.new(1, -248, 0.5, -10)
-saveCueFooterBtn.Text = "SIMPAN KE CUE"
+saveCueFooterBtn.Size = UDim2.new(0, 114, 0, 20)
+saveCueFooterBtn.Position = UDim2.new(1, -254, 0.5, -10)
+saveCueFooterBtn.Text = tr("btn_save_cue")
 saveCueFooterBtn.Font = Enum.Font.GothamBlack
 saveCueFooterBtn.TextSize = 10
 saveCueFooterBtn.BorderSizePixel = 0
@@ -2700,7 +3304,7 @@ end)
 local saveWorkFooterBtn = Instance.new("TextButton")
 saveWorkFooterBtn.Size = UDim2.new(0, 130, 0, 20)
 saveWorkFooterBtn.Position = UDim2.new(1, -134, 0.5, -10)
-saveWorkFooterBtn.Text = "EXPORT WORK.JSON"
+saveWorkFooterBtn.Text = tr("btn_export")
 saveWorkFooterBtn.Font = Enum.Font.GothamBlack
 saveWorkFooterBtn.TextSize = 10
 saveWorkFooterBtn.BorderSizePixel = 0
@@ -2715,6 +3319,25 @@ saveWorkFooterBtn.MouseButton1Click:Connect(function()
     setStatus(msg, not ok)
 end)
 
+applyLanguageTexts = function()
+    guideTopBtn.Text = tr("btn_guide")
+    saveCueFooterBtn.Text = tr("btn_save_cue")
+    saveWorkFooterBtn.Text = tr("btn_export")
+    btnSaveCueMid.Text = tr("btn_save_cue")
+    btnRecStep.Text = tr("btn_rec_step")
+    btnDelAllSteps.Text = tr("btn_del_all")
+    mirrorBtn.Text = state.curMirror and tr("btn_mirror_on") or tr("btn_mirror_off")
+    if sldPresetRate and sldPresetRate.label then sldPresetRate.label.Text = tr("lbl_rate") end
+    if sldPresetGlide and sldPresetGlide.label then sldPresetGlide.label.Text = tr("lbl_glide") end
+    if sldCustomPan and sldCustomPan.label then sldCustomPan.label.Text = tr("lbl_pan") end
+    if sldCustomTilt and sldCustomTilt.label then sldCustomTilt.label.Text = tr("lbl_tilt") end
+    if sldCustomDim and sldCustomDim.label then sldCustomDim.label.Text = tr("lbl_dim") end
+    if sldCustomColor and sldCustomColor.label then sldCustomColor.label.Text = tr("lbl_color") end
+    if sldCustomStrobe and sldCustomStrobe.label then sldCustomStrobe.label.Text = tr("lbl_strobe") end
+    refreshTabStyles()
+    refreshSmartHint()
+end
+
 applyFullTheme = function()
     local th = getCurrentTheme()
     for _, item in ipairs(themeBindings) do
@@ -2725,6 +3348,7 @@ applyFullTheme = function()
     main.BackgroundTransparency = uiPrefs.bgTransparency
     navBar.BackgroundTransparency = uiPrefs.bgTransparency
     contentArea.BackgroundTransparency = uiPrefs.bgTransparency
+    hintBanner.BackgroundTransparency = uiPrefs.bgTransparency
     footerBar.BackgroundTransparency = uiPrefs.bgTransparency
     topBar.BackgroundTransparency = math.clamp(uiPrefs.bgTransparency * 0.5, 0, 0.5)
     for _, sec in ipairs(sectionFrames) do
@@ -2762,5 +3386,6 @@ refreshCustomStepsListUI()
 refreshCueGridUI()
 refreshRigEditorUI()
 rebuildPreviewDots()
+applyLanguageTexts()
 applyFullTheme()
 switchTab("presets")
