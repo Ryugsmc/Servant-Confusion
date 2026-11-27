@@ -41,7 +41,7 @@ local LANGS = {
         btn_del_all = "HAPUS SEMUA",
         btn_mirror_off = "CERMIN KIRI-KANAN: MATI",
         btn_mirror_on = "CERMIN KIRI-KANAN: AKTIF",
-        hint_empty = "LANGKAH 1: PILIH PRESET DI TAB 1 ATAU REKAM STEP DI CUSTOM STEP.",
+        hint_empty = "LANGKAH 1: ATUR WARNA/PRISM & KLIK PRESET, ATAU REKAM STEP MANUAL.",
         hint_ready = "LANGKAH 2: CEK LIVE PREVIEW LALU TEKAN 'SIMPAN KE CUE' & 'EXPORT WORK.JSON'.",
         hint_edit = "MODE GESER AKTIF: SERET LAMPU / PAKAI D-PAD / PILIH BENTUK FORMASI."
     },
@@ -67,7 +67,7 @@ local LANGS = {
         btn_del_all = "HAPUS SEMUA",
         btn_mirror_off = "MIRROR SIMETRIS: MATI",
         btn_mirror_on = "MIRROR SIMETRIS: NYALA",
-        hint_empty = "TINGGAL KLIK GERAKAN INSTAN ATAU BIKIN SENDIRI TITIK PER TITIK.",
+        hint_empty = "PILIH WARNA & PRISM DULU, LALU KLIK SALAH SATU DARI 26 POLA GERAK.",
         hint_ready = "GERAKAN UDAH JADI! TINGGAL KLIK 'MASUKIN KE CUE' TERUS 'SIMPAN FILE'.",
         hint_edit = "TINGGAL SERET LAMPU PAKAI JARI ATAU PILIH BENTUK KOTAK/LINGKARAN/KATA."
     },
@@ -93,7 +93,7 @@ local LANGS = {
         btn_del_all = "BUSEK KABEH",
         btn_mirror_off = "KOCO KIWO-TENGEN: MATI",
         btn_mirror_on = "KOCO KIWO-TENGEN: URIP",
-        hint_empty = "LANGKAH 1: PILIH GERAK CEPET UTAWA GAWE DEWE NING TAB SEBELAH.",
+        hint_empty = "LANGKAH 1: PILIH WERNO/PRISM KARO POLA GERAK CEPET NING NGISOR.",
         hint_ready = "WES DADI STEP-E! LANGSUNG KLIK 'SIMPEN NING CUE' KARO 'SIMPEN JSON'.",
         hint_edit = "GESER LAMPUNE NANG LAYAR UTAWA PILIH BENTUK BUNDER/KOTAK/TULISAN."
     },
@@ -105,7 +105,7 @@ local LANGS = {
         tab_rig = "Atur Lampu",
         tab_cue = "Simpen Cue",
         tab_settings = "Setelan",
-        btn_guide = "? Pituduh",
+        btn_guide = "? PITUDUH",
         btn_save_cue = "SIMPEN KANA CUE",
         btn_export = "SIMPEN JSON",
         lbl_pan = "Kenca - Katuhu (Pan)",
@@ -119,7 +119,7 @@ local LANGS = {
         btn_del_all = "HAPUS KABEH",
         btn_mirror_off = "EUNTEUNG KENCA-KATUHU: PAEH",
         btn_mirror_on = "EUNTEUNG KENCA-KATUHU: HURUNG",
-        hint_empty = "LENGKAH 1: PILIH GERAK INSTAN ATAWA JIEUN SORANGAN DI TAB GIGIREUN.",
+        hint_empty = "LENGKAH 1: PILIH WARNA/PRISM JEUNG GERAK INSTAN DI HANDAP.",
         hint_ready = "GEUS JADI! KARI KLIK 'SIMPEN KANA CUE' JEUNG 'SIMPEN JSON'.",
         hint_edit = "GESER LAMPU DINA LAYAR ATAWA PILIH BENTUK BULEUD/KOTAK/KECAP."
     },
@@ -145,7 +145,7 @@ local LANGS = {
         btn_del_all = "CLEAR ALL",
         btn_mirror_off = "MIRROR PAN: OFF",
         btn_mirror_on = "MIRROR PAN: ON",
-        hint_empty = "STEP 1: PICK A PRESET OR RECORD CUSTOM POSITIONS IN CUSTOM STEP.",
+        hint_empty = "STEP 1: SET COLOR & PRISM/GOBO THEN CLICK ANY OF 26 PRESETS.",
         hint_ready = "STEP 2: CHECK LIVE PREVIEW THEN CLICK 'STORE TO CUE' & 'EXPORT WORK.JSON'.",
         hint_edit = "LAYOUT EDIT: DRAG FIXTURES / USE D-PAD / APPLY SHAPE OR WORD FORMATION."
     }
@@ -153,12 +153,12 @@ local LANGS = {
 
 local TUTORIALS = {
     {
-        title = "1. CARA BUAT GERAKAN PRESET (TERCEPAT)",
+        title = "1. CARA BUAT GERAKAN PRESET + WARNA & PRISM",
         steps = {
-            "Buka tab PRESET STEP, lalu pilih lampu target (Semua / Ganjil / Genap).",
-            "Atur jumlah step (misal 8 Step) & kecepatan (Rate) atau ketuk TAP BPM.",
-            "Klik salah satu pola preset (misal Circle Putar / Kipas Cermin).",
-            "Cek hasilnya di tab LIVE PREVIEW, lalu tekan SIMPAN KE CUE & EXPORT WORK.JSON."
+            "Buka tab PRESET STEP, lalu pilih unit lampu target (Semua / Ganjil / Genap).",
+            "Di bagian 2, pilih Warna Preset (Merah, Biru, Rainbow, atau Custom RGB) dan nyalakan PRISM / GOBO / FROST jika perlu.",
+            "Di bagian 3, atur jumlah Step (4/8/12/16) & kecepatan (Rate), lalu klik salah satu dari 26 pola preset.",
+            "Cek animasi warna & gerakannya di tab LIVE PREVIEW, lalu tekan SIMPAN KE CUE & EXPORT WORK.JSON."
         }
     },
     {
@@ -466,16 +466,44 @@ local FIXTURE_DEFAULTS = {
 local STEP_PRESETS = {
     {name="Circle Putar", pattern="circle", glide=0.45, rate=2.2},
     {name="Circle Cermin", pattern="circle_mirror", glide=0.45, rate=2.2},
+    {name="Circle Zoom In/Out", pattern="circle_zoom", glide=0.45, rate=2.4},
     {name="Figure-8 Angka 8", pattern="fig8", glide=0.45, rate=2.0},
+    {name="Figure-8 Cermin", pattern="fig8_mirror", glide=0.45, rate=2.1},
     {name="Sapu Kiri-Kanan", pattern="wave_pan", glide=0.40, rate=2.5},
     {name="Kipas Cermin", pattern="fan_io", glide=0.40, rate=2.4},
+    {name="Kipas Silang X", pattern="cross_x", glide=0.35, rate=2.6},
     {name="Ombak Naik-Turun", pattern="wave_tilt", glide=0.40, rate=2.5},
+    {name="Tilt Cermin Wing", pattern="tilt_mirror", glide=0.40, rate=2.5},
     {name="Tangga Tilt Naik", pattern="stair_tilt", glide=0.30, rate=2.8},
+    {name="Fly-Out Tembak Atas", pattern="fly_out", glide=0.25, rate=3.0},
+    {name="Diamond Wajik", pattern="diamond", glide=0.40, rate=2.3},
+    {name="Kotak Square Path", pattern="box_path", glide=0.30, rate=2.4},
+    {name="Zig-Zag Tajam", pattern="zigzag", glide=0.15, rate=3.2},
+    {name="Spiral Putar", pattern="spiral", glide=0.45, rate=2.2},
+    {name="Heart / Hati", pattern="heart", glide=0.45, rate=2.0},
+    {name="V-Shape Wave", pattern="v_wave", glide=0.40, rate=2.4},
+    {name="Center Focus Pinch", pattern="center_pinch", glide=0.40, rate=2.3},
     {name="Silang Ping-Pong", pattern="pingpong", glide=0.25, rate=3.0},
     {name="Ballyhoo Acak", pattern="ballyhoo", glide=0.35, rate=2.6},
     {name="Kedip Ganjil-Genap", pattern="odd_even", glide=0.0, rate=4.0},
     {name="Lampu Lari (Runner)", pattern="runner", glide=0.10, rate=4.5},
-    {name="Pelangi Berjalan", pattern="color_run", glide=0.20, rate=3.0}
+    {name="Bounce Kiri-Kanan", pattern="bounce_lr", glide=0.15, rate=4.0},
+    {name="Twinkle Bintang", pattern="twinkle", glide=0.05, rate=5.0},
+    {name="Police Strobe Split", pattern="police_split", glide=0.0, rate=6.0}
+}
+
+local PRESET_COLOR_SWATCHES = {
+    {id="none", name="Default", swatch=Color3.fromRGB(220, 225, 235), r=1, g=1, b=1, cw=0.0},
+    {id="red", name="Merah", swatch=Color3.fromRGB(240, 50, 50), r=1, g=0, b=0, cw=0.15},
+    {id="green", name="Hijau", swatch=Color3.fromRGB(45, 215, 90), r=0, g=1, b=0, cw=0.30},
+    {id="blue", name="Biru", swatch=Color3.fromRGB(50, 120, 250), r=0, g=0, b=1, cw=0.45},
+    {id="cyan", name="Cyan", swatch=Color3.fromRGB(40, 225, 235), r=0, g=1, b=1, cw=0.55},
+    {id="magenta", name="Ungu/Pink", swatch=Color3.fromRGB(235, 60, 200), r=1, g=0, b=1, cw=0.70},
+    {id="yellow", name="Kuning", swatch=Color3.fromRGB(250, 210, 40), r=1, g=0.85, b=0, cw=0.22},
+    {id="amber", name="Oranye", swatch=Color3.fromRGB(250, 120, 30), r=1, g=0.38, b=0, cw=0.12},
+    {id="uv", name="UV Ungu", swatch=Color3.fromRGB(130, 55, 245), r=0.45, g=0, b=1, cw=0.82},
+    {id="rainbow", name="Rainbow", swatch=Color3.fromRGB(255, 140, 220), r=1, g=1, b=1, cw=0.5, isRainbow=true},
+    {id="custom", name="RGB Custom", swatch=Color3.fromRGB(0, 245, 155), r=1, g=1, b=1, cw=0.5, isCustom=true}
 }
 
 local RGB_COLOR_PRESETS = {
@@ -632,6 +660,16 @@ local state = {
     stepGlide = 0.35,
     stepDir = ">",
     customSteps = {},
+    presetColorId = "none",
+    presetR = 1.0,
+    presetG = 1.0,
+    presetB = 1.0,
+    presetCW = 0.0,
+    presetPrismOn = false,
+    presetPrismRot = 0.35,
+    presetGoboVal = 0.0,
+    presetFrostOn = false,
+    presetStrobeOn = false,
     curPan = 0.5,
     curTilt = 0.5,
     curDim = 1.0,
@@ -797,17 +835,15 @@ local function makeSection(parent, title)
     applyBrutalBorder(box)
     table.insert(UI.sectionFrames, box)
 
-    local pad = Instance.new("UIPadding")
+    local pad = Instance.new("UIPadding", box)
     pad.PaddingTop = UDim.new(0, 6)
     pad.PaddingBottom = UDim.new(0, 6)
     pad.PaddingLeft = UDim.new(0, 8)
     pad.PaddingRight = UDim.new(0, 8)
-    pad.Parent = box
 
-    local layout = Instance.new("UIListLayout")
+    local layout = Instance.new("UIListLayout", box)
     layout.Padding = UDim.new(0, 5)
     layout.SortOrder = Enum.SortOrder.LayoutOrder
-    layout.Parent = box
 
     local hdr = Instance.new("TextLabel")
     hdr.Size = UDim2.new(1, 0, 0, 15)
@@ -946,10 +982,9 @@ local function makeChipSelector(parent, labelText, options, initialVal, onSelect
     wrap.ZIndex = 5
     wrap.Parent = holder
 
-    local grid = Instance.new("UIGridLayout")
+    local grid = Instance.new("UIGridLayout", wrap)
     grid.CellSize = UDim2.new(0, 74, 0, 21)
     grid.CellPadding = UDim2.new(0, 4, 0, 4)
-    grid.Parent = wrap
 
     local chips = {}
     local current = initialVal
@@ -1706,7 +1741,133 @@ do
         end
     end
 
-    local secPresetOpt = makeSection(pagePresets, "2. ATUR JUMLAH STEP, KECEPATAN & KEHALUSAN")
+    local secPresetBeamColor = makeSection(pagePresets, "2. PILIH WARNA & PRISM / GOBO / FROST UNTUK PRESET")
+
+    local colorGridWrap = Instance.new("Frame")
+    colorGridWrap.Size = UDim2.new(1, 0, 0, 0)
+    colorGridWrap.AutomaticSize = Enum.AutomaticSize.Y
+    colorGridWrap.BackgroundTransparency = 1
+    colorGridWrap.ZIndex = 5
+    colorGridWrap.Parent = secPresetBeamColor
+
+    local colorGrid = Instance.new("UIGridLayout", colorGridWrap)
+    colorGrid.CellSize = UDim2.new(0.24, 0, 0, 22)
+    colorGrid.CellPadding = UDim2.new(0.013, 0, 0, 4)
+
+    local customRgbBox = Instance.new("Frame")
+    customRgbBox.Size = UDim2.new(1, 0, 0, 0)
+    customRgbBox.AutomaticSize = Enum.AutomaticSize.Y
+    customRgbBox.BackgroundTransparency = 1
+    customRgbBox.Visible = false
+    customRgbBox.ZIndex = 5
+    customRgbBox.Parent = secPresetBeamColor
+    local customRgbLayout = Instance.new("UIListLayout", customRgbBox)
+    customRgbLayout.Padding = UDim.new(0, 4)
+
+    makeSliderRow(customRgbBox, "Merah (Red R)", 0, 1, state.presetR, false, function(v) state.presetR = v end)
+    makeSliderRow(customRgbBox, "Hijau (Green G)", 0, 1, state.presetG, false, function(v) state.presetG = v end)
+    makeSliderRow(customRgbBox, "Biru (Blue B)", 0, 1, state.presetB, false, function(v) state.presetB = v end)
+    makeSliderRow(customRgbBox, "Color Wheel (Clara)", 0, 1, state.presetCW, false, function(v) state.presetCW = v end)
+
+    local colorBtns = {}
+    local function refreshColorSwatches()
+        for _, sw in ipairs(PRESET_COLOR_SWATCHES) do
+            local btn = colorBtns[sw.id]
+            if btn then
+                local isSel = (state.presetColorId == sw.id)
+                local st = btn:FindFirstChildOfClass("UIStroke")
+                if st then
+                    st.Color = isSel and Color3.fromRGB(255, 255, 255) or Color3.fromRGB(0, 0, 0)
+                    st.Thickness = isSel and 3 or uiPrefs.borderThickness
+                end
+            end
+        end
+        customRgbBox.Visible = (state.presetColorId == "custom")
+    end
+
+    for _, sw in ipairs(PRESET_COLOR_SWATCHES) do
+        local cb = Instance.new("TextButton")
+        cb.BackgroundColor3 = sw.swatch
+        cb.Text = string.upper(sw.name)
+        cb.Font = Enum.Font.GothamBlack
+        cb.TextSize = 8
+        local lum = (sw.swatch.R * 0.299) + (sw.swatch.G * 0.587) + (sw.swatch.B * 0.114)
+        cb.TextColor3 = (lum > 0.65) and Color3.fromRGB(12, 12, 12) or Color3.fromRGB(255, 255, 255)
+        cb.BorderSizePixel = 0
+        cb.ZIndex = 5
+        cb.Parent = colorGridWrap
+        applyBrutalBorder(cb)
+        colorBtns[sw.id] = cb
+
+        cb.MouseButton1Click:Connect(function()
+            state.presetColorId = sw.id
+            if not sw.isCustom then
+                state.presetR = sw.r
+                state.presetG = sw.g
+                state.presetB = sw.b
+                state.presetCW = sw.cw
+            end
+            refreshColorSwatches()
+            setStatus("WARNA PRESET: " .. string.upper(sw.name), false)
+        end)
+    end
+    refreshColorSwatches()
+
+    local beamFxRow = Instance.new("Frame")
+    beamFxRow.Size = UDim2.new(1, 0, 0, 22)
+    beamFxRow.BackgroundTransparency = 1
+    beamFxRow.ZIndex = 5
+    beamFxRow.Parent = secPresetBeamColor
+
+    local btnPrism = makeSmallActionBtn(beamFxRow, "PRISM: OFF", 0, 82, "surface", function() end)
+    local btnGobo = makeSmallActionBtn(beamFxRow, "GOBO: OFF", 86, 80, "surface", function() end)
+    local btnFrost = makeSmallActionBtn(beamFxRow, "FROST: OFF", 170, 80, "surface", function() end)
+    local btnStrobe = makeSmallActionBtn(beamFxRow, "STROBE: OFF", 254, 86, "surface", function() end)
+
+    local sldPrismRot = makeSliderRow(secPresetBeamColor, "Putaran Prism (prot)", 0, 1, state.presetPrismRot, false, function(v)
+        state.presetPrismRot = v
+    end)
+    sldPrismRot.row.Visible = false
+
+    local function refreshBeamToggles()
+        local th = getCurrentTheme()
+        btnPrism.Text = state.presetPrismOn and "PRISM: ON" or "PRISM: OFF"
+        btnPrism.BackgroundColor3 = state.presetPrismOn and th.accent or th.surface
+        btnPrism.TextColor3 = state.presetPrismOn and th.btnText or th.ink
+        sldPrismRot.row.Visible = state.presetPrismOn
+
+        btnGobo.Text = (state.presetGoboVal > 0) and "GOBO: ON" or "GOBO: OFF"
+        btnGobo.BackgroundColor3 = (state.presetGoboVal > 0) and th.secondary or th.surface
+        btnGobo.TextColor3 = (state.presetGoboVal > 0) and th.btnText or th.ink
+
+        btnFrost.Text = state.presetFrostOn and "FROST: ON" or "FROST: OFF"
+        btnFrost.BackgroundColor3 = state.presetFrostOn and th.accent or th.surface
+        btnFrost.TextColor3 = state.presetFrostOn and th.btnText or th.ink
+
+        btnStrobe.Text = state.presetStrobeOn and "STROBE: ON" or "STROBE: OFF"
+        btnStrobe.BackgroundColor3 = state.presetStrobeOn and th.danger or th.surface
+        btnStrobe.TextColor3 = state.presetStrobeOn and Color3.fromRGB(255, 255, 255) or th.ink
+    end
+
+    btnPrism.MouseButton1Click:Connect(function()
+        state.presetPrismOn = not state.presetPrismOn
+        refreshBeamToggles()
+    end)
+    btnGobo.MouseButton1Click:Connect(function()
+        state.presetGoboVal = (state.presetGoboVal > 0) and 0 or 0.45
+        refreshBeamToggles()
+    end)
+    btnFrost.MouseButton1Click:Connect(function()
+        state.presetFrostOn = not state.presetFrostOn
+        refreshBeamToggles()
+    end)
+    btnStrobe.MouseButton1Click:Connect(function()
+        state.presetStrobeOn = not state.presetStrobeOn
+        refreshBeamToggles()
+    end)
+    UI.fn.refreshBeamToggles = refreshBeamToggles
+
+    local secPresetOpt = makeSection(pagePresets, "3. ATUR JUMLAH STEP, KECEPATAN & KEHALUSAN")
     makeChipSelector(secPresetOpt, "Jumlah Step Otomatis (steps):", {4, 8, 12, 16}, state.presetStepsCount, function(v)
         state.presetStepsCount = v
     end)
@@ -1714,7 +1875,7 @@ do
     UI.sldPresetGlide = makeSliderRow(secPresetOpt, tr("lbl_glide"), 0.0, 1.0, state.stepGlide, false, function(v) state.stepGlide = v end)
     UI.chipPresetDir = makeChipSelector(secPresetOpt, "Arah Jalan Step (dir):", {">", "<", "<>", "rand"}, state.stepDir, function(v) state.stepDir = v end)
 
-    local secPresetGrid = makeSection(pagePresets, "3. KLIK PRESET = OTOMATIS JADI STEP (12 POLA)")
+    local secPresetGrid = makeSection(pagePresets, "4. KLIK PRESET = OTOMATIS JADI STEP (26 POLA LENGKAP)")
     local presetGridWrap = Instance.new("Frame")
     presetGridWrap.Size = UDim2.new(1, 0, 0, 0)
     presetGridWrap.AutomaticSize = Enum.AutomaticSize.Y
@@ -1725,6 +1886,57 @@ do
     local presetGrid = Instance.new("UIGridLayout", presetGridWrap)
     presetGrid.CellSize = UDim2.new(0.49, 0, 0, 26)
     presetGrid.CellPadding = UDim2.new(0.02, 0, 0, 5)
+
+    local function injectColorAndBeamToOv(ov, prog, phaseOff, ang)
+        if state.presetColorId == "rainbow" then
+            local hue = (prog + phaseOff) % 1
+            local c3 = Color3.fromHSV(hue, 1, 1)
+            ov.color = hue
+            ov.col1 = hue
+            ov.acol = hue
+            ov.bcol = hue
+            ov.r = c3.R; ov.g = c3.G; ov.b = c3.B
+            ov.mr = c3.R; ov.mg = c3.G; ov.mb = c3.B
+            ov.r1 = c3.R; ov.g1 = c3.G; ov.b1 = c3.B
+            ov.r2 = c3.R; ov.g2 = c3.G; ov.b2 = c3.B
+        elseif state.presetColorId ~= "none" then
+            ov.color = state.presetCW
+            ov.col1 = state.presetCW
+            ov.acol = state.presetCW
+            ov.bcol = state.presetCW
+            ov.r = state.presetR; ov.g = state.presetG; ov.b = state.presetB
+            ov.mr = state.presetR; ov.mg = state.presetG; ov.mb = state.presetB
+            ov.r1 = state.presetR; ov.g1 = state.presetG; ov.b1 = state.presetB
+            ov.r2 = state.presetR; ov.g2 = state.presetG; ov.b2 = state.presetB
+        end
+
+        if state.presetPrismOn then
+            ov.prism = 0.65
+            ov.prism2 = 0.45
+            ov.prot = state.presetPrismRot
+            ov.rot = state.presetPrismRot
+            ov.meff = 0.5
+            ov.aeff = 0.5
+        end
+        if state.presetGoboVal > 0 then
+            ov.gobo = state.presetGoboVal
+            ov.gobor = 0.25
+            ov.g1 = state.presetGoboVal
+            ov.g2 = state.presetGoboVal
+        end
+        if state.presetFrostOn then
+            ov.frost = 0.85
+            ov.zoom = 0.90
+        end
+        if state.presetStrobeOn then
+            ov.strobe = 0.65
+            ov.str = 0.65
+            ov.shutter = 0.65
+            ov.astrobe = 0.65
+            ov.rstrobe = 0.65
+            ov.mstrb = 0.65
+        end
+    end
 
     local function buildStepsFromPreset(preset)
         local indices = getSelectedMemberIndices()
@@ -1751,6 +1963,8 @@ do
                     local ang = (prog + phaseOff) * math.pi * 2
                     local ov = {}
 
+                    injectColorAndBeamToOv(ov, prog, phaseOff, ang)
+
                     if preset.pattern == "circle" then
                         ov.pan = 0.5 + (math.cos(ang) * 0.35)
                         ov.tilt = 0.5 + (math.sin(ang) * 0.35)
@@ -1758,8 +1972,16 @@ do
                         local sign = (posIdx > (totalSel / 2)) and -1 or 1
                         ov.pan = 0.5 + (math.cos(ang) * 0.35 * sign)
                         ov.tilt = 0.5 + (math.sin(ang) * 0.35)
+                    elseif preset.pattern == "circle_zoom" then
+                        local rad = 0.15 + (0.25 * (0.5 + 0.5 * math.sin(prog * math.pi * 2)))
+                        ov.pan = 0.5 + (math.cos(ang) * rad)
+                        ov.tilt = 0.5 + (math.sin(ang) * rad)
                     elseif preset.pattern == "fig8" then
                         ov.pan = 0.5 + (math.sin(ang) * 0.40)
+                        ov.tilt = 0.5 + (math.sin(ang * 2) * 0.30)
+                    elseif preset.pattern == "fig8_mirror" then
+                        local sign = (posIdx > (totalSel / 2)) and -1 or 1
+                        ov.pan = 0.5 + (math.sin(ang) * 0.40 * sign)
                         ov.tilt = 0.5 + (math.sin(ang * 2) * 0.30)
                     elseif preset.pattern == "wave_pan" then
                         ov.pan = 0.5 + (math.sin(ang) * 0.42)
@@ -1770,12 +1992,69 @@ do
                         local wave = math.sin(prog * math.pi * 2)
                         ov.pan = 0.5 + (dist * 0.40 * wave)
                         ov.tilt = 0.5 + (0.25 * math.cos(prog * math.pi * 2))
+                    elseif preset.pattern == "cross_x" then
+                        local sign = (posIdx % 2 == 1) and 1 or -1
+                        ov.pan = 0.5 + (math.sin(ang) * 0.38 * sign)
+                        ov.tilt = 0.5 + (math.cos(ang) * 0.35)
                     elseif preset.pattern == "wave_tilt" then
                         ov.pan = 0.5
                         ov.tilt = 0.5 + (math.sin(ang) * 0.40)
+                    elseif preset.pattern == "tilt_mirror" then
+                        local sign = (posIdx % 2 == 1) and 1 or -1
+                        ov.pan = 0.5
+                        ov.tilt = 0.5 + (math.sin(ang) * 0.38 * sign)
                     elseif preset.pattern == "stair_tilt" then
                         ov.pan = 0.5
                         ov.tilt = 0.18 + (((prog + phaseOff) % 1) * 0.68)
+                    elseif preset.pattern == "fly_out" then
+                        local stepCycle = (prog + phaseOff) % 1
+                        ov.pan = 0.5
+                        ov.tilt = 0.20 + (stepCycle * 0.68)
+                        local dimVal = (stepCycle < 0.72) and 1 or 0
+                        ov.dim = dimVal; ov.int = dimVal
+                    elseif preset.pattern == "diamond" then
+                        local t4 = ((prog + phaseOff) % 1) * 4
+                        local seg = math.floor(t4)
+                        local f = t4 - seg
+                        local pts = {{0.5, 0.85}, {0.85, 0.5}, {0.5, 0.15}, {0.15, 0.5}}
+                        local pA = pts[seg + 1]
+                        local pB = pts[((seg + 1) % 4) + 1]
+                        ov.pan = pA[1] + (pB[1] - pA[1]) * f
+                        ov.tilt = pA[2] + (pB[2] - pA[2]) * f
+                    elseif preset.pattern == "box_path" then
+                        local t4 = ((prog + phaseOff) % 1) * 4
+                        local seg = math.floor(t4)
+                        local f = t4 - seg
+                        local pts = {{0.18, 0.82}, {0.82, 0.82}, {0.82, 0.18}, {0.18, 0.18}}
+                        local pA = pts[seg + 1]
+                        local pB = pts[((seg + 1) % 4) + 1]
+                        ov.pan = pA[1] + (pB[1] - pA[1]) * f
+                        ov.tilt = pA[2] + (pB[2] - pA[2]) * f
+                    elseif preset.pattern == "zigzag" then
+                        local z = ((prog + phaseOff) % 1)
+                        ov.pan = 0.15 + (z * 0.70)
+                        ov.tilt = (s % 2 == 1) and 0.75 or 0.25
+                    elseif preset.pattern == "spiral" then
+                        local rMod = 0.12 + (((prog * 2) % 1) * 0.30)
+                        ov.pan = 0.5 + (math.cos(ang * 2) * rMod)
+                        ov.tilt = 0.5 + (math.sin(ang * 2) * rMod)
+                    elseif preset.pattern == "heart" then
+                        local ht = ang
+                        local hx = 16 * (math.sin(ht)^3)
+                        local hy = 13 * math.cos(ht) - 5 * math.cos(2 * ht) - 2 * math.cos(3 * ht) - math.cos(4 * ht)
+                        ov.pan = 0.5 + ((hx / 16) * 0.36)
+                        ov.tilt = 0.52 + ((hy / 16) * 0.34)
+                    elseif preset.pattern == "v_wave" then
+                        local mid = (totalSel + 1) / 2
+                        local dist = math.abs(posIdx - mid) / math.max(1, totalSel / 2)
+                        ov.pan = 0.5 + (((posIdx - mid) / math.max(1, totalSel / 2)) * 0.28)
+                        ov.tilt = 0.35 + (dist * 0.45 * (0.5 + 0.5 * math.sin(prog * math.pi * 2)))
+                    elseif preset.pattern == "center_pinch" then
+                        local mid = (totalSel + 1) / 2
+                        local norm = (posIdx - mid) / math.max(1, totalSel / 2)
+                        local pinch = 0.5 + 0.5 * math.cos(prog * math.pi * 2)
+                        ov.pan = 0.5 + (norm * 0.42 * pinch)
+                        ov.tilt = 0.45 + (0.25 * (1 - pinch))
                     elseif preset.pattern == "pingpong" then
                         local dir = (s % 2 == 1) and 1 or -1
                         local side = (posIdx % 2 == 1) and 1 or -1
@@ -1796,12 +2075,27 @@ do
                         local val = (posIdx == activePos) and 1 or 0
                         ov.dim = val; ov.int = val; ov.r = val; ov.g = val; ov.b = val
                         ov.d1 = val; ov.d2 = val; ov.d3 = val; ov.d4 = val
-                    elseif preset.pattern == "color_run" then
-                        ov.color = (prog + phaseOff) % 1; ov.col1 = (prog + phaseOff) % 1
-                        ov.acol = (prog + phaseOff) % 1; ov.bcol = (prog + phaseOff) % 1
-                        ov.r = 0.5 + 0.5 * math.sin(ang)
-                        ov.g = 0.5 + 0.5 * math.sin(ang + 2.09)
-                        ov.b = 0.5 + 0.5 * math.sin(ang + 4.18)
+                    elseif preset.pattern == "bounce_lr" then
+                        local span = math.max(1, totalSel - 1)
+                        local cycle = (s - 1) % (span * 2)
+                        local targetPos = (cycle <= span) and (cycle + 1) or ((span * 2 - cycle) + 1)
+                        local val = (posIdx == targetPos) and 1 or 0
+                        ov.dim = val; ov.int = val; ov.r = val; ov.g = val; ov.b = val
+                    elseif preset.pattern == "twinkle" then
+                        local active = (((s * 3 + posIdx * 5) % 4) == 0)
+                        local val = active and 1 or 0.12
+                        ov.dim = val; ov.int = val
+                    elseif preset.pattern == "police_split" then
+                        local isLeft = (posIdx <= (totalSel / 2))
+                        local flashLeft = (s % 2 == 1)
+                        local active = (isLeft and flashLeft) or ((not isLeft) and (not flashLeft))
+                        local val = active and 1 or 0
+                        ov.dim = val; ov.int = val
+                        if isLeft then
+                            ov.color = 0.15; ov.col1 = 0.15; ov.r = val; ov.g = 0; ov.b = 0
+                        else
+                            ov.color = 0.45; ov.col1 = 0.45; ov.r = 0; ov.g = 0; ov.b = val
+                        end
                     end
 
                     frame[tostring(rigIdx)] = {t = fType, v = makeFullV(fType, ov)}
@@ -2284,6 +2578,7 @@ do
             if item.head then item.head:Destroy() end
             if item.beam then item.beam:Destroy() end
             if item.spot then item.spot:Destroy() end
+            if item.prismRing then item.prismRing:Destroy() end
         end
         previewFixtures = {}
         local total = math.max(1, #workData.rig)
@@ -2322,8 +2617,19 @@ do
             spot.ZIndex = 7
             applyBrutalBorder(spot)
 
+            local prismRing = Instance.new("Frame", previewCanvas)
+            prismRing.Size = UDim2.new(0, 24, 0, 24)
+            prismRing.AnchorPoint = Vector2.new(0.5, 0.5)
+            prismRing.BackgroundTransparency = 1
+            prismRing.Visible = false
+            prismRing.ZIndex = 7
+            local prStroke = Instance.new("UIStroke", prismRing)
+            prStroke.Color = Color3.fromRGB(255, 255, 255)
+            prStroke.Thickness = 2
+
             head.Position = UDim2.new(fx, 0, fy, 0)
             spot.Position = UDim2.new(fx, 0, fy, 0)
+            prismRing.Position = UDim2.new(fx, 0, fy, 0)
             beam.Position = UDim2.new(fx, 0, fy, 0)
 
             local draggingNode = false
@@ -2345,6 +2651,7 @@ do
                     fix.y = math.floor(ry * 100 + 0.5) / 100
                     head.Position = UDim2.new(fix.x, 0, fix.y, 0)
                     spot.Position = UDim2.new(fix.x, 0, fix.y, 0)
+                    prismRing.Position = UDim2.new(fix.x, 0, fix.y, 0)
                     beam.Position = UDim2.new(fix.x, 0, fix.y, 0)
                     dpadTargetLbl.Text = string.format("UNIT #%d (X:%.2f Y:%.2f)", i, fix.x, fix.y)
                 end
@@ -2358,7 +2665,7 @@ do
                     end
                 end
             end)
-            previewFixtures[i] = {head = head, beam = beam, spot = spot, fix = fix}
+            previewFixtures[i] = {head = head, beam = beam, spot = spot, prismRing = prismRing, fix = fix}
         end
     end
 
@@ -2397,6 +2704,7 @@ do
             item.head.Visible = isSel or state.layoutEditMode
             item.beam.Visible = isSel and (not state.layoutEditMode)
             item.spot.Visible = isSel and (not state.layoutEditMode)
+            item.prismRing.Visible = false
 
             local fx = math.clamp(tonumber(item.fix.x) or 0.5, 0.05, 0.95)
             local fy = math.clamp(tonumber(item.fix.y) or 0.25, 0.08, 0.92)
@@ -2406,12 +2714,24 @@ do
                 item.head.Position = UDim2.new(fx, 0, fy, 0)
             elseif isSel then
                 local panVal, tiltVal, dimVal, colVal = state.curPan, state.curTilt, state.curDim, state.curColor
+                local rVal, gVal, bVal = state.presetR, state.presetG, state.presetB
+                local hasRgb = false
+                local hasPrism = state.presetPrismOn
+                local hasFrost = state.presetFrostOn
+
                 if state.curMirror and i > (totalFix / 2) then panVal = 1 - panVal end
 
                 if activeFrame and activeFrame[tostring(i)] and activeFrame[tostring(i)].v then
                     local v1 = activeFrame[tostring(i)].v
                     panVal = v1.pan or 0.5; tiltVal = v1.tilt or 0.5
-                    dimVal = v1.dim or v1.int or v1.r or 1; colVal = v1.color or v1.col1 or 0
+                    dimVal = v1.dim or v1.int or v1.r or 1
+                    colVal = v1.color or v1.col1 or 0
+                    if v1.r ~= nil and v1.g ~= nil and v1.b ~= nil then
+                        rVal = v1.r; gVal = v1.g; bVal = v1.b
+                        hasRgb = true
+                    end
+                    hasPrism = (v1.prism and v1.prism > 0.1) or false
+                    hasFrost = (v1.frost and v1.frost > 0.1) or false
                     if state.stepGlide > 0 and nextFrame and nextFrame[tostring(i)] and nextFrame[tostring(i)].v then
                         local v2 = nextFrame[tostring(i)].v
                         local g = frac * state.stepGlide
@@ -2431,14 +2751,16 @@ do
 
                 item.head.Position = UDim2.new(startX, 0, startY, 0)
                 item.spot.Position = UDim2.new(targetX, 0, targetY, 0)
+                item.prismRing.Position = UDim2.new(targetX, 0, targetY, 0)
 
                 local dx = (targetX - startX) * cw
                 local dy = (targetY - startY) * ch
                 local dist = math.sqrt((dx * dx) + (dy * dy))
                 local deg = math.deg(math.atan2(dy, dx)) - 90
 
+                local beamWidth = hasFrost and 22 or (hasPrism and 16 or 11)
                 item.beam.Position = UDim2.new(startX, dx * 0.5, startY, dy * 0.5)
-                item.beam.Size = UDim2.new(0, 12, 0, math.max(10, dist))
+                item.beam.Size = UDim2.new(0, beamWidth, 0, math.max(10, dist))
                 item.beam.Rotation = deg
                 item.head.Rotation = deg
 
@@ -2446,14 +2768,20 @@ do
                     item.beam.BackgroundTransparency = 0.96
                     item.spot.BackgroundColor3 = Color3.fromRGB(50, 50, 55)
                 else
-                    item.beam.BackgroundTransparency = 0.58
-                    if colVal > 0.02 then
-                        local c = Color3.fromHSV(colVal % 1, 0.9, 1)
-                        item.beam.BackgroundColor3 = c
-                        item.spot.BackgroundColor3 = c
-                    else
-                        item.beam.BackgroundColor3 = th.accent
-                        item.spot.BackgroundColor3 = th.accent
+                    item.beam.BackgroundTransparency = hasFrost and 0.72 or 0.55
+                    local beamCol = th.accent
+                    if hasRgb and not (rVal == 1 and gVal == 1 and bVal == 1 and colVal == 0) then
+                        beamCol = Color3.new(rVal, gVal, bVal)
+                    elseif colVal > 0.02 then
+                        beamCol = Color3.fromHSV(colVal % 1, 0.95, 1)
+                    end
+                    item.beam.BackgroundColor3 = beamCol
+                    item.spot.BackgroundColor3 = beamCol
+                    if hasPrism then
+                        item.prismRing.Visible = true
+                        item.prismRing.Rotation = (os.clock() * 140) % 360
+                        local st = item.prismRing:FindFirstChildOfClass("UIStroke")
+                        if st then st.Color = beamCol end
                     end
                 end
             end
@@ -3024,6 +3352,7 @@ UI.fn.applyFullTheme = function()
     UI.promptRigBtn.TextColor3 = uiPrefs.promptRigOnNewCue and th.btnText or th.ink
     UI.mirrorBtn.BackgroundColor3 = state.curMirror and th.secondary or th.surface
     UI.mirrorBtn.TextColor3 = state.curMirror and th.btnText or th.ink
+    if UI.fn.refreshBeamToggles then UI.fn.refreshBeamToggles() end
     UI.fn.refreshPreviewToolbar()
     UI.fn.refreshTabStyles()
     for _, cs in ipairs(UI.chipSelectorsList) do cs.retheme() end
